@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0614">
+<meta name="description" content="손목을 비틀어 좁은 틈을 아슬아슬하게 통과하는 반응 아케이드 게임, 오래 살아남을수록 사운드트랙이 풍성해진다">
+<title>빙글 드릴</title>
+<style>
+  :root{
+    --bg-deep:#0a0614;
+    --bg-glow:#241a3d;
+    --ink:#ffffff;
+    --ink-soft:#cbb8ff;
+    --accent-drill:#8be9ff;
+    --accent-danger:#ff7a90;
+  }
+  html,body{margin:0;padding:0;overflow:hidden;background:var(--bg-deep);height:100%;width:100%;touch-action:none;}
+  canvas{display:block;width:100vw;height:100vh;}
+  canvas:focus-visible{outline:2px solid var(--accent-drill);outline-offset:-2px;}
+</style>
+</head>
+<body>
+<canvas id="c" tabindex="0"></canvas>
+<script>
+(function(){
+"use strict";
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W,H,DPR;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W*DPR; canvas.height = H*DPR;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ---------- constants ----------
+const MAX_ANGLE = 75;          // deg, reachable steering band
+const NEAR_MISS_PROX = 0.5;    // proximity (0=dead-center, 1=grazing the wall) above this = near miss
+
+// persistent meta-progression: the drummer's look is a trophy case for your best-ever run
+const SKIN_TIERS = [
+  {score:0,     name:'기본',     color:'#8be9ff'},
+  {score:1000,  name:'브론즈',   color:'#e0a56f'},
+  {score:3000,  name:'실버',     color:'#cfd8e3'},
+  {score:6000,  name:'골드',     color:'#ffd23f'},
+  {score:10000, name:'레인보우', color:'rainbow'}
+];
+function currentSkin(){
+  let tier = SKIN_TIERS[0];
+  for(const t of SKIN_TIERS){ if(best >= t.score) tier = t; }
+  return tier;
+}
+
+function vibrate(pattern){
+  try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
+}
+
+// rounded display face for scores/headlines, clean face for instructions — both system stacks, no webfont fetch
+const FONT_DISPLAY = '"SF Pro Rounded","Segoe UI Rounded",ui-rounded,-apple-system,sans-serif';
+const FONT_BODY = '"Segoe UI",-apple-system,system-ui,sans-serif';
+const REDUCE_MOTION = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------- audio: a soundtrack that grows richer, not louder, as you play ----------
+let actx=null, master=null, kickGain=null, hatGain=null, bassGain=null, padGain=null, arpGain=null, arpSend=null, reverbNode=null;
+let muted=false;
+try{ muted = localStorage.getItem('twistDrillMuted')==='1'; }catch(e){}
+let audioStarted=false;
+let arpIndex=0, chordIndex=0, energy=0;
+let nextBeatTime=0, beatCount=0;
+const BASE_BPM=100; // a steady, unhurried pace — the build lives in the harmony, not the speed
+function currentBPM(){ return BASE_BPM + layerLevel()*2; } // 100 -> 112 across a whole run, barely felt
+function currentBeat(){ return 60/currentBPM(); }
+
+// the orchestra builds one instrument every 1000 points — a standing reason to keep the run alive
+let lastLayerLevel = 0;
+const LAYER_NAMES = ['', '하이햇', '베이스', '스네어', '스트링', '벨', '리드', '브라스', '코러스', '하프', '심포니'];
+const LAYER_ICONS = ['', '🥁', '🎸', '🪘', '🎻', '🔔', '🎹', '🎺', '🎤', '🪕', '🎼'];
+function layerLevel(){ return Math.min(10, Math.floor(score/1000)); }
+
+function addScore(n){
+  score += n;
+  const lvl = layerLevel();
+  if(lvl > lastLayerLevel){
+    lastLayerLevel = lvl;
+    flashMsg = `${LAYER_ICONS[lvl]} ${LAYER_NAMES[lvl]} 합류!`;
+    flashTimer = 1.4;
+    if(actx) layerUpFanfare(actx.currentTime+0.03);
+  }
+}
+
+const A_MIN=[220.00,246.94,261.63,293.66,329.63,349.23,392.00]; // A B C D E F G, oct starting A3
+function noteFreq(step){ const oct=Math.floor(step/7); const idx=((step%7)+7)%7; return A_MIN[idx]*Math.pow(2,oct); }
+const ARP_PHRASE=[0,2,4,7,9,7,4,2,0,4,7,11,9,7,4,0];
+const PROGRESSION=[
+  {bass:110.00, pad:[220.00,261.63,329.63]}, // Am
+  {bass:87.31,  pad:[174.61,220.00,261.63]}, // F
+  {bass:130.81, pad:[261.63,329.63,392.00]}, // C
+  {bass:98.00,  pad:[196.00,246.94,293.66]}  // G
+];
+
+function makeReverb(seconds, decay){
+  const rate=actx.sampleRate, len=Math.floor(rate*seconds);
+  const buf=actx.createBuffer(2,len,rate);
+  for(let ch=0;ch<2;ch++){
+    const d=buf.getChannelData(ch);
+    for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);
+  }
+  const conv=actx.createConvolver(); conv.buffer=buf; return conv;
+}
+
+function audioStart(){
+  if(audioStarted) return;
+  try{
+    const AC = window.AudioContext||window.webkitAudioContext;
+    if(!AC) return;
+    actx = new AC();
+    master = actx.createGain(); master.gain.value = muted?0:0.85;
+    const comp = actx.createDynamicsCompressor();
+    comp.threshold.value=-16; comp.knee.value=24; comp.ratio.value=3; comp.attack.value=0.006; comp.release.value=0.3;
+    master.connect(comp); comp.connect(actx.destination);
+
+    reverbNode = makeReverb(3.0,2.1); // longer, softer tail — notes bloom and blend instead of poking out
+    const reverbGain = actx.createGain(); reverbGain.gain.value=0.6;
+    reverbNode.connect(reverbGain); reverbGain.connect(master);
+    arpSend = actx.createGain(); arpSend.gain.value=0.4; arpSend.connect(reverbNode);
+
+    kickGain=actx.createGain(); kickGain.gain.value=0.30; kickGain.connect(master);
+    hatGain=actx.createGain(); hatGain.gain.value=0; hatGain.connect(master);
+    bassGain=actx.createGain(); bassGain.gain.value=0; bassGain.connect(master);
+    padGain=actx.createGain(); padGain.gain.value=0.08; padGain.connect(master);
+    arpGain=actx.createGain(); arpGain.gain.value=0.5; arpGain.connect(master);
+
+    audioStarted = true;
+    nextBeatTime = actx.currentTime + 0.15;
+    beatCount = 0;
+    setInterval(schedulerTick, 25);
+  }catch(e){ audioStarted=false; }
+}
+
+function audioResume(){
+  if(actx && actx.state==='suspended') actx.resume().catch(()=>{});
+}
+
+function toggleMute(){
+  muted = !muted;
+  try{ localStorage.setItem('twistDrillMuted', muted?'1':'0'); }catch(e){}
+  if(master && actx) master.gain.setTargetAtTime(muted?0:0.85, actx.currentTime, 0.05);
+}
+
+function schedulerTick(){
+  if(!actx) return;
+  while(nextBeatTime < actx.currentTime + 0.12){
+    scheduleBeat(nextBeatTime, beatCount);
+    nextBeatTime += currentBeat();
+    beatCount++;
+  }
+}
+
+function scheduleBeat(t, i){
+  const bd = currentBeat();
+  const chord = PROGRESSION[chordIndex%4];
+  const lvl = layerLevel();
+
+  kick(t);
+  kick(t + bd*0.3); // a steady, gentle heartbeat — present from second one, never rushed
+
+  if(lvl>=1){ hat(t); hat(t+bd/2); }
+  if(lvl>=3 && (i%4===1 || i%4===3)) snare(t);
+  if(lvl>=2 && i%4===0) bassNote(t, chord.bass, bd*3.6);
+
+  if(i%4===0){
+    if(lvl>=4) padChord(t, chord.pad, bd*4.2);
+    if(lvl>=5) bellMelody(t, chord);
+    if(lvl>=6) leadMelody(t + bd*1.0, chord);
+    if(lvl>=7) brassChord(t, chord);
+    if(lvl>=8) choirPad(t, chord.pad.map(f=>f/2), bd*4.2);
+    if(lvl>=9) harpGliss(t + bd*2.2, chord);
+    if(lvl>=10 && chordIndex%2===0) symphonyHit(t, chord);
+    chordIndex++;
+  }
+}
+
+function setEnergy(v){
+  energy = Math.max(0, Math.min(1, v));
+  if(!actx) return;
+  const t = actx.currentTime;
+  kickGain.gain.setTargetAtTime(0.28+0.10*energy, t, 0.6);
+  hatGain.gain.setTargetAtTime(layerLevel()>=1 ? 0.10+0.06*energy : 0, t, 0.6);
+  bassGain.gain.setTargetAtTime(layerLevel()>=2 ? 0.26+0.08*energy : 0, t, 0.6);
+  padGain.gain.setTargetAtTime(0.08+0.14*energy, t, 1.0); // a gentle swell, never a shove
+}
+
+function kick(t){
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.type='sine';
+  o.frequency.setValueAtTime(108,t);
+  o.frequency.exponentialRampToValueAtTime(44,t+0.16);
+  g.gain.setValueAtTime(0.9,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+0.32);
+  o.connect(g); g.connect(kickGain);
+  o.start(t); o.stop(t+0.35);
+}
+
+function snare(t){
+  const n=Math.floor(actx.sampleRate*0.1);
+  const buf=actx.createBuffer(1,n,actx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.4);
+  const src=actx.createBufferSource(); src.buffer=buf;
+  const bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1600; bp.Q.value=0.8;
+  const g=actx.createGain();
+  g.gain.setValueAtTime(0.20,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+0.13);
+  src.connect(bp); bp.connect(g); g.connect(kickGain);
+  src.start(t); src.stop(t+0.14);
+}
+
+function hat(t){
+  const n=Math.floor(actx.sampleRate*0.045);
+  const buf=actx.createBuffer(1,n,actx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3.2);
+  const src=actx.createBufferSource(); src.buffer=buf;
+  const hp=actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=7000;
+  const g=actx.createGain();
+  g.gain.setValueAtTime(0.16,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+0.045);
+  src.connect(hp); hp.connect(g); g.connect(hatGain);
+  src.start(t); src.stop(t+0.05);
+}
+
+function bell(t, freq){
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.type='sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.24,t+0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+1.3);
+  o.connect(g); g.connect(master); g.connect(arpSend);
+  o.start(t); o.stop(t+1.4);
+}
+
+function bellMelody(t, chord){
+  chord.pad.forEach((f,i)=>{ bell(t + i*0.22, f*2); });
+}
+
+function choirPad(t, freqs, dur){
+  freqs.forEach((f,i)=>{
+    const o1=actx.createOscillator(), o2=actx.createOscillator(), g=actx.createGain(), lp=actx.createBiquadFilter();
+    o1.type='sine'; o2.type='triangle';
+    o1.frequency.value=f; o2.frequency.value=f*2; o2.detune.value=4;
+    lp.type='lowpass'; lp.frequency.value=2200;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.13,t+dur*0.4);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o1.connect(lp); o2.connect(lp); lp.connect(g);
+    g.connect(master); g.connect(arpSend);
+    o1.start(t); o1.stop(t+dur+0.1);
+    o2.start(t); o2.stop(t+dur+0.1);
+  });
+}
+
+function layerUpFanfare(t0){
+  [0,4,7].forEach((step,i)=>{ bell(t0+i*0.1, noteFreq(step)*2); });
+}
+
+function leadPluck(t, freq){
+  const o=actx.createOscillator(), g=actx.createGain(), lp=actx.createBiquadFilter();
+  o.type='triangle'; o.frequency.value=freq;
+  lp.type='lowpass'; lp.frequency.value=3000;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+0.35);
+  o.connect(lp); lp.connect(g); g.connect(master); g.connect(arpSend);
+  o.start(t); o.stop(t+0.4);
+}
+function leadMelody(t, chord){
+  chord.pad.forEach((f,i)=>{ leadPluck(t+i*0.14, f); });
+}
+
+function brassStab(t, freq){
+  const o1=actx.createOscillator(), o2=actx.createOscillator(), g=actx.createGain(), lp=actx.createBiquadFilter();
+  o1.type='sawtooth'; o2.type='sawtooth';
+  o1.frequency.value=freq; o2.frequency.value=freq; o2.detune.value=6;
+  lp.type='lowpass';
+  lp.frequency.setValueAtTime(400,t);
+  lp.frequency.exponentialRampToValueAtTime(2200,t+0.05);
+  lp.frequency.exponentialRampToValueAtTime(600,t+0.3);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.13,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+0.32);
+  o1.connect(lp); o2.connect(lp); lp.connect(g); g.connect(master); g.connect(arpSend);
+  o1.start(t); o1.stop(t+0.35); o2.start(t); o2.stop(t+0.35);
+}
+function brassChord(t, chord){
+  chord.pad.forEach(f=>{ brassStab(t, f); });
+}
+
+function harpNote(t, freq){
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.type='triangle'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.12,t+0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+0.6);
+  o.connect(g); g.connect(master); g.connect(arpSend);
+  o.start(t); o.stop(t+0.65);
+}
+function harpGliss(t, chord){
+  const base = chord.pad;
+  const seq = [base[0], base[1], base[2], base[0]*2, base[1]*2, base[2]*2];
+  seq.forEach((f,i)=>{ harpNote(t+i*0.045, f); });
+}
+
+function symphonyHit(t, chord){
+  const freqs = [...chord.pad.map(f=>f/2), ...chord.pad, ...chord.pad.map(f=>f*2)];
+  freqs.forEach((f,i)=>{
+    const o=actx.createOscillator(), g=actx.createGain(), lp=actx.createBiquadFilter();
+    o.type = i%2===0 ? 'sawtooth' : 'triangle';
+    o.frequency.value=f; o.detune.value=(i%3-1)*5;
+    lp.type='lowpass'; lp.frequency.value=3000;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.08,t+0.6);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+3.2);
+    o.connect(lp); lp.connect(g); g.connect(master); g.connect(arpSend);
+    o.start(t); o.stop(t+3.3);
+  });
+}
+
+function victoryChime(t0){
+  [0,4,7,12].forEach((step,i)=>{ bell(t0+i*0.09, noteFreq(step)*2); });
+}
+
+function goldenSparkle(t0){
+  [0,4,7,11,14].forEach((step,i)=>{ bell(t0+i*0.055, noteFreq(step)*3); });
+}
+
+function bassNote(t,freq,dur){
+  const o=actx.createOscillator(), g=actx.createGain(), f=actx.createBiquadFilter();
+  o.type='sine'; o.frequency.value=freq;
+  f.type='lowpass'; f.frequency.value=420;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.4,t+0.03);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(f); f.connect(g); g.connect(bassGain);
+  o.start(t); o.stop(t+dur+0.05);
+}
+
+function padChord(t,freqs,dur){
+  freqs.forEach((f,i)=>{
+    const o=actx.createOscillator(), g=actx.createGain(), lp=actx.createBiquadFilter();
+    o.type = 'triangle';
+    o.frequency.value=f; o.detune.value=(i-1)*4;
+    lp.type='lowpass'; lp.frequency.value=1600;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.16,t+dur*0.45);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(lp); lp.connect(g); g.connect(padGain);
+    o.start(t); o.stop(t+dur+0.1);
+  });
+}
+
+function arpNote(t,freq,strong){
+  // the "pass" sound — soft and filtered so it can fire often without ever grating
+  const o=actx.createOscillator(), g=actx.createGain(), lp=actx.createBiquadFilter();
+  o.type='sine'; o.frequency.value=freq;
+  lp.type='lowpass'; lp.frequency.value=3400;
+  const peak = strong ? 0.26 : 0.09;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(peak,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+(strong?0.75:0.4));
+  o.connect(lp); lp.connect(g); g.connect(arpGain); g.connect(arpSend);
+  o.start(t); o.stop(t+0.9);
+}
+
+function chime(freqs,t0){
+  freqs.forEach((f,i)=>{
+    const start=t0+i*0.11;
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type='sine'; o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,start);
+    g.gain.exponentialRampToValueAtTime(0.26,start+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001,start+1.0);
+    o.connect(g); g.connect(arpGain); g.connect(arpSend);
+    o.start(start); o.stop(start+1.1);
+  });
+}
+
+function crashSting(t){
+  [220,233.08].forEach(f=>{
+    const o=actx.createOscillator(), g=actx.createGain(), lp=actx.createBiquadFilter();
+    o.type='sawtooth'; o.frequency.value=f;
+    lp.type='lowpass'; lp.frequency.setValueAtTime(2200,t);
+    lp.frequency.exponentialRampToValueAtTime(200,t+0.4);
+    g.gain.setValueAtTime(0.22,t);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.4);
+    o.connect(lp); lp.connect(g); g.connect(master);
+    o.start(t); o.stop(t+0.45);
+  });
+}
+
+function audioOnPass(isNearMiss, comboAfter){
+  if(!actx) return false;
+  const step = arpIndex % ARP_PHRASE.length;
+  arpNote(actx.currentTime+0.02, noteFreq(ARP_PHRASE[step]), isNearMiss);
+  arpIndex++;
+  let crashed = false;
+  if(arpIndex>0 && arpIndex % ARP_PHRASE.length === 0){
+    chime([noteFreq(7),noteFreq(9),noteFreq(11)], actx.currentTime+0.05);
+    crashed = true;
+  }
+  setEnergy(Math.min(1, comboAfter/8));
+  return crashed;
+}
+
+function audioOnGameOver(){
+  if(!actx) return;
+  crashSting(actx.currentTime+0.01);
+  setEnergy(0);
+}
+
+function audioOnReset(){
+  arpIndex=0; lastLayerLevel=0;
+  setEnergy(0);
+}
+
+function vp(){ return {x: W/2, y: H*0.34}; }
+function playerRadius(){ return Math.min(W,H)*0.40; }
+function maxRingRadius(){ return Math.hypot(W,H)*0.75; }
+
+// ---------- state ----------
+let state = 'start'; // start | playing | gameover
+let currentAngle = 0, targetAngle = 0;
+let gyroActive = false, calibBaseline = 0, gyroSeen = false;
+let rings = [];
+let particles = [];
+let scorePopups = [];
+let shakeTime = 0, shakeMag = 0;
+let score = 0, best = 0, combo = 0;
+let elapsed = 0;
+let spawnTimer = 0;
+let hue = 260;
+let gameOverIdleTimer = 0;
+let flashMsg = '', flashTimer = 0;
+let lastT = performance.now();
+let animClock = 0;
+let drum = { hitT:0, hitDur:0.18, strong:false, crash:false, active:true };
+let justUnlockedSkin = null;
+let goldenCooldown = 0;
+let todayCount = 0, dayStreak = 1;
+let rankingList = [], lastRankIndex = -1;
+
+function hitDrum(strong, crash){
+  drum.hitT = drum.hitDur * (crash?1.4:1);
+  drum.strong = !!strong;
+  drum.crash = !!crash;
+}
+function setDrumActive(v){ drum.active = v; if(v) drum.hitT = 0; }
+
+try{ best = parseInt(localStorage.getItem('twistDrillBest')||'0',10)||0; }catch(e){ best = 0; }
+
+// daily streak — reads/updates once at load so it's ready before the very first frame
+(function initDailyStats(){
+  try{
+    const today = new Date().toISOString().slice(0,10);
+    const last = localStorage.getItem('twistDrillLastDate');
+    let streak = parseInt(localStorage.getItem('twistDrillStreak')||'1',10);
+    let count = parseInt(localStorage.getItem('twistDrillTodayCount')||'0',10);
+    if(last !== today){
+      const y = new Date(Date.now()-86400000).toISOString().slice(0,10);
+      streak = (last === y) ? streak+1 : 1;
+      count = 0;
+      localStorage.setItem('twistDrillLastDate', today);
+      localStorage.setItem('twistDrillStreak', String(streak));
+    }
+    dayStreak = streak; todayCount = count;
+  }catch(e){}
+})();
+
+// ---------- input ----------
+function setTargetFromClientX(cx){
+  const rel = (cx - W/2) / (W/2); // -1..1
+  targetAngle = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, rel*MAX_ANGLE));
+}
+window.addEventListener('mousemove', e=>{
+  if(gyroActive) return;
+  setTargetFromClientX(e.clientX);
+});
+window.addEventListener('touchmove', e=>{
+  if(gyroActive) return;
+  if(e.touches && e.touches[0]) setTargetFromClientX(e.touches[0].clientX);
+}, {passive:true});
+
+const keys = {};
+window.addEventListener('keydown', e=>{ keys[e.key]=true; });
+window.addEventListener('keyup', e=>{ keys[e.key]=false; });
+
+function handleOrientation(e){
+  if(e.gamma === null || e.gamma === undefined) return;
+  gyroSeen = true;
+  if(!gyroActive){
+    calibBaseline = e.gamma;
+    gyroActive = true;
+  }
+  const raw = (e.gamma - calibBaseline) * 1.9; // sensitivity: ~15-30deg wrist snap -> full range
+  targetAngle = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, raw));
+}
+
+function tryEnableGyro(){
+  if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+    DeviceOrientationEvent.requestPermission().then(res=>{
+      if(res === 'granted') window.addEventListener('deviceorientation', handleOrientation);
+    }).catch(()=>{});
+  } else if(typeof DeviceOrientationEvent !== 'undefined'){
+    window.addEventListener('deviceorientation', handleOrientation);
+  }
+}
+
+// ---------- helpers ----------
+function rand(a,b){ return a + Math.random()*(b-a); }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function angDist(a,b){ return Math.abs(a-b); }
+
+function addShake(mag, time){
+  const m = REDUCE_MOTION ? mag*0.3 : mag;
+  shakeMag = Math.max(shakeMag, m); shakeTime = Math.max(shakeTime, time);
+}
+
+function burst(x,y,color,n,speed){
+  for(let i=0;i<n;i++){
+    const a = Math.random()*Math.PI*2;
+    const sp = rand(speed*0.3, speed);
+    particles.push({x,y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, life:rand(0.35,0.8), maxLife:0.8, color, size:rand(3,7)});
+  }
+}
+
+const JUDGMENT_TIERS = [
+  {max:0.50, label:'GOOD',    color:'#8be9ff'},
+  {max:0.75, label:'BETTER',  color:'#7CFC9A'},
+  {max:0.90, label:'BEST',    color:'#ff7ac6'},
+  {max:1.01, label:'PERFECT', color:'#ffd23f'}
+];
+function judgmentFor(prox){
+  for(const tier of JUDGMENT_TIERS){ if(prox <= tier.max) return tier; }
+  return JUDGMENT_TIERS[JUDGMENT_TIERS.length-1];
+}
+
+function spawnScorePopup(prox, points, goldenHit){
+  const tier = goldenHit ? {label:'GOLDEN!', color:'#ffd23f'} : judgmentFor(prox);
+  const p = vp();
+  const size = 18 + Math.min(1, points/180) * 40;
+  scorePopups.push({x:p.x, y:p.y, text:tier.label, size, color:tier.color, strong: goldenHit || prox>=0.75, life: goldenHit?0.95:0.8, maxLife: goldenHit?0.95:0.8});
+  if(points >= 90 || goldenHit) burst(p.x, p.y, tier.color, goldenHit?18:10, goldenHit?220:150);
+}
+
+// driven by play time, not score — keeps the ramp smooth regardless of scoring bursts
+function difficulty(){ return Math.min(elapsed*15, 900); }
+
+function spawnRing(){
+  const d = difficulty();
+  const gapWidth = Math.max(16, 40 - d*0.026);
+  const gapCenter = rand(-58, 58);
+  goldenCooldown++;
+  const golden = goldenCooldown >= 5 && Math.random() < 0.35; // rare, unpredictable — a lottery moment
+  if(golden) goldenCooldown = 0;
+  rings.push({
+    radius: 4,
+    gapCenter, gapWidth,
+    resolved: false,
+    hueOff: rand(0,360),
+    golden
+  });
+}
+
+function ringSpeed(){
+  const d = difficulty();
+  return 140 + d*0.35;
+}
+
+function spawnInterval(){
+  const d = difficulty();
+  return Math.max(0.55, 1.15 - d*0.0007);
+}
+
+function formatTime(s){
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return m + ':' + String(sec).padStart(2,'0');
+}
+
+// personal ranking only — no server exists to compare scores across players
+function recordRanking(finalScore){
+  let list = [];
+  try{ list = JSON.parse(localStorage.getItem('twistDrillRankings')||'[]'); }catch(e){}
+  const id = Date.now() + Math.random();
+  list.push({score: finalScore, id});
+  list.sort((a,b)=>b.score-a.score);
+  const top10 = list.slice(0,10);
+  try{ localStorage.setItem('twistDrillRankings', JSON.stringify(top10)); }catch(e){}
+  lastRankIndex = top10.findIndex(e=>e.id===id);
+  rankingList = top10;
+}
+
+// ---------- reset / lifecycle ----------
+function resetGame(){
+  rings = []; particles = []; scorePopups = [];
+  score = 0; combo = 0;
+  elapsed = 0;
+  spawnTimer = 0; shakeTime = 0; shakeMag = 0;
+  currentAngle = 0; targetAngle = 0;
+  flashMsg=''; flashTimer=0;
+  justUnlockedSkin = null;
+  goldenCooldown = 0;
+  state = 'playing';
+  audioOnReset();
+  setDrumActive(true);
+  todayCount++;
+  try{ localStorage.setItem('twistDrillTodayCount', String(todayCount)); }catch(e){}
+}
+
+function gameOver(){
+  state = 'gameover';
+  gameOverIdleTimer = 0;
+  addShake(22, 0.45);
+  const {x,y} = playerPos();
+  burst(x,y,'#ff5577',36,320);
+  vibrate([30,20,30]);
+  recordRanking(score);
+  if(score > best){
+    const prevSkin = currentSkin();
+    best = score;
+    try{ localStorage.setItem('twistDrillBest', String(best)); }catch(e){}
+    const newSkin = currentSkin();
+    if(newSkin.name !== prevSkin.name){
+      justUnlockedSkin = newSkin.name;
+      burst(x,y,'#ffd23f',30,280);
+      if(actx) victoryChime(actx.currentTime+0.1);
+      vibrate([20,30,20,30,60]);
+    }
+  }
+  audioOnGameOver();
+  setDrumActive(false);
+}
+
+function playerPos(){
+  const p = vp(); const R = playerRadius();
+  const rad = currentAngle * Math.PI/180;
+  return { x: p.x + R*Math.sin(rad), y: p.y + R*Math.cos(rad) };
+}
+
+// ---------- update ----------
+function update(dt){
+  hue = (hue + dt*20) % 360;
+  animClock += dt;
+  if(drum.hitT>0) drum.hitT = Math.max(0, drum.hitT-dt);
+  if(shakeTime>0) shakeTime -= dt;
+  if(flashTimer>0) flashTimer -= dt;
+  for(let i=particles.length-1;i>=0;i--){
+    const pt = particles[i];
+    pt.x += pt.vx*dt; pt.y += pt.vy*dt;
+    pt.vx *= 0.94; pt.vy *= 0.94;
+    pt.life -= dt;
+    if(pt.life<=0) particles.splice(i,1);
+  }
+  for(let i=scorePopups.length-1;i>=0;i--){
+    scorePopups[i].life -= dt;
+    if(scorePopups[i].life<=0) scorePopups.splice(i,1);
+  }
+
+  if(state !== 'playing'){
+    if(state === 'gameover'){
+      if(Math.abs(targetAngle) < 5) gameOverIdleTimer += dt; else gameOverIdleTimer = 0;
+      if(gameOverIdleTimer > 0.4) resetGame();
+    }
+    return;
+  }
+
+  // keyboard steering
+  if(!gyroActive){
+    if(keys['ArrowLeft']||keys['a']||keys['A']) targetAngle = Math.max(-MAX_ANGLE, targetAngle - 140*dt);
+    if(keys['ArrowRight']||keys['d']||keys['D']) targetAngle = Math.min(MAX_ANGLE, targetAngle + 140*dt);
+  }
+
+  currentAngle = lerp(currentAngle, targetAngle, Math.min(1, dt*9));
+  elapsed += dt;
+
+  spawnTimer -= dt;
+  if(spawnTimer <= 0){ spawnRing(); spawnTimer = spawnInterval(); }
+
+  const PR = playerRadius();
+  const spd = ringSpeed();
+  for(let i=rings.length-1;i>=0;i--){
+    const r = rings[i];
+    const prevR = r.radius;
+    r.radius += spd*dt;
+    if(!r.resolved && prevR < PR && r.radius >= PR){
+      r.resolved = true;
+      const d = angDist(currentAngle, r.gapCenter);
+      const half = r.gapWidth/2;
+      const pp = playerPos();
+      if(d <= half){
+        const clearance = half - d;
+        const prox = Math.max(0, Math.min(1, 1 - clearance/half)); // 0 = dead-center, 1 = grazing the wall
+        const proximityBonus = Math.round(150 * Math.pow(prox, 2.2));
+        const isNear = prox >= NEAR_MISS_PROX;
+        let points;
+        const goldenHit = r.golden && prox >= 0.85;
+        if(isNear){
+          combo++;
+          points = 10 + proximityBonus + combo*6;
+          if(goldenHit) points = Math.round(points * 2.5);
+          addShake(6+prox*11, 0.15+prox*0.15);
+          burst(pp.x, pp.y, judgmentFor(prox).color, 10+Math.round(prox*14), 180+prox*160);
+          if(goldenHit){
+            burst(pp.x, pp.y, '#ffd23f', 22, 260);
+            if(actx) goldenSparkle(actx.currentTime+0.02);
+            vibrate(25);
+          }
+        } else {
+          combo = 0;
+          points = 10 + proximityBonus;
+          addShake(3,0.1);
+        }
+        addScore(points);
+        spawnScorePopup(prox, points, goldenHit);
+        const crashed = audioOnPass(isNear, combo);
+        hitDrum(isNear, crashed);
+      } else {
+        gameOver();
+      }
+    }
+    if(r.radius > maxRingRadius()) rings.splice(i,1);
+  }
+}
+
+// ---------- render ----------
+function drawBackground(){
+  const g = ctx.createRadialGradient(W/2,H*0.34,10,W/2,H*0.34,Math.max(W,H));
+  g.addColorStop(0, '#241a3d');
+  g.addColorStop(1, '#0a0614');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
+}
+
+function drawRing(r){
+  const p = vp();
+  const alpha = Math.min(1, r.radius/60);
+  ctx.save();
+  ctx.translate(p.x,p.y);
+  // faint full guide circle
+  ctx.beginPath();
+  ctx.arc(0,0,r.radius,0,Math.PI*2);
+  ctx.strokeStyle = r.golden
+    ? `hsla(48,90%,65%,${0.28*alpha})`
+    : `hsla(${(hue+r.hueOff)%360},70%,70%,${0.12*alpha})`;
+  ctx.lineWidth = r.golden ? 3 : 2;
+  ctx.stroke();
+
+  // wall covers the whole ring except the gap — no ambiguous "open" side anywhere
+  const gapStart = r.gapCenter - r.gapWidth/2;
+  const gapEnd = r.gapCenter + r.gapWidth/2;
+  const wallSpan = 360 - r.gapWidth;
+  const mid = gapEnd + wallSpan/2;
+  const segs = [[gapEnd, mid], [mid, gapStart+360]];
+  ctx.lineWidth = Math.max(10, Math.min(30, r.radius*0.09));
+  ctx.lineCap = 'round';
+  segs.forEach((seg,idx)=>{
+    if(seg[1] <= seg[0]) return;
+    const color = r.golden
+      ? `hsl(${45+Math.sin(animClock*5+idx)*8},95%,${58+Math.sin(animClock*6)*8}%)`
+      : `hsl(${(idx*40+hue+r.hueOff)%360},85%,60%)`;
+    drawArcCustom(seg[0], seg[1], r.radius, color);
+  });
+  ctx.restore();
+}
+
+function drawArcCustom(degA, degB, radius, color){
+  // theta measured from "down" vector, x=R sin(theta), y=R cos(theta)
+  const steps = Math.max(18, Math.round(Math.abs(degB-degA)/6));
+  ctx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const deg = degA + (degB-degA)*(i/steps);
+    const rad = deg*Math.PI/180;
+    const x = radius*Math.sin(rad), y = radius*Math.cos(rad);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle = color;
+  ctx.stroke();
+}
+
+function drawPlayer(){
+  // the drummer itself is the cursor — it steers the tunnel and drums out every pass live
+  const pp = playerPos();
+  const rad = currentAngle*Math.PI/180;
+  const dur = drum.hitDur * (drum.crash?1.4:1);
+  ctx.save();
+  ctx.translate(pp.x, pp.y);
+  ctx.rotate(rad);
+
+  if(drum.hitT>0){
+    const p = drum.hitT/dur;
+    const ringR = (drum.crash?26:17) * (1-p) + 10;
+    ctx.globalAlpha = p*0.55;
+    ctx.strokeStyle = drum.crash ? '#ffd23f' : (drum.strong ? '#ff7ac6' : '#8be9ff');
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.ellipse(0,15,ringR,ringR*0.6,0,0,Math.PI*2); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  const flash = drum.hitT>0 ? drum.hitT/dur : 0;
+  ctx.fillStyle = `rgba(255,210,63,${0.32+0.5*flash})`;
+  ctx.beginPath(); ctx.ellipse(0,15,12,7,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  const skin = currentSkin();
+  const bodyColor = skin.color==='rainbow' ? `hsl(${hue},85%,65%)` : skin.color;
+  const glow = !drum.active ? 0 : (combo>0 ? 14+combo*2 : 10);
+  if(glow>0){ ctx.shadowColor = bodyColor; ctx.shadowBlur = glow; }
+  ctx.fillStyle = drum.active ? bodyColor : '#5a6b78';
+  ctx.beginPath(); ctx.arc(0,-8,12,0,Math.PI*2); ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#0a0614';
+  ctx.beginPath(); ctx.arc(-4,-10,1.6,0,Math.PI*2); ctx.arc(4,-10,1.6,0,Math.PI*2); ctx.fill();
+
+  let angle;
+  if(!drum.active){
+    angle = 55;
+  } else if(drum.hitT>0){
+    const p = 1 - drum.hitT/dur;
+    angle = -55 + Math.sin(Math.min(p,1)*Math.PI)*95;
+  } else {
+    angle = -55 + Math.sin(animClock*3.5)*4;
+  }
+  const arad = angle*Math.PI/180;
+  const sx=7, sy=-9, armLen=16;
+  const hx = sx+Math.cos(arad)*armLen, hy = sy+Math.sin(arad)*armLen;
+  ctx.strokeStyle = drum.active ? '#e2d6ff' : '#7a8a96';
+  ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(hx,hy); ctx.stroke();
+  ctx.fillStyle = drum.active ? '#fff566' : '#7a8a96';
+  ctx.beginPath(); ctx.arc(hx,hy,2.2,0,Math.PI*2); ctx.fill();
+
+  ctx.restore();
+}
+
+function drawParticles(){
+  particles.forEach(pt=>{
+    const t = Math.max(0, pt.life/pt.maxLife);
+    ctx.globalAlpha = t;
+    ctx.fillStyle = pt.color;
+    ctx.beginPath();
+    ctx.arc(pt.x,pt.y,pt.size*t,0,Math.PI*2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+}
+
+function drawScorePopups(){
+  ctx.textAlign = 'center';
+  scorePopups.forEach(sp=>{
+    const t = 1 - sp.life/sp.maxLife; // 0 -> 1 over its life
+    const scale = t < 0.18 ? t/0.18 : 1;
+    const alpha = t < 0.65 ? 1 : Math.max(0, 1-(t-0.65)/0.35);
+    const yOff = -t*46;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(sp.x, sp.y+yOff);
+    ctx.scale(scale, scale);
+    ctx.font = `800 ${sp.size}px ${FONT_DISPLAY}`;
+    ctx.fillStyle = sp.color;
+    ctx.shadowColor = sp.color;
+    ctx.shadowBlur = sp.strong ? 18 : 8;
+    ctx.fillText(sp.text, 0, 0);
+    ctx.restore();
+  });
+  ctx.globalAlpha = 1;
+}
+
+function drawUI(){
+  ctx.textAlign='left';
+  ctx.font = `700 15px ${FONT_BODY}`;
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fillText('⏱ ' + formatTime(elapsed), 16, 32);
+
+  const unlockedLvl = layerLevel();
+  const iconSize = 50, iconSizeNew = 60, colGap = 74, rowGap = 58;
+  for(let i=1;i<=unlockedLvl;i++){
+    const isNewest = (i===unlockedLvl && flashTimer>0);
+    const col = (i-1)%2, row = Math.floor((i-1)/2);
+    ctx.font = `${isNewest?iconSizeNew:iconSize}px sans-serif`;
+    ctx.globalAlpha = isNewest ? (0.8+0.2*Math.sin(flashTimer*12)) : 0.95;
+    ctx.fillText(LAYER_ICONS[i], 16 + col*colGap, 78 + row*rowGap);
+  }
+  ctx.globalAlpha = 1;
+
+  ctx.textAlign='center';
+  ctx.fillStyle = '#fff';
+  ctx.font = `800 42px ${FONT_DISPLAY}`;
+  ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=8;
+  ctx.fillText(String(score), W/2, 64);
+  ctx.font = `600 14px ${FONT_BODY}`;
+  ctx.fillStyle = '#cbb8ff';
+  ctx.fillText('BEST '+best, W/2, 86);
+  ctx.shadowBlur=0;
+
+  if(layerLevel() < 6){
+    const bw = Math.min(160, W*0.42), bh = 4;
+    const bx = W/2-bw/2, by = 94;
+    const prog = (score % 1000)/1000;
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillRect(bx,by,bw,bh);
+    ctx.fillStyle = '#8be9ff';
+    ctx.fillRect(bx,by,bw*prog,bh);
+  }
+
+  if(combo >= 2){
+    ctx.font = `700 15px ${FONT_BODY}`;
+    ctx.fillStyle = '#ff7ac6';
+    ctx.fillText('COMBO ×'+combo, W/2, 116);
+  }
+
+  if(flashTimer>0){
+    ctx.globalAlpha = Math.min(1, flashTimer);
+    ctx.font=`800 30px ${FONT_DISPLAY}`;
+    ctx.fillStyle = '#fff';
+    ctx.fillText(flashMsg, W/2, H*0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  ctx.globalAlpha = 0.8;
+  ctx.font = '22px sans-serif';
+  ctx.fillText(muted ? '🔇' : '🔊', W-30, 40);
+  ctx.globalAlpha = 1;
+}
+
+function drawOverlayStart(){
+  ctx.fillStyle = 'rgba(10,6,20,0.55)';
+  ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center';
+  ctx.fillStyle='#fff';
+  ctx.font=`800 36px ${FONT_DISPLAY}`;
+  ctx.fillText('빙글 드릴!', W/2, H*0.38);
+  ctx.font=`600 16px ${FONT_BODY}`;
+  ctx.fillStyle='#e2d6ff';
+  ctx.fillText('📱 손목을 좌우로 살짝 비틀어 조종 (PC: 마우스/방향키)', W/2, H*0.46);
+  ctx.fillText('갭에 아슬아슬하게 붙어 지나갈수록 점수 폭발!', W/2, H*0.50);
+  ctx.font=`700 20px ${FONT_DISPLAY}`;
+  ctx.fillStyle='#ffd23f';
+  ctx.fillText('탭해서 시작 (자동 영점보정)', W/2, H*0.60);
+
+  if(dayStreak >= 2 || todayCount >= 1){
+    const parts = [];
+    if(todayCount>=1) parts.push(`오늘 ${todayCount+1}번째 도전`);
+    if(dayStreak>=2) parts.push(`🔥 ${dayStreak}일 연속`);
+    ctx.font=`600 13px ${FONT_BODY}`;
+    ctx.fillStyle='#9c8fc9';
+    ctx.fillText(parts.join(' · '), W/2, H*0.68);
+  }
+}
+
+function drawOverlayGameOver(){
+  ctx.fillStyle = 'rgba(10,6,20,0.45)';
+  ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center';
+  ctx.fillStyle='#ff7a90';
+  ctx.font=`800 30px ${FONT_DISPLAY}`;
+  ctx.fillText('충돌!', W/2, H*0.10);
+  ctx.fillStyle='#fff';
+  ctx.font=`600 16px ${FONT_BODY}`;
+  ctx.fillText('점수 '+score+(score>=best?'  🏆 NEW BEST':''), W/2, H*0.155);
+
+  let nextY = 0.195;
+  if(justUnlockedSkin){
+    ctx.font=`700 15px ${FONT_DISPLAY}`;
+    ctx.fillStyle='#ffd23f';
+    ctx.shadowColor='#ffd23f'; ctx.shadowBlur=10;
+    ctx.fillText(`🎨 ${justUnlockedSkin} 드러머 해금!`, W/2, H*nextY);
+    ctx.shadowBlur=0;
+    nextY += 0.04;
+  }
+  ctx.font=`700 14px ${FONT_BODY}`;
+  ctx.fillStyle='#8be9ff';
+  ctx.fillText('탭하거나 손목을 중립으로 돌리면 바로 재도전', W/2, H*nextY);
+
+  const rankTop = H*(nextY+0.06);
+  ctx.font=`700 12px ${FONT_BODY}`;
+  ctx.fillStyle='#9c8fc9';
+  ctx.fillText('개인 랭킹 TOP 10', W/2, rankTop);
+  const rankBottom = H*0.97;
+  const rowH = (rankBottom - rankTop) / 10;
+  const fontSize = Math.max(11, Math.min(15, rowH*0.62));
+  for(let i=0;i<rankingList.length;i++){
+    const y = rankTop + rowH*(i+1);
+    const isThis = i === lastRankIndex;
+    ctx.font = `${isThis?800:600} ${fontSize}px ${FONT_BODY}`;
+    ctx.fillStyle = isThis ? '#ffd23f' : '#cbd0e8';
+    ctx.fillText(`${i+1}. ${rankingList[i].score}${isThis?'  ⬅':''}`, W/2, y);
+  }
+}
+
+function render(){
+  drawBackground();
+  ctx.save();
+  if(shakeTime>0){
+    const m = shakeMag * (shakeTime/0.45);
+    ctx.translate(rand(-m,m), rand(-m,m));
+  }
+  rings.forEach(drawRing);
+  drawScorePopups();
+  drawPlayer();
+  drawParticles();
+  drawUI();
+  ctx.restore();
+  if(state==='start') drawOverlayStart();
+  if(state==='gameover') drawOverlayGameOver();
+}
+
+// ---------- main loop ----------
+function loop(t){
+  let dt = (t-lastT)/1000; lastT = t;
+  dt = Math.min(dt, 0.05);
+  update(dt);
+  render();
+  requestAnimationFrame(loop);
+}
+
+// ---------- start input ----------
+function firstInteract(){
+  tryEnableGyro();
+  audioStart();
+  if(state==='start') resetGame();
+}
+window.addEventListener('pointerdown', e=>{
+  if(e.clientX > W-60 && e.clientY < 60){ toggleMute(); return; }
+  audioResume();
+  if(state==='start'){ firstInteract(); }
+  else if(state==='gameover'){ resetGame(); }
+}, {passive:true});
+window.addEventListener('keydown', e=>{
+  if(e.key==='m'||e.key==='M'){ toggleMute(); return; }
+  if(e.key===' '||e.key==='Enter'){
+    if(state==='start'){ firstInteract(); }
+    else if(state==='gameover'){ resetGame(); }
+  }
+});
+
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
