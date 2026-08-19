@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>커밋이란?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:wght@500;600;700&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f3f0e8;
+    --paper-raised: #fffdf8;
+    --ink: #221f1a;
+    --muted: #6f6a5e;
+    --line: rgba(34, 31, 26, 0.14);
+    --line-strong: rgba(34, 31, 26, 0.28);
+    --accent: #a8501e;
+    --accent-ink: #fffaf3;
+    --accent-soft: rgba(168, 80, 30, 0.12);
+    --accent2: #2f6b5e;
+    --accent2-soft: rgba(47, 107, 94, 0.12);
+    --shadow: 0 1px 2px rgba(34, 31, 26, 0.07), 0 10px 26px rgba(34, 31, 26, 0.07);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #18160f;
+      --paper-raised: #221f17;
+      --ink: #f2ede2;
+      --muted: #a39b89;
+      --line: rgba(242, 237, 226, 0.14);
+      --line-strong: rgba(242, 237, 226, 0.26);
+      --accent: #e2864f;
+      --accent-ink: #221206;
+      --accent-soft: rgba(226, 134, 79, 0.16);
+      --accent2: #5fbfa8;
+      --accent2-soft: rgba(95, 191, 168, 0.14);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 30px rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #18160f;
+    --paper-raised: #221f17;
+    --ink: #f2ede2;
+    --muted: #a39b89;
+    --line: rgba(242, 237, 226, 0.14);
+    --line-strong: rgba(242, 237, 226, 0.26);
+    --accent: #e2864f;
+    --accent-ink: #221206;
+    --accent-soft: rgba(226, 134, 79, 0.16);
+    --accent2: #5fbfa8;
+    --accent2-soft: rgba(95, 191, 168, 0.14);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 31px,
+        var(--line) 31px,
+        var(--line) 32px
+      ),
+      var(--paper);
+    color: var(--ink);
+    font-family: "Karla", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent-soft); }
+
+  .wrap { max-width: 700px; margin: 0 auto; padding: 60px 22px 100px; }
+
+  h1, h2 {
+    font-family: "Petrona", "Noto Serif KR", serif;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    text-wrap: balance;
+    margin: 0;
+  }
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 16px;
+  }
+  .kicker::before { content: ""; width: 18px; height: 1.5px; background: var(--accent); }
+
+  header.hero h1 { font-size: clamp(32px, 7vw, 48px); line-height: 1.25; }
+  .hero p.lede { font-size: 17px; color: var(--muted); max-width: 60ch; margin: 18px 0 0; }
+
+  section { margin-top: 68px; }
+  .section-head { margin-bottom: 26px; }
+  .section-head h2 { font-size: clamp(21px, 3.6vw, 26px); }
+  .section-head .sub { color: var(--muted); font-size: 14.5px; margin-top: 8px; max-width: 58ch; }
+
+  p { margin: 14px 0; }
+  .prose { max-width: 64ch; }
+  .prose strong { color: var(--ink); background: var(--accent-soft); padding: 0 3px; border-radius: 3px; }
+
+  /* ---- flow diagram ---- */
+  .flow {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
+  .flow-stage {
+    padding: 22px 16px 20px;
+    border-right: 1px dashed var(--line-strong);
+    position: relative;
+  }
+  .flow-stage:last-child { border-right: none; }
+  .flow-stage .n {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .flow-stage h3 {
+    font-family: "Petrona", serif; font-weight: 600; font-size: 16px; margin: 6px 0 8px;
+  }
+  .flow-stage p { font-size: 12.5px; color: var(--muted); margin: 0 0 12px; min-height: 44px; }
+  .flow-stage .cmd {
+    display: inline-block; font-size: 12px; padding: 5px 9px; border-radius: 5px;
+    background: var(--accent-soft); color: var(--accent); white-space: nowrap;
+  }
+  .flow-stage:nth-child(1) .cmd, .flow-stage:nth-child(1) h3 { color: inherit; }
+  .flow-stage:nth-child(3) .cmd { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .flow-stage::after {
+    content: "→"; position: absolute; right: -11px; top: 50%; transform: translateY(-60%);
+    font-family: "Petrona", serif; color: var(--line-strong); font-size: 18px; z-index: 1;
+  }
+  .flow-stage:last-child::after { content: none; }
+  @media (max-width: 640px) {
+    .flow { grid-template-columns: 1fr; }
+    .flow-stage { border-right: none; border-bottom: 1px dashed var(--line-strong); }
+    .flow-stage:last-child { border-bottom: none; }
+    .flow-stage::after { content: "↓"; right: auto; left: 16px; top: auto; bottom: -14px; transform: none; }
+  }
+
+  /* ---- commit anatomy card ---- */
+  .commit-card {
+    margin-top: 28px;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    box-shadow: var(--shadow);
+    padding: 22px 24px 20px;
+  }
+  .commit-card .row { display: flex; gap: 14px; padding: 8px 0; align-items: baseline; }
+  .commit-card .row + .row { border-top: 1px solid var(--line); }
+  .commit-card .field {
+    flex: 0 0 100px; font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .commit-card .val { font-size: 14.5px; }
+  .commit-card .val.hash { font-family: "IBM Plex Mono", monospace; color: var(--accent2); }
+  .commit-card .val.msg { font-weight: 600; }
+
+  /* ---- history chain ---- */
+  .chain {
+    margin-top: 30px;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+  .chain-link {
+    display: flex; align-items: center; flex: none;
+  }
+  .chain-link:not(:first-child)::before {
+    content: ""; width: 30px; height: 2px; background: var(--line-strong); flex: none;
+  }
+  .chain-node {
+    flex: none; width: 210px;
+    background: var(--paper-raised); border: 1px solid var(--line);
+    box-shadow: var(--shadow); padding: 14px 16px;
+    position: relative;
+  }
+  .chain-node::before {
+    content: ""; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
+    width: 10px; height: 10px; border-radius: 50%; background: var(--accent2);
+    border: 2px solid var(--paper);
+  }
+  .chain-node:first-child::before { display: none; }
+  .chain-node .hash { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent2); }
+  .chain-node .msg { font-size: 13.5px; margin-top: 5px; }
+  .chain-node .tag {
+    display: inline-block; margin-top: 8px; font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px; color: var(--accent); background: var(--accent-soft);
+    padding: 2px 7px; border-radius: 4px;
+  }
+
+  .note-box {
+    margin-top: 22px; border: 1px dashed var(--line-strong); padding: 16px 18px;
+    font-size: 14.5px; color: var(--muted); background: var(--paper-raised);
+  }
+  .note-box strong { color: var(--ink); }
+
+  .meaning {
+    margin-top: 30px; background: var(--paper-raised); border: 1px solid var(--line);
+    border-top: 3px solid var(--accent2); padding: 26px 26px 24px; box-shadow: var(--shadow);
+  }
+  .meaning ul { margin: 12px 0 0; padding-left: 20px; }
+  .meaning li { font-size: 15px; margin-bottom: 9px; }
+  .meaning li::marker { color: var(--accent2); }
+
+  footer {
+    margin-top: 90px; padding-top: 22px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); font-family: "IBM Plex Mono", monospace;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .flow-stage, .chain-node { transition: transform 0.2s ease; }
+    .flow-stage:hover, .chain-node:hover { transform: translateY(-2px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">GIT 개념 노트</p>
+    <h1>커밋, 변경 내용을 역사에 새기는 일</h1>
+    <p class="lede">
+      파일을 고쳐도 그 자체론 아무것도 기록되지 않아요. <strong>커밋(commit)</strong>은 "지금 이 상태를
+      저장소 역사에 하나의 스냅샷으로 남기겠다"는 확정 동작이에요. 오늘 얘기했던 뉴스브리핑 업데이트를
+      예로 들어 그 과정을 풀어볼게요.
+    </p>
+  </header>
+
+  <section id="flow">
+    <div class="section-head">
+      <h2>수정에서 반영까지, 세 번의 관문</h2>
+      <p class="sub">파일을 고친다고 바로 기록되지 않아요. 세 단계를 순서대로 거쳐야 저장소 역사에 남고, 실제 사이트에도 반영돼요.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-stage">
+        <div class="n">0</div>
+        <h3>작업 폴더</h3>
+        <p>파일을 열어서 내용을 고침. 아직 git은 이 변화를 "추적 안 함" 상태로만 인지해요.</p>
+        <span class="cmd">news-briefing/index.html 수정</span>
+      </div>
+      <div class="flow-stage">
+        <div class="n">1</div>
+        <h3>스테이징</h3>
+        <p>이번 커밋에 포함시킬 변경사항을 고름. 장바구니에 담는 것과 같아요.</p>
+        <span class="cmd">git add</span>
+      </div>
+      <div class="flow-stage">
+        <div class="n">2</div>
+        <h3>커밋</h3>
+        <p>담아둔 변경을 메시지와 함께 저장소 역사에 스냅샷으로 확정 기록.</p>
+        <span class="cmd">git commit -m "..."</span>
+      </div>
+      <div class="flow-stage">
+        <div class="n">3</div>
+        <h3>푸시</h3>
+        <p>내 컴퓨터 안의 기록을 GitHub 원격 저장소로 올려서 사이트에 반영.</p>
+        <span class="cmd">git push</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="anatomy">
+    <div class="section-head">
+      <h2>커밋 하나의 구성</h2>
+      <p class="sub">방금 이 저장소에 실제로 남은 커밋을 뜯어보면 이렇게 생겼어요.</p>
+    </div>
+
+    <div class="commit-card">
+      <div class="row">
+        <div class="field">해시</div>
+        <div class="val hash">0a30c46</div>
+      </div>
+      <div class="row">
+        <div class="field">메시지</div>
+        <div class="val msg">뉴스브리핑 2026-08-19</div>
+      </div>
+      <div class="row">
+        <div class="field">변경 파일</div>
+        <div class="val mono">news-briefing/index.html</div>
+      </div>
+      <div class="row">
+        <div class="field">부모 커밋</div>
+        <div class="val hash">3f69f6e</div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>해시가 있는 이유</strong> 커밋마다 내용과 이전 커밋을 바탕으로 계산된 고유 ID(해시)가 붙어요.
+      메시지는 사람이 지어 붙이는 이름표일 뿐이고, 실제로 그 커밋을 가리키는 진짜 이름은 이 해시예요.
+    </div>
+  </section>
+
+  <section id="chain">
+    <div class="section-head">
+      <h2>커밋이 이어지면 역사가 된다</h2>
+      <p class="sub">각 커밋은 바로 이전 커밋을 "부모"로 가리켜요. 그래서 커밋을 죽 이으면 저장소가 지금 모습이 되기까지의 순서가 그대로 남아요.</p>
+    </div>
+
+    <div class="chain">
+      <div class="chain-link">
+        <div class="chain-node">
+          <div class="hash">be1d6b7</div>
+          <div class="msg">Add Bone Rising PWA and assetlinks.json</div>
+        </div>
+      </div>
+      <div class="chain-link">
+        <div class="chain-node">
+          <div class="hash">3f69f6e</div>
+          <div class="msg">Add .nojekyll to disable Jekyll processing</div>
+        </div>
+      </div>
+      <div class="chain-link">
+        <div class="chain-node">
+          <div class="hash">0a30c46</div>
+          <div class="msg">뉴스브리핑 2026-08-19</div>
+          <span class="tag">최신</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="meaning">
+    <div class="section-head"><h2>정리하면</h2></div>
+    <div class="meaning">
+      <ul>
+        <li>커밋은 <strong>파일 변경을 저장소 역사에 남기는 확정 기록</strong>이에요. 사진을 찍듯 그 순간을 남겨요.</li>
+        <li><code>git add</code>로 담고, <code>git commit</code>으로 기록하고, <code>git push</code>로 원격에 올려야 완성돼요.</li>
+        <li>모든 커밋은 고유 해시를 가지고 이전 커밋을 가리켜서, 전체가 하나의 이어진 역사를 이뤄요.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>y031748.github.io · git 개념 노트</footer>
+
+</div>
+
+</body>
+</html>

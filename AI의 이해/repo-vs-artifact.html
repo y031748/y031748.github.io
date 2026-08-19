@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>저장소 파일과 아티팩트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:wght@500;600;700&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f3f0e8;
+    --paper-raised: #fffdf8;
+    --ink: #221f1a;
+    --muted: #6f6a5e;
+    --line: rgba(34, 31, 26, 0.14);
+    --line-strong: rgba(34, 31, 26, 0.28);
+    --repo: #a8501e;
+    --repo-soft: rgba(168, 80, 30, 0.12);
+    --art: #5b4b9e;
+    --art-soft: rgba(91, 75, 158, 0.12);
+    --shadow: 0 1px 2px rgba(34, 31, 26, 0.07), 0 10px 26px rgba(34, 31, 26, 0.07);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #18160f;
+      --paper-raised: #221f17;
+      --ink: #f2ede2;
+      --muted: #a39b89;
+      --line: rgba(242, 237, 226, 0.14);
+      --line-strong: rgba(242, 237, 226, 0.26);
+      --repo: #e2864f;
+      --repo-soft: rgba(226, 134, 79, 0.16);
+      --art: #a596e8;
+      --art-soft: rgba(165, 150, 232, 0.16);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 30px rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #18160f;
+    --paper-raised: #221f17;
+    --ink: #f2ede2;
+    --muted: #a39b89;
+    --line: rgba(242, 237, 226, 0.14);
+    --line-strong: rgba(242, 237, 226, 0.26);
+    --repo: #e2864f;
+    --repo-soft: rgba(226, 134, 79, 0.16);
+    --art: #a596e8;
+    --art-soft: rgba(165, 150, 232, 0.16);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--line) 31px, var(--line) 32px),
+      var(--paper);
+    color: var(--ink);
+    font-family: "Karla", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--art-soft); }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 60px 22px 100px; }
+
+  h1, h2, h3 {
+    font-family: "Petrona", "Noto Serif KR", serif;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    text-wrap: balance;
+    margin: 0;
+  }
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--art); margin: 0 0 16px;
+  }
+  .kicker::before { content: ""; width: 18px; height: 1.5px; background: var(--art); }
+
+  header.hero h1 { font-size: clamp(30px, 6.4vw, 44px); line-height: 1.28; }
+  .hero p.lede { font-size: 17px; color: var(--muted); max-width: 60ch; margin: 18px 0 0; }
+
+  section { margin-top: 68px; }
+  .section-head { margin-bottom: 26px; }
+  .section-head h2 { font-size: clamp(21px, 3.6vw, 26px); }
+  .section-head .sub { color: var(--muted); font-size: 14.5px; margin-top: 8px; max-width: 58ch; }
+
+  p { margin: 14px 0; }
+  .prose { max-width: 64ch; }
+  .prose strong { color: var(--ink); background: var(--art-soft); padding: 0 3px; border-radius: 3px; }
+
+  /* ---- two silos ---- */
+  .silos { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 30px; }
+  @media (min-width: 620px) { .silos { grid-template-columns: 1fr 1fr; } }
+
+  .silo {
+    background: var(--paper-raised); border: 1px solid var(--line);
+    box-shadow: var(--shadow); padding: 24px 22px 22px; position: relative;
+  }
+  .silo.repo { border-top: 3px solid var(--repo); }
+  .silo.art { border-top: 3px solid var(--art); }
+  .silo .tag {
+    display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 11px;
+    padding: 3px 9px; border-radius: 4px; margin-bottom: 12px; letter-spacing: 0.03em;
+  }
+  .silo.repo .tag { color: var(--repo); background: var(--repo-soft); }
+  .silo.art .tag { color: var(--art); background: var(--art-soft); }
+  .silo h3 { font-size: 19px; margin-bottom: 10px; }
+  .silo p { font-size: 14.5px; color: var(--muted); margin: 0 0 14px; }
+  .silo .example {
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; padding: 8px 10px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 5px; word-break: break-all;
+  }
+  .silo.repo .example { color: var(--repo); }
+  .silo.art .example { color: var(--art); }
+
+  .no-bridge {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin: 18px 0 -2px; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: 12px;
+  }
+  .no-bridge .x-line { flex: 1; max-width: 90px; height: 1px; background: var(--line-strong); position: relative; }
+  .no-bridge .x-line::after {
+    content: "×"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: var(--paper); padding: 0 6px; color: var(--muted); font-family: "Petrona", serif; font-size: 15px;
+  }
+  @media (max-width: 619px) { .no-bridge { display: none; } }
+
+  /* ---- comparison table ---- */
+  .compare {
+    margin-top: 26px; width: 100%; border-collapse: collapse; font-size: 14px;
+    background: var(--paper-raised); box-shadow: var(--shadow);
+  }
+  .compare th, .compare td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .compare th { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+  .compare tr:last-child td { border-bottom: none; }
+  .compare td.label { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .compare td.repo-v { color: var(--repo); }
+  .compare td.art-v { color: var(--art); }
+  .table-scroll { overflow-x: auto; }
+
+  .note-box {
+    margin-top: 22px; border: 1px dashed var(--line-strong); padding: 16px 18px;
+    font-size: 14.5px; color: var(--muted); background: var(--paper-raised);
+  }
+  .note-box strong { color: var(--ink); }
+
+  .meaning {
+    margin-top: 30px; background: var(--paper-raised); border: 1px solid var(--line);
+    border-top: 3px solid var(--art); padding: 26px 26px 24px; box-shadow: var(--shadow);
+  }
+  .meaning ul { margin: 12px 0 0; padding-left: 20px; }
+  .meaning li { font-size: 15px; margin-bottom: 9px; }
+  .meaning li::marker { color: var(--art); }
+
+  footer {
+    margin-top: 90px; padding-top: 22px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); font-family: "IBM Plex Mono", monospace;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .silo { transition: transform 0.2s ease; }
+    .silo:hover { transform: translateY(-2px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">개념 노트</p>
+    <h1>저장소 파일과 아티팩트는 서로 다른 곳에 산다</h1>
+    <p class="lede">
+      같은 대화 안에서 나온 결과물이라도, <strong>저장 공간이 완전히 다른 두 종류</strong>가 있어요.
+      하나는 git 저장소 안의 파일이고, 다른 하나는 claude.ai에 발행된 아티팩트예요.
+      둘은 서로의 존재를 몰라요.
+    </p>
+  </header>
+
+  <section id="silos">
+    <div class="section-head">
+      <h2>두 개의 창고</h2>
+      <p class="sub">이 대화에서 실제로 만들어진 것들을 예로 들면 이렇게 나뉘어요.</p>
+    </div>
+
+    <div class="silos">
+      <div class="silo repo">
+        <span class="tag">GIT REPOSITORY</span>
+        <h3>저장소 파일</h3>
+        <p><code>y031748.github.io</code> 저장소 안의 실제 파일. 커밋으로 기록되고, <code>git push</code>하면 웹사이트로 배포돼요. <code>git</code>·<code>Read</code>·<code>Edit</code> 도구로 직접 다뤄요.</p>
+        <div class="example">news-briefing/index.html<br>→ 커밋 0a30c46로 기록됨</div>
+      </div>
+      <div class="silo art">
+        <span class="tag">CLAUDE.AI ARTIFACT</span>
+        <h3>아티팩트</h3>
+        <p>claude.ai 쪽에 별도로 발행된 페이지. 저장소와 무관한 자체 URL을 갖고, 삭제·관리도 claude.ai 아티팩트 페이지에서만 가능해요.</p>
+        <div class="example">DRAGON RAGE<br>→ claude.ai/code/artifact/7724...</div>
+      </div>
+    </div>
+
+    <div class="no-bridge">
+      <span class="x-line"></span>
+      <span>연결 다리 없음</span>
+      <span class="x-line"></span>
+    </div>
+  </section>
+
+  <section id="compare">
+    <div class="section-head">
+      <h2>구체적으로 뭐가 다른가</h2>
+    </div>
+
+    <div class="table-scroll">
+      <table class="compare">
+        <thead>
+          <tr><th>기준</th><th>저장소 파일</th><th>아티팩트</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label">보관 위치</td>
+            <td class="repo-v">GitHub 저장소</td>
+            <td class="art-v">claude.ai 서버</td>
+          </tr>
+          <tr>
+            <td class="label">기록 단위</td>
+            <td class="repo-v">커밋(commit)</td>
+            <td class="art-v">발행 버전(publish)</td>
+          </tr>
+          <tr>
+            <td class="label">공개 방식</td>
+            <td class="repo-v">git push → 사이트 배포</td>
+            <td class="art-v">공유 메뉴로 링크 공개</td>
+          </tr>
+          <tr>
+            <td class="label">제가 지울 수 있나</td>
+            <td class="repo-v">가능 (git으로 삭제·커밋)</td>
+            <td class="art-v">불가능 (직접 페이지에서 삭제)</td>
+          </tr>
+          <tr>
+            <td class="label">되짚어보는 법</td>
+            <td class="repo-v"><code>git log</code>로 히스토리 확인</td>
+            <td class="art-v">artifact 목록에서 찾기</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note-box">
+      <strong>그래서 DRAGON RAGE를 지우려면?</strong> 저장소에 파일로 존재하지 않으니 커밋으로 삭제할 방법이 없어요.
+      claude.ai의 아티팩트 페이지로 들어가서 직접 삭제해야 해요.
+    </div>
+  </section>
+
+  <section id="meaning">
+    <div class="section-head"><h2>정리하면</h2></div>
+    <div class="meaning">
+      <ul>
+        <li>같은 대화에서 나왔다고 <strong>같은 곳에 저장되는 게 아니에요</strong> — 파일과 아티팩트는 서로 다른 창고예요.</li>
+        <li>저장소 파일은 git 도구로, 아티팩트는 claude.ai 페이지에서만 관리·삭제할 수 있어요.</li>
+        <li>둘 사이를 잇고 싶다면(예: 아티팩트 내용을 저장소 파일로 남기기), 그건 제가 따로 파일을 써서 커밋해야 하는 별개의 작업이에요.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>y031748.github.io · 개념 노트</footer>
+
+</div>
+
+</body>
+</html>
