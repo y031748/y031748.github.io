@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>뉴스브리핑 GitHub 연결기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gowun+Dodum&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef1f5;
+    --bg-grid: rgba(16, 24, 38, 0.10);
+    --surface: #ffffff;
+    --surface-2: #e3e9f0;
+    --ink: #101826;
+    --ink-soft: #4c5a6d;
+    --ink-faint: #7c8898;
+    --line: #b9c3d1;
+    --line-strong: #8b98ab;
+    --accent: #a15c0a;
+    --accent-fill: #f2c98a;
+    --accent-ink: #3a2405;
+    --danger: #a3352a;
+    --danger-fill: #f2d9d5;
+    --ok: #2f6f4e;
+    --ok-fill: #d9ecdf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1420;
+      --bg-grid: rgba(255, 255, 255, 0.08);
+      --surface: #12233a;
+      --surface-2: #17304e;
+      --ink: #eef3f8;
+      --ink-soft: #aebccd;
+      --ink-faint: #7f90a6;
+      --line: #2c4568;
+      --line-strong: #3d5c86;
+      --accent: #e3a53f;
+      --accent-fill: #4a3312;
+      --accent-ink: #f7dfae;
+      --danger: #e2796b;
+      --danger-fill: #45201c;
+      --ok: #6fbf94;
+      --ok-fill: #163325;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1420;
+    --bg-grid: rgba(255, 255, 255, 0.08);
+    --surface: #12233a;
+    --surface-2: #17304e;
+    --ink: #eef3f8;
+    --ink-soft: #aebccd;
+    --ink-faint: #7f90a6;
+    --line: #2c4568;
+    --line-strong: #3d5c86;
+    --accent: #e3a53f;
+    --accent-fill: #4a3312;
+    --accent-ink: #f7dfae;
+    --danger: #e2796b;
+    --danger-fill: #45201c;
+    --ok: #6fbf94;
+    --ok-fill: #163325;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background:
+      radial-gradient(circle, var(--bg-grid) 1px, transparent 1.4px) 0 0 / 26px 26px,
+      var(--bg);
+    color: var(--ink);
+    font-family: 'Gowun Dodum', 'Apple SD Gothic Neo', sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: var(--line-strong);
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: 'Black Han Sans', sans-serif;
+    font-weight: 400;
+    font-size: clamp(1.9rem, 5vw, 2.7rem);
+    line-height: 1.28;
+    margin: 0 0 20px;
+    text-wrap: balance;
+    letter-spacing: 0.01em;
+  }
+
+  .lede {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 40px;
+  }
+
+  section.block { margin-bottom: 52px; }
+
+  h2 {
+    font-family: 'Black Han Sans', sans-serif;
+    font-weight: 400;
+    font-size: 1.45rem;
+    margin: 0 0 18px;
+    letter-spacing: 0.01em;
+  }
+
+  .steps { position: relative; }
+  .steps::before {
+    content: "";
+    position: absolute;
+    left: 21px;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background: var(--line-strong);
+  }
+  @media (max-width: 480px) {
+    .steps::before { left: 17px; }
+  }
+
+  .step {
+    position: relative;
+    padding-left: 62px;
+    margin-bottom: 26px;
+  }
+  @media (max-width: 480px) {
+    .step { padding-left: 50px; }
+  }
+  .step:last-child { margin-bottom: 0; }
+
+  .step-num {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .step-num.fail { color: var(--danger); }
+  .step-num.win { color: var(--ok); border-color: var(--ok); }
+  @media (max-width: 480px) {
+    .step-num { width: 36px; height: 36px; font-size: 0.9rem; }
+  }
+
+  .step-body {
+    position: relative;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 2px;
+    padding: 16px 20px;
+  }
+  .step-body::before, .step-body::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--line-strong);
+    border-style: solid;
+    border-width: 0;
+  }
+  .step-body::before { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
+  .step-body::after { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; }
+  .step-body.win { border-color: var(--ok); }
+  .step-body.win::before, .step-body.win::after { border-color: var(--ok); }
+
+  .step h3 {
+    font-family: 'Gowun Dodum', sans-serif;
+    font-weight: 400;
+    font-size: 1.05rem;
+    margin: 0 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .tag.fail { background: var(--danger-fill); color: var(--danger); }
+  .tag.win { background: var(--ok-fill); color: var(--ok); }
+
+  .step p { margin: 0 0 8px; color: var(--ink-soft); font-size: 0.94rem; }
+  .step p:last-child { margin-bottom: 0; }
+
+  .code-line {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 6px 10px;
+    border-radius: 3px;
+    margin: 6px 0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code-line.err { color: var(--danger); }
+  .code-line.ok { color: var(--ok); }
+
+  .meaning {
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+  }
+  .meaning h2 { margin-bottom: 14px; }
+  .meaning p { color: var(--ink-soft); margin: 0 0 12px; font-size: 0.98rem; }
+  .meaning .analogy {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 2px;
+    padding: 16px 18px;
+    margin: 16px 0;
+    font-size: 0.94rem;
+    color: var(--ink-soft);
+  }
+  .meaning .analogy b { color: var(--ink); }
+  .meaning .ok-line {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--ok);
+    margin-top: 16px;
+  }
+  .meaning .chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="eyebrow">GITHUB PUSH · 문제해결 일지</div>
+  <h1>왜 자동 뉴스브리핑이 계속 GitHub에 안 올라갔을까?</h1>
+  <p class="lede">
+    "출입증을 다시 만들어주면 되겠지" 하고 시작했는데, 알고 보니 출입증은 처음부터 아무 상관이 없었어요.
+    총 8번의 시도 끝에 찾은 진짜 범인과, 그걸 찾아낸 과정을 순서대로 정리했어요.
+  </p>
+
+  <section class="block">
+    <h2>추적 기록 — 8번의 시도</h2>
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num fail">1</div>
+        <div class="step-body">
+          <h3>범인 지목 #1 <span class="tag fail">틀림</span></h3>
+          <p>GitHub 설정에서 Claude 앱의 "쓰기 권한"을 켜주면 될 줄 알았어요. 그런데 확인해보니 그 앱 자체가 계정에 설치조차 안 되어 있었어요.</p>
+          <span class="code-line">Installed GitHub Apps → "No installed GitHub Apps"</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num fail">2</div>
+        <div class="step-body">
+          <h3>범인 지목 #2 <span class="tag fail">틀림</span></h3>
+          <p>그럼 다시 연결(Authorize)하면 되겠지 — 했더니 "신원 확인"은 됐는데, 저장소에 접근하는 "설치" 단계는 여전히 비어 있었어요. 인증과 설치는 서로 다른 절차였던 거예요.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num fail">3</div>
+        <div class="step-body">
+          <h3>범인 지목 #3 <span class="tag fail">틀림</span></h3>
+          <p>그렇다면 직접 열쇠(개인 액세스 토큰)를 만들어서 쥐여주자 — GitHub에서 쓰기 권한이 있는 토큰을 새로 발급받아 클라우드 환경에 등록했어요.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num fail">4</div>
+        <div class="step-body">
+          <h3>여전히 막힘 <span class="tag fail">403</span></h3>
+          <p>새 열쇠로 <code>git push</code>를 해봤지만 똑같이 거부당했어요. 토큰 길이(93자)까지 확인해서 열쇠 자체는 멀쩡한 걸 확인했는데도요.</p>
+          <span class="code-line err">fatal: unable to access '...' The requested URL returned error: 403</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num fail">5</div>
+        <div class="step-body">
+          <h3>범인 지목 #4 <span class="tag fail">틀림</span></h3>
+          <p>"아, 기존에 설정된 다른 인증 방식이 새 열쇠를 가로막고 있나 보다" — CI에서 쓰는 방식대로 인증 정보를 명령어에 직접 주입하는 방법까지 써봤어요. 결과는 똑같은 403.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num win">6</div>
+        <div class="step-body win">
+          <h3>결정적 단서 발견 <span class="tag win">단서</span></h3>
+          <p>GitHub 서버에 직접 물어봤더니(API 호출), 진짜 이유가 나왔어요. 이건 GitHub가 아니라 <b>Claude 쪽에서</b> 보낸 메시지였어요:</p>
+          <span class="code-line">"GitHub access is not enabled for this session. An org admin must connect the Claude GitHub App..."</span>
+          <p>즉, 우리가 만든 열쇠는 애초에 문에 닿지도 못하고 있었던 거예요. 다른 누군가(Claude의 대리 시스템)가 미리 문 앞에서 신분증을 대신 검사하고 있었던 거죠.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num win">7</div>
+        <div class="step-body win">
+          <h3>진짜 원인 확인 <span class="tag win">확인</span></h3>
+          <p>공식 설명서를 찾아보니 확실해졌어요: 클라우드 작업 환경에서는 GitHub 인증서가 절대 작업 공간 안으로 들어오지 않고, 항상 <b>Claude의 대리 보안 시스템</b>이 대신 처리해요. 우리가 넣은 열쇠는 원래부터 쓰일 수가 없었던 거예요.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num win">8</div>
+        <div class="step-body win">
+          <h3>진짜 해결 <span class="tag win">성공</span></h3>
+          <p>해결책은 아주 간단했어요. 터미널에서 <span class="code-line" style="display:inline-block;margin:0;">/web-setup</span> 한 번 실행 — 컴퓨터에 이미 로그인되어 있던 GitHub 계정 정보를 Claude 계정에 등록만 해주면 끝이었어요.</p>
+          <span class="code-line ok">3f69f6e..0a30c46  main -> main   (push 성공)</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="meaning">
+    <h2>그래서 뭐가 문제였던 걸까요</h2>
+    <div class="analogy">
+      건물 경비원을 떠올려보세요. 저는 계속 <b>택배 기사(로봇)의 사원증</b>을 새로 만들어주고 있었는데,
+      알고 보니 그 건물은 <b>택배 기사 본인이 아니라 경비실이 직접 문을 열어주는 시스템</b>이었어요.
+      사원증이 아무리 완벽해도 경비실에 "이 사람 들여보내도 돼요"라는 등록이 안 되어 있으면 소용없었던 거죠.
+      <span class="chip">/web-setup</span>이 바로 그 "경비실 등록"이었어요.
+    </div>
+    <p>
+      뉴스 검색과 요약, HTML 제작까지는 처음부터 문제없이 잘 됐어요. 막힌 곳은 딱 한 곳,
+      "완성한 걸 GitHub에 올리는" 마지막 한 걸음이었어요.
+    </p>
+    <div class="ok-line">→ 완료: <span class="chip">y031748.github.io/news-briefing/</span> 매일 자동 갱신 확인됨</div>
+  </section>
+
+  <footer>2026-08-19 · GitHub push 403 문제 8단계 추적 및 해결 일지</footer>
+
+</div>
+
+</body>
+</html>
