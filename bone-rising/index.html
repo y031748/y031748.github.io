@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120b10">
+<meta name="description" content="맨주먹으로 시작해 몬스터를 잡고 전설의 용사로 진화하는 중독성 있는 탭 RPG">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<title>Bone Rising</title>
+<style>
+  :root {
+    --void: #120b10;
+    --panel: #1d1420;
+    --panel-2: #241a29;
+    --line: rgba(242, 233, 220, 0.12);
+    --ink: #f2e9dc;
+    --ink-dim: rgba(242, 233, 220, 0.58);
+    --ember: #ff7a3d;
+    --ember-dim: rgba(255, 122, 61, 0.35);
+    --gold: #f2c14e;
+    --arcane: #9b7bff;
+    --hp: #e6483e;
+    --hp-dim: rgba(230, 72, 62, 0.25);
+    --xp: #8b6bff;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--void);
+    color: var(--ink);
+  }
+
+  body {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    padding: 26px 14px;
+    font-family: -apple-system, "Segoe UI", "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -8%, #3a1f14 0%, transparent 60%),
+      radial-gradient(ellipse 60% 45% at 90% 105%, #241035 0%, transparent 55%),
+      var(--void);
+  }
+
+  .cabinet { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 12px; }
+
+  .marquee { text-align: center; user-select: none; }
+  .marquee .kicker {
+    display: block; font-family: ui-monospace, Consolas, monospace;
+    font-size: 11px; letter-spacing: .4em; text-transform: uppercase;
+    color: var(--ink-dim); margin-bottom: 6px;
+  }
+  .marquee h1 {
+    margin: 0; font-size: clamp(30px, 8vw, 40px); font-weight: 800;
+    letter-spacing: .03em; color: var(--ink);
+    text-shadow: 0 0 8px var(--ember-dim), 0 0 28px rgba(255,122,61,.25);
+  }
+  .marquee h1 span { color: var(--ember); }
+
+  .stage {
+    position: relative; width: 100%; border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,.8), 0 0 60px -25px rgba(255,122,61,.2);
+    background: var(--panel); touch-action: manipulation; cursor: pointer;
+  }
+  canvas { display: block; width: 100%; height: auto; }
+
+  .region-tag {
+    position: absolute; top: 12px; left: 14px;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 11px; letter-spacing: .08em; white-space: nowrap;
+    color: var(--ink-dim);
+    background: rgba(10,6,10,.4); padding: 4px 9px; border-radius: 999px;
+    border: 1px solid var(--line);
+    pointer-events: none;
+  }
+  .region-tag b { color: var(--ink); font-weight: 700; }
+
+  .mute-btn {
+    position: absolute; top: 10px; right: 10px; width: 30px; height: 30px;
+    border-radius: 50%; border: 1px solid var(--line);
+    background: rgba(10,6,10,.4); color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 13px;
+  }
+  .mute-btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+  .boss-banner {
+    position: absolute; top: 44px; left: 50%; transform: translate(-50%, -8px);
+    font-weight: 800; font-size: 14px; letter-spacing: .08em;
+    color: #ffdede; background: linear-gradient(135deg, #7a1a1a, #3d0d0d);
+    border: 1px solid rgba(255,120,120,.4);
+    padding: 6px 16px; border-radius: 999px;
+    box-shadow: 0 0 20px rgba(230,72,62,.5);
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    white-space: nowrap;
+  }
+  .boss-banner.show { opacity: 1; transform: translate(-50%, 0); }
+
+  .special-banner {
+    position: absolute; top: 80px; left: 50%; transform: translate(-50%, -8px);
+    font-weight: 800; font-size: 12px; letter-spacing: .04em;
+    color: #fff6e0;
+    background: linear-gradient(135deg, #7a3a0a, #4a1a3a);
+    border: 1px solid rgba(255,193,78,.55);
+    padding: 6px 14px; border-radius: 999px;
+    box-shadow: 0 0 22px rgba(255,122,61,.55);
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .special-banner.show { opacity: 1; transform: translate(-50%, 0); animation: specialPulse 1.1s ease-in-out infinite; }
+  .special-banner .mult { color: var(--gold); font-weight: 900; }
+  @keyframes specialPulse {
+    0%, 100% { box-shadow: 0 0 18px rgba(255,122,61,.5); }
+    50% { box-shadow: 0 0 32px rgba(255,193,78,.85); }
+  }
+
+  .monster-hp-wrap {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    width: 46%; top: 14px;
+    display: flex; flex-direction: column; gap: 3px; align-items: center;
+    pointer-events: none;
+  }
+  .monster-name { font-size: 10px; letter-spacing: .08em; color: var(--ink-dim); font-family: ui-monospace, Consolas, monospace; }
+  .monster-hp-bar { width: 100%; height: 8px; border-radius: 999px; background: rgba(0,0,0,.4); border: 1px solid var(--line); overflow: hidden; }
+  .monster-hp-fill { height: 100%; background: linear-gradient(90deg, var(--hp), #ff8a80); width: 100%; transition: width .12s ease; }
+
+  .dmg-layer, .toast-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+  .dmg {
+    position: absolute; transform: translate(-50%, -50%);
+    font-family: ui-monospace, Consolas, monospace;
+    font-weight: 800; font-size: 17px; color: #fff2e0;
+    text-shadow: 0 0 6px rgba(0,0,0,.8), 0 0 10px var(--ember-dim);
+    animation: dmgFloat .75s ease-out forwards;
+  }
+  .dmg.crit { font-size: 23px; color: var(--ember); text-shadow: 0 0 8px rgba(255,122,61,.8); }
+  .dmg.auto { font-size: 13px; color: var(--ink-dim); }
+  @keyframes dmgFloat {
+    0% { opacity: 0; transform: translate(-50%, -40%) scale(.7); }
+    15% { opacity: 1; transform: translate(-50%, -70%) scale(1.05); }
+    100% { opacity: 0; transform: translate(-50%, -140%) scale(1); }
+  }
+
+  .dmg.critkill {
+    font-size: 26px; font-weight: 900; color: #fff2e0; white-space: nowrap;
+    text-shadow: 0 0 10px var(--ember), 0 0 26px rgba(255,122,61,.9), 0 0 42px rgba(242,193,78,.65);
+    animation: critKillPop .9s cubic-bezier(.2,.9,.3,1) forwards;
+  }
+  @keyframes critKillPop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(.4) rotate(-6deg); }
+    30% { opacity: 1; transform: translate(-50%, -62%) scale(1.25) rotate(2deg); }
+    100% { opacity: 0; transform: translate(-50%, -115%) scale(1) rotate(0deg); }
+  }
+
+  .quote-layer { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+  .quote-bubble {
+    position: absolute; transform: translate(-50%, -100%);
+    max-width: 62%; width: max-content;
+    background: linear-gradient(160deg, #2a1a12, #1c0f0a);
+    border: 1px solid rgba(255,193,78,.45);
+    color: var(--ink);
+    font-size: 12px; font-weight: 700; line-height: 1.45;
+    padding: 9px 12px; border-radius: 13px 13px 13px 3px;
+    box-shadow: 0 10px 26px -10px rgba(0,0,0,.7), 0 0 20px -8px rgba(255,122,61,.4);
+    animation: quotePop .35s ease, quoteOut .3s ease 2.9s forwards;
+  }
+  .quote-bubble::after {
+    content: ''; position: absolute; left: 14px; bottom: -7px;
+    width: 0; height: 0;
+    border: 7px solid transparent;
+    border-top-color: #1c0f0a; border-bottom: 0;
+  }
+  @keyframes quotePop {
+    from { opacity: 0; transform: translate(-50%, -88%) scale(.85); }
+    to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+  }
+  @keyframes quoteOut { to { opacity: 0; transform: translate(-50%, -108%) scale(.95); } }
+
+  .toast-layer { top: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px; }
+  .toast {
+    pointer-events: none;
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(15, 9, 14, .85); border: 1px solid var(--line);
+    padding: 7px 14px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    box-shadow: 0 6px 20px -6px rgba(0,0,0,.6);
+    animation: toastIn .35s ease, toastOut .35s ease 1.85s forwards;
+  }
+  .toast .icon { font-size: 15px; }
+  .toast.level { border-color: rgba(155,123,255,.5); box-shadow: 0 0 20px rgba(155,123,255,.35); }
+  .toast.evo { border-color: rgba(242,193,78,.6); box-shadow: 0 0 22px rgba(242,193,78,.4); }
+  .toast.ult { border-color: rgba(255,122,61,.7); box-shadow: 0 0 26px rgba(255,122,61,.5); }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes toastOut { to { opacity: 0; transform: translateY(-6px); } }
+
+  .flash-overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at 50% 55%, rgba(255,255,255,.9), rgba(242,193,78,.3) 40%, transparent 70%);
+    opacity: 0;
+  }
+  .flash-overlay.go { animation: flashPulse .6s ease; }
+  @keyframes flashPulse { 0% { opacity: 0; } 25% { opacity: 1; } 100% { opacity: 0; } }
+
+  .hud {
+    display: flex; flex-direction: column; gap: 10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    padding: 14px 16px;
+  }
+
+  .row { display: flex; align-items: center; gap: 10px; }
+  .row.between { justify-content: space-between; }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+
+  .lv-badge {
+    flex: none; width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--arcane), #5a3fd6);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px; color: #fff;
+    box-shadow: 0 0 14px rgba(155,123,255,.45);
+    font-family: ui-monospace, Consolas, monospace;
+  }
+
+  .xp-wrap { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .xp-label { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: .05em; color: var(--ink-dim); font-family: ui-monospace, Consolas, monospace; font-variant-numeric: tabular-nums; }
+  .xp-bar { height: 8px; border-radius: 999px; background: rgba(0,0,0,.35); overflow: hidden; border: 1px solid var(--line); }
+  .xp-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--xp), #c3b3ff); transition: width .2s ease; }
+
+  .ult-wrap { display: flex; flex-direction: column; gap: 4px; }
+  .ult-label { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: .05em; color: var(--ink-dim); font-family: ui-monospace, Consolas, monospace; font-variant-numeric: tabular-nums; }
+  .ult-bar { height: 9px; border-radius: 999px; background: rgba(0,0,0,.35); overflow: hidden; border: 1px solid var(--line); }
+  .ult-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #ff4d4d, var(--ember), var(--gold));
+    transition: width .2s ease;
+  }
+  .ult-fill.ready { animation: ultReady .7s ease-in-out infinite; }
+  @keyframes ultReady { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.5); } }
+
+  .stat {
+    display: flex; align-items: center; gap: 6px;
+    font-family: ui-monospace, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 14px; font-weight: 700; color: var(--ink);
+  }
+  .stat .ic { font-size: 15px; }
+  .stat.gold { color: var(--gold); }
+  .stat small { font-family: -apple-system, "Segoe UI", sans-serif; font-weight: 500; font-size: 10px; color: var(--ink-dim); margin-left: -2px; }
+
+  .upgrade-row { display: flex; gap: 8px; }
+  .btn {
+    appearance: none; border: none; cursor: pointer; font-family: inherit;
+    font-weight: 700; font-size: 13px; letter-spacing: .01em;
+    padding: 11px 16px; border-radius: 12px; color: #1a0f08;
+    background: linear-gradient(135deg, var(--ember), #ffb35c);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset, 0 8px 20px -8px rgba(255,122,61,.6);
+    transition: transform .12s ease;
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    line-height: 1.3;
+  }
+  .btn .cost { font-family: ui-monospace, Consolas, monospace; font-size: 11px; font-weight: 600; opacity: .75; font-variant-numeric: tabular-nums; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: scale(.97); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+  .footer-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--ink-dim); }
+  .footer-row button {
+    appearance: none; background: none; border: none; color: var(--ink-dim);
+    font-size: 11px; text-decoration: underline; cursor: pointer; padding: 4px;
+  }
+  .footer-row button:hover { color: var(--ink); }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(5,3,6,.72);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .18s ease;
+  }
+  .modal-backdrop.show { opacity: 1; pointer-events: auto; }
+
+  .modal-panel {
+    width: 100%; max-width: 380px; max-height: 76vh;
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 18px;
+    display: flex; flex-direction: column;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,.7), 0 0 40px -18px rgba(255,122,61,.25);
+    transform: translateY(8px) scale(.98);
+    transition: transform .18s ease;
+    overflow: hidden;
+  }
+  .modal-backdrop.show .modal-panel { transform: translateY(0) scale(1); }
+
+  .modal-header { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 18px 18px 12px; }
+  .modal-header h3 { margin: 0; font-size: 16px; font-weight: 800; color: var(--ink); }
+  .modal-close {
+    appearance: none; border: none; background: rgba(255,255,255,.06); color: var(--ink-dim);
+    width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 12px;
+    display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  .modal-close:hover { color: var(--ink); background: rgba(255,255,255,.14); }
+  .modal-close:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+  .modal-body {
+    flex: 1; min-height: 0;
+    overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    padding: 0 18px 18px;
+  }
+
+  .modal-empty { color: var(--ink-dim); font-size: 13px; text-align: center; padding: 26px 8px; line-height: 1.6; }
+
+  .item-list { display: flex; flex-direction: column; gap: 8px; }
+  .item-row {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,.03); border: 1px solid var(--line);
+    border-radius: 12px; padding: 9px 12px;
+  }
+  .item-icon { font-size: 20px; flex: none; width: 24px; text-align: center; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .item-effect { font-size: 11px; color: var(--ink-dim); margin-top: 1px; }
+  .item-count {
+    font-family: ui-monospace, Consolas, monospace; font-variant-numeric: tabular-nums;
+    font-size: 13px; font-weight: 700; color: var(--ember); flex: none;
+  }
+
+  .stat-list { display: flex; flex-direction: column; gap: 2px; }
+  .stat-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 10px 2px; border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row-label { color: var(--ink-dim); }
+  .stat-row-val {
+    font-family: ui-monospace, Consolas, monospace; font-variant-numeric: tabular-nums;
+    font-weight: 700; color: var(--ink); text-align: right;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cabinet">
+  <div class="marquee">
+    <span class="kicker">MAENJUMEOK · 맨주먹 모험</span>
+    <h1>BONE <span>RISING</span></h1>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="scene"></canvas>
+    <div class="region-tag" id="regionTag"><b>Lv.1</b> · 초원</div>
+    <button class="mute-btn" id="muteBtn" aria-label="음소거 전환" aria-pressed="false">🔊</button>
+    <div class="boss-banner" id="bossBanner">⚔ 보스 등장 ⚔</div>
+    <div class="special-banner" id="specialBanner"></div>
+    <div class="monster-hp-wrap">
+      <div class="monster-name" id="monsterName">몬스터</div>
+      <div class="monster-hp-bar"><div class="monster-hp-fill" id="monsterHpFill"></div></div>
+    </div>
+    <div class="dmg-layer" id="dmgLayer"></div>
+    <div class="quote-layer" id="quoteLayer"></div>
+    <div class="toast-layer" id="toastLayer"></div>
+    <div class="flash-overlay" id="flashOverlay"></div>
+  </div>
+
+  <div class="hud">
+    <div class="row">
+      <div class="lv-badge" id="lvBadge">1</div>
+      <div class="xp-wrap">
+        <div class="xp-label"><span>경험치</span><span id="xpText">0 / 20</span></div>
+        <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
+      </div>
+    </div>
+
+    <div class="ult-wrap">
+      <div class="ult-label"><span>⚡ 필살기 게이지</span><span id="ultText">0%</span></div>
+      <div class="ult-bar"><div class="ult-fill" id="ultFill"></div></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat gold"><span class="ic">🪙</span><span id="goldStat">0</span><small>골드</small></div>
+      <div class="stat"><span class="ic">💀</span><span id="killStat">0</span><small>처치</small></div>
+      <div class="stat"><span class="ic">🗡️</span><span id="atkStat">3</span><small>공격력</small></div>
+      <div class="stat"><span class="ic">⚡</span><span id="atkSpeedStat">100%</span><small>공격속도</small></div>
+    </div>
+
+    <div class="upgrade-row">
+      <button class="btn" id="upgradeBtn">
+        <span>공격력 강화</span>
+        <span class="cost" id="upgradeCost">🪙 10</span>
+      </button>
+    </div>
+
+    <div class="footer-row">
+      <button id="itemsBtn">보유 아이템 <span id="itemCountLabel">0</span>개</button>
+      <button id="statsBtn">스탯 보기</button>
+      <button id="resetBtn">새로 시작</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <h3 id="modalTitle">보유 아이템</h3>
+      <button class="modal-close" id="modalCloseBtn" aria-label="닫기">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var stageEl = document.getElementById('stage');
+  var canvas = document.getElementById('scene');
+  var ctx = canvas.getContext('2d');
+  var regionTag = document.getElementById('regionTag');
+  var bossBanner = document.getElementById('bossBanner');
+  var specialBanner = document.getElementById('specialBanner');
+  var monsterName = document.getElementById('monsterName');
+  var monsterHpFill = document.getElementById('monsterHpFill');
+  var dmgLayer = document.getElementById('dmgLayer');
+  var toastLayer = document.getElementById('toastLayer');
+  var quoteLayer = document.getElementById('quoteLayer');
+  var flashOverlay = document.getElementById('flashOverlay');
+  var muteBtn = document.getElementById('muteBtn');
+
+  var lvBadge = document.getElementById('lvBadge');
+  var xpText = document.getElementById('xpText');
+  var xpFill = document.getElementById('xpFill');
+  var goldStat = document.getElementById('goldStat');
+  var atkStat = document.getElementById('atkStat');
+  var atkSpeedStat = document.getElementById('atkSpeedStat');
+  var ultFill = document.getElementById('ultFill');
+  var ultText = document.getElementById('ultText');
+  var killStat = document.getElementById('killStat');
+  var upgradeBtn = document.getElementById('upgradeBtn');
+  var upgradeCost = document.getElementById('upgradeCost');
+  var itemCountLabel = document.getElementById('itemCountLabel');
+  var resetBtn = document.getElementById('resetBtn');
+  var itemsBtn = document.getElementById('itemsBtn');
+  var statsBtn = document.getElementById('statsBtn');
+  var modalBackdrop = document.getElementById('modalBackdrop');
+  var modalTitle = document.getElementById('modalTitle');
+  var modalBody = document.getElementById('modalBody');
+  var modalCloseBtn = document.getElementById('modalCloseBtn');
+
+  // ---------- sizing ----------
+  var DW = 460, DH = 300;
+  var DPR = Math.max(1, Math.min(window.devicePixelRatio || 1, 2.5));
+  function resize() {
+    var w = stageEl.clientWidth || 400;
+    DW = w; DH = Math.round(w * 0.66);
+    canvas.style.height = DH + 'px';
+    canvas.width = Math.round(DW * DPR);
+    canvas.height = Math.round(DH * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+
+  // ---------- sound ----------
+  var muted = false, actx = null;
+  function ensureAudio() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } }
+  function beep(freq, dur, type, gain, delay) {
+    if (muted || !actx) return;
+    var t0 = actx.currentTime + (delay || 0);
+    var osc = actx.createOscillator(), g = actx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(gain || 0.1, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g); g.connect(actx.destination);
+    osc.start(t0); osc.stop(t0 + dur + 0.02);
+  }
+  function sfxHit() { beep(180 + Math.random() * 40, 0.06, 'square', 0.06); }
+  function sfxCrit() { beep(320, 0.08, 'square', 0.11); beep(500, 0.1, 'square', 0.07, 0.03); }
+  function sfxDeath() { beep(140, 0.15, 'sawtooth', 0.08); }
+  function sfxCritKill() {
+    beep(70, 0.32, 'sawtooth', 0.17);
+    beep(1046, 0.1, 'sine', 0.13, 0.04);
+    beep(1318, 0.16, 'sine', 0.12, 0.11);
+  }
+  function sfxBoss() { beep(90, 0.3, 'sawtooth', 0.1); beep(70, 0.4, 'sawtooth', 0.1, 0.12); }
+  function sfxUltimate() {
+    beep(220, 0.1, 'sawtooth', 0.15);
+    beep(440, 0.1, 'sawtooth', 0.15, 0.09);
+    beep(660, 0.14, 'square', 0.17, 0.18);
+    beep(880, 0.22, 'square', 0.19, 0.28);
+  }
+  function sfxLevel() { beep(523, 0.09, 'sine', 0.1); beep(659, 0.09, 'sine', 0.1, 0.09); beep(784, 0.16, 'sine', 0.11, 0.18); }
+  function sfxEvo() { beep(392, 0.12, 'triangle', 0.12); beep(523, 0.12, 'triangle', 0.12, 0.1); beep(784, 0.22, 'triangle', 0.13, 0.2); }
+  function sfxItem() { beep(660, 0.07, 'sine', 0.09); beep(880, 0.09, 'sine', 0.08, 0.06); }
+  function vibrate(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+
+  muteBtn.addEventListener('click', function () {
+    muted = !muted;
+    muteBtn.textContent = muted ? '🔇' : '🔊';
+    muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+  });
+
+  // ---------- persistence ----------
+  var SAVE_KEY = 'boneRising_save_v1';
+  function loadSave() {
+    try {
+      var raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) { return null; }
+  }
+  function doSave() {
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({
+        level: G.level, xp: G.xp, xpNeed: G.xpNeed, atkBase: G.atkBase, atkItems: G.atkItems,
+        atkSpeedMult: G.atkSpeedMult, critChance: G.critChance, critDamageBonus: G.critDamageBonus,
+        goldMult: G.goldMult, xpMult: G.xpMult, gold: G.gold, kills: G.kills,
+        upgradeCount: G.upgradeCount, itemCount: G.itemCount, encounterIndex: G.encounterIndex,
+        inventory: G.inventory, ultimateGauge: G.ultimateGauge
+      }));
+    } catch (e) {}
+  }
+
+  // ---------- game state ----------
+  var REGIONS = ['초원', '동굴', '화산', '빙하', '마왕성'];
+  var REGION_THEMES = [
+    { sky1: '#1c2a1a', sky2: '#0d160d', ground: '#16220f', accent: '#6cff7a' },
+    { sky1: '#161522', sky2: '#0a0912', ground: '#151022', accent: '#8b6bff' },
+    { sky1: '#2a1210', sky2: '#160805', ground: '#1f0d09', accent: '#ff7a3d' },
+    { sky1: '#0f1c26', sky2: '#080f16', ground: '#0d1a20', accent: '#7fe0ff' },
+    { sky1: '#1e0a14', sky2: '#0e0308', ground: '#170611', accent: '#ff3ec9' }
+  ];
+
+  function needForLevel(lvl) { return Math.round(20 * Math.pow(1.16, lvl - 1)); }
+
+  var G = {};
+  function freshState() {
+    G.level = 1; G.xp = 0; G.xpNeed = needForLevel(1);
+    G.atkBase = 3; G.atkItems = 0; G.atkSpeedMult = 1; G.critChance = 0.1; G.critDamageBonus = 0;
+    G.goldMult = 1; G.xpMult = 1;
+    G.gold = 0; G.kills = 0; G.upgradeCount = 0; G.itemCount = 0; G.encounterIndex = 0;
+    G.inventory = {};
+    G.ultimateGauge = 0;
+  }
+  var saved = loadSave();
+  if (saved) {
+    freshState();
+    for (var k in saved) if (saved[k] !== undefined) G[k] = saved[k];
+  } else {
+    freshState();
+  }
+
+  function stageForLevel(lvl) {
+    if (lvl >= 200) return 9;
+    if (lvl >= 150) return 8;
+    if (lvl >= 105) return 7;
+    if (lvl >= 75) return 6;
+    if (lvl >= 50) return 5;
+    if (lvl >= 30) return 4;
+    if (lvl >= 15) return 3;
+    if (lvl >= 5) return 2;
+    return 1;
+  }
+  var curStage = stageForLevel(G.level);
+
+  var STAT_LABEL = {
+    atk: '공격력', atkSpeed: '공격속도', crit: '치명타 확률',
+    critDmg: '치명타 피해', gold: '골드 획득', xp: '경험치 획득'
+  };
+  function formatStatVal(item) {
+    if (item.type === 'atk') return '+' + item.val;
+    return '+' + Math.round(item.val * 100) + '%';
+  }
+
+  var ITEM_POOL = [
+    // 공격력 — hits harder
+    { name: '낡은 나이프', icon: '🗡️', type: 'atk', val: 2 },
+    { name: '가죽 장갑', icon: '🥊', type: 'atk', val: 1 },
+    { name: '강철 검', icon: '⚔️', type: 'atk', val: 4 },
+    { name: '힘의 팔찌', icon: '💪', type: 'atk', val: 3 },
+    { name: '오우거의 곤봉', icon: '🏏', type: 'atk', val: 6 },
+    // 공격속도 — auto-attack fires more often
+    { name: '가벼운 장갑', icon: '🧤', type: 'atkSpeed', val: 0.06 },
+    { name: '바람의 부츠', icon: '👟', type: 'atkSpeed', val: 0.08 },
+    { name: '매의 반사신경', icon: '🦅', type: 'atkSpeed', val: 0.1 },
+    // 치명타 확률 — hidden odds of a crit
+    { name: '행운의 반지', icon: '💍', type: 'crit', val: 0.03 },
+    { name: '매의 눈', icon: '🎯', type: 'crit', val: 0.05 },
+    { name: '암살자의 망토', icon: '🥷', type: 'crit', val: 0.04 },
+    // 치명타 피해 — hidden crit multiplier
+    { name: '광전사의 표식', icon: '🔥', type: 'critDmg', val: 0.2 },
+    { name: '파괴의 룬', icon: '🔺', type: 'critDmg', val: 0.15 },
+    // 골드 획득 — hidden loot bonus
+    { name: '황금 목걸이', icon: '📿', type: 'gold', val: 0.1 },
+    { name: '상인의 주머니', icon: '👛', type: 'gold', val: 0.15 },
+    // 경험치 획득 — hidden growth bonus
+    { name: '지혜의 부적', icon: '📘', type: 'xp', val: 0.08 },
+    { name: '현자의 돌', icon: '🔮', type: 'xp', val: 0.12 }
+  ];
+
+  function totalAtk() { return G.atkBase + G.atkItems; }
+
+  // ---------- special weapons (ultimate) ----------
+  var SPECIAL_WEAPONS = [
+    { id: 'tank', name: '탱크 모드', icon: '🛡️', mult: 9, hue: 80, filter: 'saturate(.6) sepia(.35) hue-rotate(50deg) brightness(1.1)', desc: '포탄이 빗발친다!' },
+    { id: 'sword', name: '전설의 검', icon: '⚔️', mult: 12, hue: 45, filter: 'saturate(2.6) hue-rotate(275deg) brightness(1.3)', desc: '전설의 힘이 깃든다!' },
+    { id: 'hulk', name: '헐크 변신', icon: '💚', mult: 15, hue: 130, filter: 'saturate(3) hue-rotate(95deg) brightness(1.15)', desc: '분노가 폭발한다!' },
+    { id: 'robot', name: '로봇 강림', icon: '🤖', mult: 11, hue: 190, filter: 'saturate(1.7) hue-rotate(180deg) brightness(1.3)', desc: '기계의 힘을 빌린다!' },
+    { id: 'berserk', name: '광폭화', icon: '🔥', mult: 8, hue: 5, filter: 'saturate(2.3) hue-rotate(-35deg) brightness(1.25)', desc: '이성을 잃고 날뛴다!', critBonus: 0.35 }
+  ];
+  var SPECIAL_DURATION = 9;
+  var specialMode = null;
+
+  function currentAtkMultiplier() { return specialMode ? specialMode.weapon.mult : 1; }
+  function currentCritChance() { return G.critChance + (specialMode && specialMode.weapon.critBonus || 0); }
+
+  function activateSpecialWeapon() {
+    G.ultimateGauge = 0;
+    var w = SPECIAL_WEAPONS[Math.floor(Math.random() * SPECIAL_WEAPONS.length)];
+    specialMode = { weapon: w, timeLeft: SPECIAL_DURATION };
+    sfxUltimate();
+    vibrate([30, 40, 30, 40, 30, 80]);
+    shake = Math.max(shake, 18);
+    flashOverlay.classList.remove('go'); void flashOverlay.offsetWidth; flashOverlay.classList.add('go');
+    toast(w.icon + ' ' + w.name + ' 발동! ' + w.desc, w.icon, 'ult');
+    specialBanner.innerHTML = w.icon + ' ' + w.name + ' · <span class="mult">' + w.mult + '배</span> 데미지';
+    specialBanner.classList.add('show');
+    syncHud();
+  }
+
+  function gainUltimateGauge(amount) {
+    if (specialMode) return;
+    G.ultimateGauge = Math.min(100, G.ultimateGauge + amount);
+    if (G.ultimateGauge >= 100) activateSpecialWeapon();
+    else syncHud();
+  }
+
+  // ---------- monster ----------
+  var monster = null;
+  var particles = [];
+  var autoTimer = 0;
+  var AUTO_INTERVAL_BASE = 1.3;
+  var pendingSpawn = 0;
+
+  function regionInfo(encIdx) {
+    var tier = Math.floor((Math.max(1, encIdx) - 1) / 10);
+    var regionIdx = tier % REGIONS.length;
+    var loop = Math.floor(tier / REGIONS.length) + 1;
+    return { name: REGIONS[regionIdx], theme: REGION_THEMES[regionIdx], loop: loop };
+  }
+
+  function updateRegionTag() {
+    var ri = regionInfo(G.encounterIndex);
+    regionTag.innerHTML = '<b>Lv.' + G.level + '</b> · ' + ri.name + (ri.loop > 1 ? ' ×' + ri.loop : '');
+  }
+
+  function spawnMonster() {
+    G.encounterIndex++;
+    var n = G.encounterIndex;
+    var isBoss = (n % 10 === 0);
+    var hp = Math.round(9 * Math.pow(1.125, n));
+    if (isBoss) hp = Math.round(hp * 6);
+    var tier = Math.floor((n - 1) / 10);
+    var sizeScale = 1 + Math.min(0.9, tier * 0.045);
+    var hornChance = Math.min(0.85, 0.35 + tier * 0.05);
+    var bumps = [];
+    for (var i = 0; i < 10; i++) bumps.push(0.82 + Math.random() * 0.36);
+    monster = {
+      hp: hp, maxHp: hp, isBoss: isBoss,
+      hue: Math.floor(Math.random() * 360),
+      bumps: bumps,
+      sizeScale: sizeScale,
+      eyeCount: 1 + Math.floor(Math.random() * 3),
+      hasHorns: Math.random() < hornChance,
+      flashT: 0, dying: false, deathT: 0, idlePhase: Math.random() * 10,
+      spawnT: 0
+    };
+    updateRegionTag();
+    var ri = regionInfo(n);
+    monsterName.textContent = isBoss ? '보스 · ' + ri.name + ' 우두머리' : ri.name + '의 몬스터';
+    if (isBoss) {
+      bossBanner.classList.add('show');
+      sfxBoss();
+      vibrate([20, 30, 20]);
+    } else {
+      bossBanner.classList.remove('show');
+    }
+    updateMonsterHpBar();
+  }
+
+  function updateMonsterHpBar() {
+    if (!monster) return;
+    var pct = Math.max(0, monster.hp / monster.maxHp) * 100;
+    monsterHpFill.style.width = pct + '%';
+  }
+
+  // ---------- damage popups & toasts ----------
+  function spawnDmg(x, y, text, cls, duration) {
+    var el = document.createElement('div');
+    el.className = 'dmg' + (cls ? ' ' + cls : '');
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.textContent = text;
+    dmgLayer.appendChild(el);
+    setTimeout(function () { el.remove(); }, duration || 800);
+  }
+
+  function toast(text, icon, cls) {
+    var el = document.createElement('div');
+    el.className = 'toast' + (cls ? ' ' + cls : '');
+    el.innerHTML = '<span class="icon">' + (icon || '✨') + '</span><span>' + text + '</span>';
+    toastLayer.appendChild(el);
+    setTimeout(function () { el.remove(); }, 2300);
+  }
+
+  function burst(x, z, hue, n) {
+    for (var i = 0; i < n; i++) {
+      var ang = Math.random() * Math.PI * 2;
+      var spd = 50 + Math.random() * 110;
+      particles.push({
+        x: x, y: z,
+        vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd - 40,
+        life: 1, hue: hue, size: 2 + Math.random() * 3
+      });
+    }
+  }
+
+  var shockwaves = [];
+  function spawnShockwave(x, y, color) {
+    shockwaves.push({ x: x, y: y, r: 6, life: 1, color: color });
+  }
+
+  var shake = 0;
+
+  // ---------- UI sync ----------
+  function syncHud() {
+    lvBadge.textContent = G.level;
+    updateRegionTag();
+    xpText.textContent = Math.floor(G.xp) + ' / ' + G.xpNeed;
+    xpFill.style.width = Math.min(100, (G.xp / G.xpNeed) * 100) + '%';
+    goldStat.textContent = Math.floor(G.gold);
+    atkStat.textContent = totalAtk();
+    atkSpeedStat.textContent = Math.round(G.atkSpeedMult * 100) + '%';
+    killStat.textContent = G.kills;
+    itemCountLabel.textContent = G.itemCount;
+    ultFill.style.width = G.ultimateGauge + '%';
+    ultText.textContent = Math.floor(G.ultimateGauge) + '%';
+    ultFill.classList.toggle('ready', G.ultimateGauge >= 85 && !specialMode);
+    var cost = upgradeCostValue();
+    upgradeCost.textContent = '🪙 ' + cost;
+    upgradeBtn.disabled = G.gold < cost;
+  }
+
+  function upgradeCostValue() { return Math.round(10 * Math.pow(1.16, G.upgradeCount)); }
+
+  upgradeBtn.addEventListener('click', function () {
+    ensureAudio();
+    var cost = upgradeCostValue();
+    if (G.gold < cost) return;
+    G.gold -= cost;
+    G.atkItems += 1;
+    G.upgradeCount++;
+    sfxItem();
+    syncHud();
+    doSave();
+  });
+
+  function fullReset() {
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    freshState();
+    curStage = stageForLevel(G.level);
+    monster = null;
+    particles.length = 0;
+    shockwaves.length = 0;
+    shake = 0;
+    specialMode = null;
+    pendingSpawn = 0;
+    autoTimer = 0;
+    isPointerHolding = false;
+    isKeyHolding = false;
+    bossBanner.classList.remove('show');
+    specialBanner.classList.remove('show');
+    dmgLayer.innerHTML = '';
+    toastLayer.innerHTML = '';
+    quoteLayer.innerHTML = '';
+    spawnMonster();
+    syncHud();
+  }
+
+  resetBtn.addEventListener('click', function () {
+    if (!confirm('정말 새로 시작할까요? 레벨 1부터 새 모험을 시작하고, 지금까지의 진행 상황은 모두 사라져요.')) return;
+    fullReset();
+  });
+
+  // ---------- items / stats modal ----------
+  function openModal(title, bodyHtml) {
+    modalTitle.textContent = title;
+    modalBody.innerHTML = bodyHtml;
+    modalBackdrop.classList.add('show');
+  }
+  function closeModal() { modalBackdrop.classList.remove('show'); }
+  modalCloseBtn.addEventListener('click', closeModal);
+  modalBackdrop.addEventListener('click', function (e) { if (e.target === modalBackdrop) closeModal(); });
+  window.addEventListener('keydown', function (e) {
+    if (e.code === 'Escape' && modalBackdrop.classList.contains('show')) closeModal();
+  });
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function renderItemsModal() {
+    var names = Object.keys(G.inventory || {});
+    if (!names.length) {
+      openModal('보유 아이템', '<p class="modal-empty">아직 획득한 아이템이 없어요.<br>몬스터를 처치하면 아이템을 얻을 수 있어요.</p>');
+      return;
+    }
+    names.sort(function (a, b) { return G.inventory[b] - G.inventory[a]; });
+    var html = '<div class="item-list">' + names.map(function (name) {
+      var meta = null;
+      for (var i = 0; i < ITEM_POOL.length; i++) if (ITEM_POOL[i].name === name) { meta = ITEM_POOL[i]; break; }
+      if (!meta) return '';
+      var count = G.inventory[name];
+      return '<div class="item-row">' +
+        '<span class="item-icon">' + meta.icon + '</span>' +
+        '<div class="item-info">' +
+          '<div class="item-name">' + escapeHtml(name) + '</div>' +
+          '<div class="item-effect">' + (meta.type === 'atk' ? '공격력 강화 (레벨에 비례)' : STAT_LABEL[meta.type] + ' ' + formatStatVal(meta)) + '</div>' +
+        '</div>' +
+        '<div class="item-count">×' + count + '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+    openModal('보유 아이템 (' + G.itemCount + '개)', html);
+  }
+
+  var STAGE_NAMES = {
+    1: '뼈다귀', 2: '떠돌이 전사', 3: '무장한 전사', 4: '정예 전사', 5: '각성한 용사',
+    6: '수호 기사', 7: '빛의 전사', 8: '초월자', 9: '전설의 용사'
+  };
+
+  function renderStatsModal() {
+    var ri = regionInfo(G.encounterIndex);
+    var rows = [
+      ['레벨', 'Lv.' + G.level + ' · ' + STAGE_NAMES[curStage]],
+      ['경험치', Math.floor(G.xp) + ' / ' + G.xpNeed],
+      ['공격력', totalAtk() + ' (기본 ' + G.atkBase + ' + 아이템 ' + G.atkItems + ')'],
+      ['공격속도', Math.round(G.atkSpeedMult * 100) + '%'],
+      ['치명타 확률', Math.round(G.critChance * 100) + '%'],
+      ['치명타 피해', '×' + (2 + G.critDamageBonus).toFixed(2)],
+      ['골드 획득량', Math.round(G.goldMult * 100) + '%'],
+      ['경험치 획득량', Math.round(G.xpMult * 100) + '%'],
+      ['보유 골드', Math.floor(G.gold)],
+      ['처치 수', G.kills],
+      ['현재 지역', ri.name + (ri.loop > 1 ? ' ×' + ri.loop : '')],
+      ['필살기 게이지', specialMode ? specialMode.weapon.icon + ' ' + specialMode.weapon.name + ' 발동 중' : Math.floor(G.ultimateGauge) + '%']
+    ];
+    var html = '<div class="stat-list">' + rows.map(function (r) {
+      return '<div class="stat-row"><span class="stat-row-label">' + r[0] + '</span><span class="stat-row-val">' + r[1] + '</span></div>';
+    }).join('') + '</div>';
+    openModal('내 스탯', html);
+  }
+
+  itemsBtn.addEventListener('click', renderItemsModal);
+  statsBtn.addEventListener('click', renderStatsModal);
+
+  // ---------- combat ----------
+  var attackPulse = 0;
+
+  function gainXp(amount) {
+    G.xp += amount * G.xpMult;
+    var leveled = false, evolved = false;
+    while (G.xp >= G.xpNeed) {
+      G.xp -= G.xpNeed;
+      G.level++;
+      G.xpNeed = needForLevel(G.level);
+      G.atkBase = Math.round(G.atkBase * 1.045) + 2 + Math.floor(G.level / 3);
+      leveled = true;
+      var ns = stageForLevel(G.level);
+      if (ns !== curStage) { curStage = ns; evolved = true; }
+    }
+    if (leveled) showQuote();
+    if (evolved) {
+      sfxEvo();
+      vibrate([15, 20, 15, 20, 30]);
+      flashOverlay.classList.remove('go'); void flashOverlay.offsetWidth; flashOverlay.classList.add('go');
+      toast('진화! ' + STAGE_NAMES[curStage] + '이(가) 되었다!', '🌟', 'evo');
+    } else if (leveled) {
+      sfxLevel();
+      vibrate(20);
+      toast('레벨 업! Lv.' + G.level, '⬆️', 'level');
+    }
+  }
+
+  function rollItemDrop(guaranteed) {
+    var chance = guaranteed ? 1 : 0.22;
+    if (Math.random() > chance) return;
+    var item = ITEM_POOL[Math.floor(Math.random() * ITEM_POOL.length)];
+    var displayVal;
+    if (item.type === 'atk') {
+      var gain = Math.round(item.val * (1 + G.level * 0.07));
+      G.atkItems += gain;
+      displayVal = '+' + gain;
+    } else {
+      displayVal = formatStatVal(item);
+      if (item.type === 'atkSpeed') G.atkSpeedMult += item.val;
+      else if (item.type === 'crit') G.critChance = Math.min(0.6, G.critChance + item.val);
+      else if (item.type === 'critDmg') G.critDamageBonus += item.val;
+      else if (item.type === 'gold') G.goldMult += item.val;
+      else if (item.type === 'xp') G.xpMult += item.val;
+    }
+    G.itemCount++;
+    G.inventory[item.name] = (G.inventory[item.name] || 0) + 1;
+    sfxItem();
+    syncHud();
+    toast(item.name + ' 획득! (' + STAT_LABEL[item.type] + ' ' + displayVal + ')', item.icon);
+  }
+
+  function monsterScreenPos() {
+    return { x: DW * 0.72, y: DH * 0.8 };
+  }
+
+  function characterHeadPos() {
+    var scale = Math.min(1.15, DW / 420);
+    return { x: DW * 0.26, y: DH * 0.82 - 82 * scale };
+  }
+
+  var QUOTES = [
+    '고통은 잠깐이지만, 영광은 영원하다.',
+    '쓰러진 자만이 다시 일어설 자격이 있다.',
+    '약한 뼈다귀는 없다, 아직 단련되지 않은 전사가 있을 뿐이다.',
+    '피와 땀 없이는 전설도 없다.',
+    '적을 두려워 말라, 나약함을 두려워하라.',
+    '한계는 내가 정한다.',
+    '포기는 배우지 않았다.',
+    '강해지기 위해 왔다. 멈추지 않는다.',
+    '한 대 더 맞아도 좋다, 한 걸음 더 나아간다.',
+    '진짜 힘은 다시 일어서는 것에서 나온다.',
+    '오늘 흘린 땀이 내일의 전설이 된다.',
+    '물러설 곳은 없다. 오직 전진뿐.',
+    '죽지 않는 한, 나는 계속 강해진다.',
+    '뼈만 남았어도 심장은 뜨겁다.',
+    '싸우지 않으면 아무것도 얻을 수 없다.'
+  ];
+
+  function showQuote() {
+    var text = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    var pos = characterHeadPos();
+    var el = document.createElement('div');
+    el.className = 'quote-bubble';
+    el.style.left = pos.x + 'px';
+    el.style.top = pos.y + 'px';
+    el.textContent = '"' + text + '"';
+    quoteLayer.appendChild(el);
+    setTimeout(function () { el.remove(); }, 3200);
+  }
+
+  function applyDamage(dmg, isCrit, isAuto) {
+    if (!monster || monster.dying) return;
+    monster.hp -= dmg;
+    monster.flashT = 1;
+    updateMonsterHpBar();
+    var pos = monsterScreenPos();
+    var jitterX = pos.x + (Math.random() * 26 - 13);
+    var jitterY = pos.y - DH * 0.22 + (Math.random() * 14 - 7);
+    spawnDmg(jitterX, jitterY, Math.round(dmg), isCrit ? 'crit' : (isAuto ? 'auto' : ''));
+    if (isCrit) { sfxCrit(); gainUltimateGauge(2); } else { sfxHit(); }
+    if (!isAuto) vibrate(6);
+
+    if (monster.hp <= 0 && !monster.dying) {
+      monster.dying = true;
+      monster.deathT = 0;
+      var n = G.encounterIndex;
+      var xpGain = Math.round(4 * Math.pow(1.11, n)) * (monster.isBoss ? 5 : 1);
+      var goldGain = Math.round(5 * Math.pow(1.1, n)) * G.goldMult * (monster.isBoss ? 4 : 1);
+      G.gold += goldGain;
+      G.kills++;
+      gainXp(xpGain);
+      rollItemDrop(monster.isBoss);
+      gainUltimateGauge(monster.isBoss ? 30 : 7);
+      var mp = monsterScreenPos();
+      var burstPt = { x: mp.x, y: mp.y - DH * 0.16 };
+      if (isCrit) {
+        sfxCritKill();
+        vibrate([15, 30, 15, 30, 15, 60]);
+        shake = monster.isBoss ? 22 : 16;
+        spawnShockwave(burstPt.x, burstPt.y, '#fff2e0');
+        spawnShockwave(burstPt.x, burstPt.y, 'hsl(' + monster.hue + ',90%,65%)');
+        burst(burstPt.x, burstPt.y, monster.hue, monster.isBoss ? 60 : 34);
+        spawnDmg(mp.x, mp.y - DH * 0.32, '💥 크리티컬 처치!', 'critkill', 900);
+      } else {
+        sfxDeath();
+        vibrate(monster.isBoss ? [10, 20, 10, 20, 40] : 10);
+        burst(burstPt.x, burstPt.y, monster.hue, monster.isBoss ? 34 : 16);
+      }
+      syncHud();
+      doSave();
+      pendingSpawn = 0.45;
+    }
+  }
+
+  function onAttack() {
+    ensureAudio();
+    if (!monster || monster.dying) return;
+    attackPulse = 1;
+    var crit = Math.random() < currentCritChance();
+    var critMult = 2 + G.critDamageBonus;
+    var dmg = totalAtk() * currentAtkMultiplier() * (crit ? critMult : 1) * (0.9 + Math.random() * 0.2);
+    applyDamage(dmg, crit, false);
+  }
+
+  var isPointerHolding = false, isKeyHolding = false, holdTimer = 0;
+  var HOLD_INTERVAL_BASE = 0.1;
+
+  stageEl.addEventListener('pointerdown', function (e) {
+    e.preventDefault();
+    isPointerHolding = true; holdTimer = 0;
+    onAttack();
+  });
+  window.addEventListener('pointerup', function () { isPointerHolding = false; });
+  window.addEventListener('pointercancel', function () { isPointerHolding = false; });
+
+  window.addEventListener('keydown', function (e) {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (!isKeyHolding) { isKeyHolding = true; holdTimer = 0; onAttack(); }
+    }
+  });
+  window.addEventListener('keyup', function (e) {
+    if (e.code === 'Space') isKeyHolding = false;
+  });
+
+  // ---------- drawing helpers ----------
+  function cap(x1, y1, x2, y2, w, color) {
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.restore();
+  }
+  function poly(pts, fill, stroke, lw) {
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.closePath();
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1; ctx.stroke(); }
+  }
+  function circ(x, y, r, fill, stroke, lw) {
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1; ctx.stroke(); }
+  }
+
+  var STAGE_CFG = {
+    1: { bone: '#ece3d1', outline: '#2b2320', cloth: null, armor: null, weapon: null, cape: null, aura: 0, wings: false, crown: false, halo: false, pauldrons: false, extraScale: 1 },
+    2: { bone: '#ece3d1', outline: '#2b2320', cloth: '#8a5a34', armor: null, weapon: null, cape: null, aura: 0, wings: false, crown: false, halo: false, pauldrons: false, extraScale: 1 },
+    3: { bone: '#ece3d1', outline: '#2b2320', cloth: null, armor: '#9aa4b2', armorDark: '#5f6874', weapon: 'steel', cape: '#7a2530', aura: 0, wings: false, crown: false, halo: false, pauldrons: false, extraScale: 1 },
+    4: { bone: '#ece3d1', outline: '#2b2320', cloth: null, armor: '#7d8fae', armorDark: '#43506b', weapon: 'steel', cape: '#243c66', aura: 0, wings: false, crown: false, halo: false, pauldrons: true, extraScale: 1.03 },
+    5: { bone: '#f6e6c2', outline: '#3a2410', cloth: null, armor: '#f2c14e', armorDark: '#b8862a', weapon: 'ember', cape: '#ff7a3d', aura: 1, wings: false, crown: false, halo: false, pauldrons: true, extraScale: 1.05 },
+    6: { bone: '#f6e6c2', outline: '#3a2410', cloth: null, armor: '#e8c96a', armorDark: '#a8842f', weapon: 'ember', cape: '#f2c14e', aura: 1, wings: false, crown: false, halo: true, pauldrons: true, extraScale: 1.07 },
+    7: { bone: '#fff3d8', outline: '#3a2410', cloth: null, armor: '#fff3d8', armorDark: '#d8b968', weapon: 'holy', cape: '#ffe9b0', aura: 2, wings: 'small', crown: false, halo: true, pauldrons: true, extraScale: 1.09 },
+    8: { bone: '#f3e8ff', outline: '#3a2410', cloth: null, armor: '#c9b6ff', armorDark: '#7a5fd6', weapon: 'arcane', cape: '#8b6bff', aura: 2, wings: true, crown: false, halo: true, pauldrons: true, extraScale: 1.12, runeOrbit: true },
+    9: { bone: '#fff9ec', outline: '#3a2410', cloth: null, armor: '#ffe9a8', armorDark: '#d6a93f', weapon: 'legend', cape: '#b98bff', aura: 3, wings: true, crown: true, halo: true, pauldrons: true, extraScale: 1.22, runeOrbit: true, sparkle: true }
+  };
+
+  function drawCharacter(ox, oy, scale, bobPhase, atkT) {
+    var cfg = STAGE_CFG[curStage];
+    var bob = Math.sin(bobPhase) * 2;
+    var atkSwing = Math.sin(Math.min(1, atkT) * Math.PI);
+    var es = cfg.extraScale || 1;
+
+    ctx.save();
+    ctx.translate(ox, oy + bob);
+    ctx.scale(scale * es, scale * es);
+    ctx.translate(atkSwing * 6, 0);
+
+    // aura
+    if (cfg.aura > 0) {
+      var t = performance.now() / 600;
+      var pulse = 0.75 + Math.sin(t) * 0.15;
+      var r = (cfg.aura === 3 ? 80 : cfg.aura === 2 ? 62 : 46) * pulse;
+      var grad = ctx.createRadialGradient(0, -40, 4, 0, -40, r);
+      if (cfg.aura === 3) {
+        grad.addColorStop(0, 'rgba(255,255,255,0.5)');
+        grad.addColorStop(0.35, 'rgba(242,193,78,0.34)');
+        grad.addColorStop(0.7, 'rgba(155,123,255,0.22)');
+        grad.addColorStop(1, 'rgba(155,123,255,0)');
+      } else if (cfg.aura === 2) {
+        grad.addColorStop(0, 'rgba(155,123,255,0.35)');
+        grad.addColorStop(0.6, 'rgba(242,193,78,0.18)');
+        grad.addColorStop(1, 'rgba(242,193,78,0)');
+      } else {
+        grad.addColorStop(0, 'rgba(255,122,61,0.32)');
+        grad.addColorStop(1, 'rgba(255,122,61,0)');
+      }
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(0, -40, r, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // wings
+    if (cfg.wings) {
+      var wingScale = cfg.wings === 'small' ? 0.55 : 1;
+      var flap = Math.sin(bobPhase * 1.3) * 4;
+      ctx.save();
+      if (wingScale !== 1) { ctx.translate(0, -45); ctx.scale(wingScale, wingScale); ctx.translate(0, 45); }
+      [-1, 1].forEach(function (side) {
+        var g = ctx.createLinearGradient(0, -70, side * 30, -20);
+        g.addColorStop(0, 'rgba(255,255,255,0.85)');
+        g.addColorStop(1, 'rgba(155,123,255,0.55)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.moveTo(side * 4, -60);
+        ctx.quadraticCurveTo(side * (26 + flap), -66, side * (30 + flap), -38);
+        ctx.quadraticCurveTo(side * 16, -42, side * 4, -30);
+        ctx.closePath();
+        ctx.fill();
+      });
+      ctx.restore();
+    }
+
+    // cape
+    if (cfg.cape) {
+      var sway = Math.sin(bobPhase * 0.9) * 5;
+      ctx.fillStyle = cfg.cape;
+      ctx.beginPath();
+      ctx.moveTo(-9, -56);
+      ctx.quadraticCurveTo(-18 + sway, -30, -12 + sway, -4);
+      ctx.lineTo(-4, -6);
+      ctx.quadraticCurveTo(-8 + sway * 0.6, -30, -2, -54);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // legs
+    cap(0, -34, -9, -2, 6, cfg.bone);
+    cap(0, -34, 9, -2, 6, cfg.bone);
+    if (cfg.armor) {
+      cap(-1, -20, -9, -3, 6, cfg.armorDark);
+      cap(1, -20, 9, -3, 6, cfg.armorDark);
+    }
+
+    // back arm
+    cap(0, -56, -17, -42, 5, cfg.bone);
+
+    // torso
+    if (cfg.armor) {
+      poly([[-10, -56], [10, -56], [8, -34], [-8, -34]], cfg.armor, cfg.armorDark, 1.5);
+    } else if (cfg.cloth) {
+      cap(0, -34, 0, -58, 8, '#c9bfa9');
+      poly([[-9, -36], [9, -36], [7, -26], [-7, -26]], cfg.cloth, null, 0);
+      for (var r = 0; r < 3; r++) cap(-5, -40 - r * 6, 5, -40 - r * 6, 2.4, '#d8cdb6');
+    } else {
+      cap(0, -34, 0, -58, 8, cfg.bone);
+      for (var ri = 0; ri < 3; ri++) cap(-5, -40 - ri * 6, 5, -40 - ri * 6, 2.4, cfg.bone);
+    }
+
+    // pauldrons (shoulder armor)
+    if (cfg.pauldrons) {
+      poly([[-13, -58], [-6, -60], [-7, -52], [-14, -52]], cfg.armorDark, cfg.armor, 1);
+      poly([[13, -58], [6, -60], [7, -52], [14, -52]], cfg.armorDark, cfg.armor, 1);
+    }
+
+    // front arm + weapon
+    var handX = 18 + atkSwing * 16, handY = -46 - atkSwing * 6;
+    var fistColor = cfg.cloth ? '#c99a5b' : cfg.bone;
+    cap(0, -56, handX, handY, cfg.armor ? 5 : 6, cfg.armor ? cfg.armorDark : fistColor);
+
+    if (cfg.weapon) {
+      var bladeColor = cfg.weapon === 'steel' ? '#d8dee6' : cfg.weapon === 'ember' ? '#ffb35c' :
+        cfg.weapon === 'holy' ? '#fff6d0' : cfg.weapon === 'legend' ? '#ffe9a8' : '#d9c9ff';
+      var glow = cfg.weapon === 'ember' ? '#ff7a3d' : cfg.weapon === 'arcane' ? '#9b7bff' :
+        cfg.weapon === 'holy' ? '#ffe28a' : cfg.weapon === 'legend' ? '#ffd1f0' : null;
+      if (cfg.weapon === 'legend') {
+        ctx.save();
+        ctx.globalAlpha = 0.45;
+        cap(handX - 4, handY + 4, handX + 26, handY - 16, 8, '#ffd1f0');
+        ctx.restore();
+      }
+      ctx.save();
+      if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = cfg.weapon === 'legend' || cfg.weapon === 'holy' ? 18 : 12; }
+      cap(handX, handY, handX + 30, handY - 20, cfg.weapon === 'legend' ? 6 : 4.5, bladeColor);
+      ctx.restore();
+      cap(handX - 4, handY + 4, handX + 4, handY - 4, 5, cfg.armorDark || '#7a5a2a');
+    } else {
+      circ(handX, handY, 4.5, fistColor, cfg.outline, 1.2);
+    }
+
+    // head
+    if (cfg.armor) {
+      circ(0, -70, 11, cfg.armor, cfg.armorDark, 1.5);
+      ctx.fillStyle = '#140b08';
+      ctx.fillRect(-6, -72, 12, 3);
+      if (cfg.aura > 0) {
+        ctx.save();
+        ctx.shadowColor = cfg.aura === 3 ? '#ffe28a' : cfg.aura === 2 ? '#9b7bff' : '#ff7a3d';
+        ctx.shadowBlur = 8;
+        ctx.fillStyle = cfg.aura === 3 ? '#fff6d0' : cfg.aura === 2 ? '#c9b6ff' : '#ffcf9e';
+        ctx.fillRect(-5, -71.3, 4, 1.6);
+        ctx.fillRect(1, -71.3, 4, 1.6);
+        ctx.restore();
+      }
+      if (cfg.crown) {
+        poly([[-7, -80], [-3, -87], [-1, -80]], '#f2c14e');
+        poly([[-2, -80], [0, -90], [2, -80]], '#ffe28a');
+        poly([[1, -80], [3, -87], [7, -80]], '#f2c14e');
+      }
+      if (cfg.halo) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,229,150,0.85)';
+        ctx.lineWidth = 2;
+        ctx.shadowColor = '#ffe28a'; ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.ellipse(0, -86, 11, 3.4, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    } else {
+      circ(0, -70, 10, cfg.bone, cfg.outline, 1.4);
+      ctx.fillStyle = cfg.outline;
+      circ(-4, -71, 1.6, cfg.outline);
+      circ(4, -71, 1.6, cfg.outline);
+    }
+
+    // orbiting runes/sparks
+    if (cfg.runeOrbit) {
+      var orbitCount = cfg.aura === 3 ? 5 : 3;
+      for (var oi = 0; oi < orbitCount; oi++) {
+        var ang = bobPhase * 1.4 + oi * (Math.PI * 2 / orbitCount);
+        var rx = Math.cos(ang) * 34, ry = -48 + Math.sin(ang) * 16;
+        ctx.save();
+        ctx.shadowColor = '#e6d6ff'; ctx.shadowBlur = 9;
+        ctx.fillStyle = 'rgba(235,222,255,0.92)';
+        ctx.beginPath(); ctx.arc(rx, ry, 2.3, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function drawMonster(ox, oy, scale) {
+    if (!monster) return;
+    var m = monster;
+    var deathScale = m.dying ? Math.max(0.05, 1 - m.deathT * 0.75) : 1;
+    var deathAlpha = m.dying ? Math.max(0, 1 - m.deathT * 1.3) : 1;
+    var spawnScale = m.spawnT < 1 ? (0.4 + m.spawnT * 0.6) : 1;
+    var s = scale * deathScale * spawnScale * m.sizeScale * (m.isBoss ? 1.5 : 1);
+    var bob = Math.sin(m.idlePhase) * 2.2;
+    var jitter = m.flashT > 0.55 ? (Math.random() - 0.5) * 4 : 0;
+
+    ctx.save();
+    ctx.globalAlpha = deathAlpha;
+    ctx.translate(ox + jitter, oy + bob - (m.isBoss ? 6 : 0));
+    ctx.scale(s, s);
+    if (m.dying) ctx.rotate(m.deathT * 0.6);
+
+    var baseR = 22;
+    var fillColor = 'hsl(' + m.hue + ',60%,48%)';
+    var strokeColor = 'hsl(' + m.hue + ',60%,24%)';
+
+    if (m.isBoss) {
+      ctx.save();
+      ctx.shadowColor = '#ff3b3b';
+      ctx.shadowBlur = 14 + Math.sin(performance.now() / 200) * 6;
+    }
+
+    ctx.beginPath();
+    for (var i = 0; i <= 10; i++) {
+      var idx = i % 10;
+      var ang = (idx / 10) * Math.PI * 2;
+      var r = baseR * m.bumps[idx];
+      var px = Math.cos(ang) * r;
+      var py = Math.sin(ang) * r * 0.85 - baseR * 0.3;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = fillColor; ctx.fill();
+    ctx.lineWidth = m.isBoss ? 3 : 2;
+    ctx.strokeStyle = m.isBoss ? '#ff5b5b' : strokeColor;
+    ctx.stroke();
+
+    if (m.isBoss) ctx.restore();
+
+    if (m.flashT > 0) {
+      ctx.fillStyle = 'rgba(255,255,255,' + (m.flashT * 0.65) + ')';
+      ctx.fill();
+    }
+
+    if (m.hasHorns) {
+      poly([[-10, -baseR * 0.95], [-4, -baseR * 1.5], [-2, -baseR * 0.9]], strokeColor);
+      poly([[10, -baseR * 0.95], [4, -baseR * 1.5], [2, -baseR * 0.9]], strokeColor);
+    }
+    if (m.isBoss) {
+      for (var sp = -2; sp <= 2; sp++) {
+        poly([[sp * 8 - 4, -baseR * 0.9], [sp * 8, -baseR * 1.6], [sp * 8 + 4, -baseR * 0.9]], '#5a1414');
+      }
+    }
+
+    var eyeSpacing = 9;
+    var startX = -((m.eyeCount - 1) * eyeSpacing) / 2;
+    for (var e = 0; e < m.eyeCount; e++) {
+      var ex = startX + e * eyeSpacing;
+      circ(ex, -baseR * 0.5, 3.4, '#fff8ee');
+      circ(ex, -baseR * 0.5, 1.7, '#1a0d0d');
+    }
+
+    ctx.restore();
+  }
+
+  function drawBackground(theme, groundY) {
+    var g = ctx.createLinearGradient(0, 0, 0, DH);
+    g.addColorStop(0, theme.sky1);
+    g.addColorStop(1, theme.sky2);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, DW, DH);
+
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = theme.accent;
+    for (var i = 0; i < 18; i++) {
+      var sx = (i * 71 + 20) % DW;
+      var sy = (i * 37 + 10) % (groundY * 0.7);
+      ctx.globalAlpha = 0.08 + 0.1 * Math.abs(Math.sin(i * 3.1 + performance.now() / 3000));
+      ctx.beginPath(); ctx.arc(sx, sy, 1.6, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.fillStyle = theme.ground;
+    ctx.fillRect(0, groundY, DW, DH - groundY);
+    ctx.save();
+    ctx.globalAlpha = 0.4;
+    ctx.strokeStyle = theme.accent;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(DW, groundY); ctx.stroke();
+    ctx.restore();
+  }
+
+  // ---------- loop ----------
+  var lastT = 0, bobPhase = 0, atkT = 2;
+  function update(dt) {
+    bobPhase += dt * (specialMode ? 4.6 : 2.1);
+    if (attackPulse > 0) { atkT = 1 - attackPulse; attackPulse -= dt * 5; if (attackPulse < 0) attackPulse = 0; }
+    else atkT = 2;
+
+    if (monster) {
+      monster.idlePhase += dt * 1.8;
+      if (monster.flashT > 0) monster.flashT -= dt * 4;
+      if (monster.spawnT < 1) monster.spawnT += dt * 3.5;
+      if (monster.dying) monster.deathT += dt / 0.35;
+    }
+
+    autoTimer += dt;
+    if (autoTimer >= AUTO_INTERVAL_BASE / G.atkSpeedMult) {
+      autoTimer = 0;
+      if (monster && !monster.dying) {
+        var dmg = totalAtk() * currentAtkMultiplier() * 0.5 * (0.9 + Math.random() * 0.2);
+        applyDamage(dmg, false, true);
+      }
+    }
+
+    if (isPointerHolding || isKeyHolding) {
+      holdTimer += dt;
+      var holdInterval = HOLD_INTERVAL_BASE / G.atkSpeedMult;
+      if (holdTimer >= holdInterval) {
+        holdTimer -= holdInterval;
+        onAttack();
+      }
+    }
+
+    if (pendingSpawn > 0) {
+      pendingSpawn -= dt;
+      if (pendingSpawn <= 0) spawnMonster();
+    }
+
+    if (specialMode) {
+      specialMode.timeLeft -= dt;
+      var w = specialMode.weapon;
+      specialBanner.innerHTML = w.icon + ' ' + w.name + ' · <span class="mult">' + w.mult + '배</span> · ' + Math.ceil(specialMode.timeLeft) + 's';
+      if (Math.random() < dt * 6) {
+        var chp = characterHeadPos();
+        burst(chp.x, chp.y + 30, w.hue, 2);
+      }
+      if (specialMode.timeLeft <= 0) {
+        specialMode = null;
+        specialBanner.classList.remove('show');
+      }
+    }
+
+    if (STAGE_CFG[curStage].sparkle && Math.random() < dt * 3) {
+      var shp = characterHeadPos();
+      particles.push({
+        x: shp.x + (Math.random() * 44 - 22), y: shp.y + 16 + Math.random() * 26,
+        vx: (Math.random() - 0.5) * 8, vy: -18 - Math.random() * 14,
+        life: 1, hue: 46, size: 1.6 + Math.random() * 1.8
+      });
+    }
+
+    for (var i = particles.length - 1; i >= 0; i--) {
+      var p = particles[i];
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 180 * dt;
+      p.life -= dt * 1.6;
+      if (p.life <= 0) particles.splice(i, 1);
+    }
+
+    for (var si = shockwaves.length - 1; si >= 0; si--) {
+      var sw = shockwaves[si];
+      sw.r += dt * 260;
+      sw.life -= dt * 2.4;
+      if (sw.life <= 0) shockwaves.splice(si, 1);
+    }
+
+    if (shake > 0) shake = Math.max(0, shake - dt * 30);
+  }
+
+  function draw() {
+    ctx.save();
+    if (shake > 0) {
+      ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
+    }
+
+    var ri = regionInfo(G.encounterIndex);
+    var groundY = DH * 0.86;
+    drawBackground(ri.theme, groundY);
+
+    var charX = DW * 0.26, charY = DH * 0.82;
+    var monPos = monsterScreenPos();
+
+    if (specialMode) {
+      var pulse = 0.14 + Math.sin(performance.now() / 130) * 0.06;
+      ctx.save();
+      ctx.globalAlpha = pulse;
+      ctx.fillStyle = 'hsl(' + specialMode.weapon.hue + ',90%,55%)';
+      ctx.fillRect(0, 0, DW, DH);
+      ctx.restore();
+    }
+
+    ctx.save();
+    if (specialMode) ctx.filter = specialMode.weapon.filter;
+    drawCharacter(charX, charY, Math.min(1.15, DW / 420), bobPhase, atkT);
+    ctx.restore();
+
+    if (specialMode) {
+      var iconScale = 1 + Math.sin(performance.now() / 160) * 0.12;
+      var chp = characterHeadPos();
+      ctx.save();
+      ctx.globalAlpha = 0.92;
+      ctx.font = Math.round(30 * iconScale) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.shadowColor = 'hsl(' + specialMode.weapon.hue + ',90%,60%)';
+      ctx.shadowBlur = 18;
+      ctx.fillText(specialMode.weapon.icon, chp.x, chp.y - 8);
+      ctx.restore();
+    }
+
+    if (monster) drawMonster(monPos.x, monPos.y, Math.min(1.1, DW / 420));
+
+    for (var si = 0; si < shockwaves.length; si++) {
+      var sw = shockwaves[si];
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, sw.life);
+      ctx.strokeStyle = sw.color;
+      ctx.lineWidth = 3 * Math.max(0, sw.life) + 1;
+      ctx.beginPath();
+      ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = 'hsl(' + p.hue + ',85%,65%)';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  function frame(t) {
+    if (!lastT) lastT = t;
+    var dt = Math.min(0.033, (t - lastT) / 1000);
+    lastT = t;
+    update(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  syncHud();
+  spawnMonster();
+  requestAnimationFrame(frame);
+
+  window.addEventListener('beforeunload', doSave);
+  setInterval(doSave, 8000);
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./service-worker.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
