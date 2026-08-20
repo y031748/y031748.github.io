@@ -1,0 +1,268 @@
+<title>2026년 8월 19일 뉴스브리핑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #eef1ee;
+    --paper-raised: #ffffff;
+    --ink: #1a222c;
+    --ink-soft: #4c5560;
+    --line: #ccd2ce;
+    --accent: #b8560f;
+    --accent-soft: #3d5a72;
+    --shadow: 0 1px 2px rgba(26, 34, 44, 0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #12161b;
+      --paper-raised: #191e24;
+      --ink: #e8eae7;
+      --ink-soft: #a8afaa;
+      --line: #2b333a;
+      --accent: #e2913f;
+      --accent-soft: #86adc4;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #12161b;
+    --paper-raised: #191e24;
+    --ink: #e8eae7;
+    --ink-soft: #a8afaa;
+    --line: #2b333a;
+    --accent: #e2913f;
+    --accent-soft: #86adc4;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Gowun Dodum", "Noto Sans KR", sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Sans KR", sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    color: var(--accent-soft);
+  }
+
+  h1 {
+    font-family: "IBM Plex Sans KR", sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    line-height: 1.18;
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  .masthead-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: "IBM Plex Sans KR", sans-serif;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .masthead-meta strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .lede {
+    margin: 28px 0 0;
+    color: var(--ink-soft);
+    font-size: 1rem;
+    max-width: 62ch;
+  }
+
+  .articles {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .article {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .article:last-child { border-bottom: none; }
+
+  .kicker {
+    font-family: "IBM Plex Sans KR", sans-serif;
+    font-weight: 600;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    color: var(--accent-soft);
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kicker .num {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .article h2 {
+    margin: 0;
+    font-family: "IBM Plex Sans KR", sans-serif;
+    font-size: 1.22rem;
+    font-weight: 700;
+    line-height: 1.42;
+    text-wrap: balance;
+  }
+
+  .article h2 a {
+    color: var(--ink);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 2px;
+    transition: background-size 0.18s ease, color 0.18s ease;
+  }
+
+  .article h2 a:hover,
+  .article h2 a:focus-visible {
+    color: var(--accent);
+    background-size: 100% 2px;
+  }
+
+  .article h2 a:focus-visible {
+    outline: 2px solid var(--accent-soft);
+    outline-offset: 3px;
+  }
+
+  .summary {
+    margin: 0;
+    max-width: 60ch;
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+  }
+
+  .empty {
+    padding: 48px 0;
+    font-family: "IBM Plex Sans KR", sans-serif;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-family: "IBM Plex Sans KR", sans-serif;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 40px 18px 72px; }
+    .masthead-meta { flex-direction: column; gap: 4px; align-items: flex-start; }
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">건설·인프라 데일리 브리핑</p>
+    <h1>2026년 8월 19일 뉴스브리핑</h1>
+    <div class="masthead-meta">
+      <span>키워드 <strong>포스코이앤씨</strong></span>
+      <span>기사 <strong>9건</strong></span>
+    </div>
+  </header>
+
+  <main class="articles">
+    <article class="article">
+      <p class="kicker"><span class="num">01</span>KBS · 19:20</p>
+      <h2><a href="https://n.news.naver.com/mnews/article/056/0012240467?sid=101" target="_blank" rel="noopener">[같이경제] '침체의 늪' 건설업…지역 건설 생태계 '흔들'</a></h2>
+      <p class="summary">지역 건설업 침체가 깊어지는 가운데 대구 지역 시공능력평가에서 포스코이앤씨를 제외한 지역 건설사 대부분이 40위권 밖으로 밀려난 것으로 나타났다. 대구시는 500억원 이상 공공공사의 공구 분할을 활성화하고 1000억원 이상 공사에는 공구분할 검토위원회를 도입하는 등 대책 마련에 나섰다.</p>
+    </article>
+
+    <article class="article">
+      <p class="kicker"><span class="num">02</span>파이낸셜뉴스 · 18:19</p>
+      <h2><a href="https://n.news.naver.com/mnews/article/014/0005563669?sid=101" target="_blank" rel="noopener">직무 멘토링·미래비전 특강… 건설 채용 한자리에</a></h2>
+      <p class="summary">현대건설, GS건설, 대우건설, DL이앤씨, 포스코이앤씨, 호반건설 등 주요 건설사와 인천국제공항공사 등 공기업이 함께하는 채용 행사가 열린다. 구직자를 위한 직무 멘토링과 미래비전 특강 프로그램도 함께 마련됐다.</p>
+    </article>
+
+    <article class="article">
+      <p class="kicker"><span class="num">03</span>경기일보 · 18:02</p>
+      <h2><a href="http://www.ikld.kr/news/articleView.html?idxno=339180" target="_blank" rel="noopener">건설사·공기업 25곳 한자리에… 대한건설협회, 25일 '스마트건설 청년' 행사</a></h2>
+      <p class="summary">대한건설협회가 오는 25일 현대건설, 포스코이앤씨, 호반건설 등 건설사와 공기업 등 25곳이 참여하는 '스마트건설 청년' 행사를 연다. 건설업 청년 인재 유치를 위한 채용 연계 프로그램으로 마련됐다.</p>
+    </article>
+
+    <article class="article">
+      <p class="kicker"><span class="num">04</span>SK브로드밴드뉴스 · 17:52</p>
+      <h2><a href="https://news.skbroadband.com/news/articleView.html?idxno=235376" target="_blank" rel="noopener">신안산선 광명구간 공사 재개 앞두고 '안전선언'</a></h2>
+      <p class="summary">신안산선 광명구간 공사 재개를 앞두고 시공사인 포스코이앤씨가 최고 수준의 안전 기준을 적용해 복구·보강 공사를 책임 시공하겠다는 안전선언을 밝혔다. 시민 대표들도 현장을 직접 찾아 위험 요인을 점검하고 개선사항을 제안할 예정이다.</p>
+    </article>
+
+    <article class="article">
+      <p class="kicker"><span class="num">05</span>매일경제 · 17:47</p>
+      <h2><a href="https://n.news.naver.com/mnews/article/009/0005723075?sid=101" target="_blank" rel="noopener">바다·공원이 한눈에…인천 학익역 초고층 대단지</a></h2>
+      <p class="summary">HDC현대산업개발·현대건설·포스코이앤씨 컨소시엄이 인천 미추홀구 학익동 용현·학익 1블록 도시개발사업 공동 3블록에서 '시티오씨엘 9단지 오션파크뷰'를 이달 선보인다. 지하 2층~지상 49층, 9개 동 규모로 조성되며 인근 바다와 공원 조망이 강점으로 꼽힌다.</p>
+    </article>
+
+    <article class="article">
+      <p class="kicker"><span class="num">06</span>한국경제 · 17:40</p>
+      <h2><a href="https://n.news.naver.com/mnews/article/015/0005322505?sid=101" target="_blank" rel="noopener">인천 '시티오씨엘' 1949가구 랜드마크</a></h2>
+      <p class="summary">HDC현대산업개발·현대건설·포스코이앤씨 컨소시엄이 인천 용현학익 1블록 도시개발구역 공동 3블록에서 총 1949가구 규모의 '시티오씨엘 9단지 오션파크뷰'를 공급한다. 지하 2층~지상 49층, 9개 동으로 조성되며 지역 내 랜드마크 단지로 주목받고 있다.</p>
+    </article>
+
+    <article class="article">
+      <p class="kicker"><span class="num">07</span>코스카저널 · 17:10</p>
+      <h2><a href="https://www.koscaj.com/news/articleView.html?idxno=325895" target="_blank" rel="noopener">10대 건설사 분쟁 들여다보니···국내선 '하자·공사비', 해외선 '공기'</a></h2>
+      <p class="summary">10대 건설사의 소송·중재 현황을 살펴보면 국내에서는 하자와 공사비 관련 분쟁이, 해외에서는 공기 지연 관련 분쟁이 두드러진다. 포스코이앤씨에서도 주52시간제 시행에 따른 추가 공사비를 비롯해 공사대금과 간접비를 둘러싼 소송·중재가 다수 확인됐다.</p>
+    </article>
+
+    <article class="article">
+      <p class="kicker"><span class="num">08</span>로이슈 · 16:54</p>
+      <h2><a href="http://www.lawissue.co.kr/view.php?ud=2026081916523892367191f6c6e_12" target="_blank" rel="noopener">"이름이 곧 시세"…지방 부동산 시장 휩쓰는 '1군 브랜드'</a></h2>
+      <p class="summary">지방 부동산 시장에서 1군 브랜드 아파트가 시세를 주도하는 가운데 포스코이앤씨의 부산 '더샵 트리센트'는 1순위 평균 18.3대 1의 청약 경쟁률을 기록했고 입주 후에도 시세를 이끌고 있다. 인근 '포레나 부산덕천 2차'도 두 달 만에 1억7300만원이 오르는 등 브랜드 프리미엄이 뚜렷했다.</p>
+    </article>
+
+    <article class="article">
+      <p class="kicker"><span class="num">09</span>굿모닝경제 · 16:44</p>
+      <h2><a href="https://www.goodkyung.com/news/articleView.html?idxno=290420" target="_blank" rel="noopener">상반기 '빅10' 중 삼성물산·SK에코플랜트 날았다…'반도체 훈풍'</a></h2>
+      <p class="summary">상반기 10대 건설사 실적을 보면 포스코이앤씨는 매출이 3조6800억원에서 3조2804억원으로 줄었지만 영업이익은 669억원 적자에서 974억원 흑자로 돌아섰다. 수익성 중심의 사업 운영과 철저한 원가관리가 흑자전환의 배경으로 꼽힌다.</p>
+    </article>
+  </main>
+
+  <footer>
+    네이버 뉴스 검색(키워드: 포스코이앤씨) 기준으로 매일 자동 수집·요약합니다.
+  </footer>
+</div>

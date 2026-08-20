@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PR과 머지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:wght@500;600;700&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f3f0e8;
+    --paper-raised: #fffdf8;
+    --ink: #221f1a;
+    --muted: #6f6a5e;
+    --line: rgba(34, 31, 26, 0.14);
+    --line-strong: rgba(34, 31, 26, 0.28);
+    --pr: #6a4bb0;
+    --pr-soft: rgba(106, 75, 176, 0.12);
+    --merge: #2f7d52;
+    --merge-soft: rgba(47, 125, 82, 0.12);
+    --main-line: #8a6a2f;
+    --shadow: 0 1px 2px rgba(34, 31, 26, 0.07), 0 10px 26px rgba(34, 31, 26, 0.07);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #18160f;
+      --paper-raised: #221f17;
+      --ink: #f2ede2;
+      --muted: #a39b89;
+      --line: rgba(242, 237, 226, 0.14);
+      --line-strong: rgba(242, 237, 226, 0.26);
+      --pr: #b09bea;
+      --pr-soft: rgba(176, 155, 234, 0.16);
+      --merge: #5fc98f;
+      --merge-soft: rgba(95, 201, 143, 0.14);
+      --main-line: #d9b56c;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 30px rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #18160f;
+    --paper-raised: #221f17;
+    --ink: #f2ede2;
+    --muted: #a39b89;
+    --line: rgba(242, 237, 226, 0.14);
+    --line-strong: rgba(242, 237, 226, 0.26);
+    --pr: #b09bea;
+    --pr-soft: rgba(176, 155, 234, 0.16);
+    --merge: #5fc98f;
+    --merge-soft: rgba(95, 201, 143, 0.14);
+    --main-line: #d9b56c;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--line) 31px, var(--line) 32px),
+      var(--paper);
+    color: var(--ink);
+    font-family: "Karla", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--merge-soft); }
+
+  .wrap { max-width: 740px; margin: 0 auto; padding: 60px 22px 100px; }
+
+  h1, h2, h3 {
+    font-family: "Petrona", "Noto Serif KR", serif;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    text-wrap: balance;
+    margin: 0;
+  }
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--merge); margin: 0 0 16px;
+  }
+  .kicker::before { content: ""; width: 18px; height: 1.5px; background: var(--merge); }
+
+  header.hero h1 { font-size: clamp(30px, 6.4vw, 44px); line-height: 1.28; }
+  .hero p.lede { font-size: 17px; color: var(--muted); max-width: 60ch; margin: 18px 0 0; }
+
+  section { margin-top: 68px; }
+  .section-head { margin-bottom: 26px; }
+  .section-head h2 { font-size: clamp(21px, 3.6vw, 26px); }
+  .section-head .sub { color: var(--muted); font-size: 14.5px; margin-top: 8px; max-width: 58ch; }
+
+  p { margin: 14px 0; }
+  .prose { max-width: 64ch; }
+  .prose strong.pr { color: var(--pr); background: var(--pr-soft); padding: 0 3px; border-radius: 3px; }
+  .prose strong.merge { color: var(--merge); background: var(--merge-soft); padding: 0 3px; border-radius: 3px; }
+
+  /* ---- branch diagram ---- */
+  .branch-diagram {
+    margin-top: 30px; background: var(--paper-raised); border: 1px solid var(--line);
+    box-shadow: var(--shadow); padding: 34px 26px 26px; overflow-x: auto;
+  }
+  .bd-track { position: relative; min-width: 560px; height: 190px; }
+  .bd-line {
+    position: absolute; left: 0; right: 0; height: 3px; top: 40px;
+    background: var(--main-line); border-radius: 2px;
+  }
+  .bd-line-label {
+    position: absolute; left: 0; top: 16px; font-family: "IBM Plex Mono", monospace;
+    font-size: 11px; color: var(--main-line); letter-spacing: 0.04em;
+  }
+  .bd-branch-path {
+    position: absolute; left: 26%; top: 40px; width: 48%; height: 100px;
+    border: 2px solid var(--pr); border-top: none; border-right: none;
+    border-radius: 0 0 0 26px;
+  }
+  .bd-branch-path.merge-back {
+    left: 26%; top: 140px; width: 48%; height: 100px;
+    border: 2px solid var(--merge); border-bottom: none; border-right: none;
+    border-radius: 26px 0 0 0; transform: scaleY(-1) translateY(-100px);
+    position: absolute;
+  }
+  .bd-branch-label {
+    position: absolute; left: 26%; top: 148px; font-family: "IBM Plex Mono", monospace;
+    font-size: 11px; color: var(--pr); letter-spacing: 0.02em; white-space: nowrap;
+  }
+  .bd-dot {
+    position: absolute; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--main-line); border: 2px solid var(--paper-raised); top: 34px;
+  }
+  .bd-dot.pr-dot { background: var(--pr); }
+  .bd-dot.merge-dot { background: var(--merge); width: 15px; height: 15px; top: 32.5px; }
+  .bd-tag {
+    position: absolute; font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    padding: 3px 8px; border-radius: 4px; white-space: nowrap; transform: translateX(-50%);
+  }
+  .bd-tag.pr { top: 90px; background: var(--pr-soft); color: var(--pr); }
+  .bd-tag.merge { top: 8px; background: var(--merge-soft); color: var(--merge); font-weight: 700; }
+
+  /* ---- pr card ---- */
+  .pr-card {
+    margin-top: 28px; background: var(--paper-raised); border: 1px solid var(--line);
+    border-left: 3px solid var(--pr); box-shadow: var(--shadow); padding: 22px 24px 20px;
+  }
+  .pr-card .row { display: flex; gap: 14px; padding: 8px 0; align-items: baseline; flex-wrap: wrap; }
+  .pr-card .row + .row { border-top: 1px solid var(--line); }
+  .pr-card .field {
+    flex: 0 0 100px; font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .pr-card .val { font-size: 14.5px; }
+  .pr-card .val.branches { font-family: "IBM Plex Mono", monospace; }
+  .pr-card .val.branches .arrow { color: var(--merge); margin: 0 6px; }
+  .pr-card .val.msg { font-weight: 600; }
+  .pr-card .status {
+    display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 11px;
+    padding: 2px 9px; border-radius: 999px; background: var(--pr-soft); color: var(--pr); font-weight: 600;
+  }
+
+  .note-box {
+    margin-top: 22px; border: 1px dashed var(--line-strong); padding: 16px 18px;
+    font-size: 14.5px; color: var(--muted); background: var(--paper-raised);
+  }
+  .note-box strong { color: var(--ink); }
+
+  /* ---- steps ---- */
+  .timeline { position: relative; margin-top: 32px; padding-left: 46px; }
+  .timeline::before { content: ""; position: absolute; left: 17px; top: 6px; bottom: 6px; width: 2px; background: var(--line-strong); }
+  .step { position: relative; padding-bottom: 30px; }
+  .step:last-child { padding-bottom: 0; }
+  .step-num {
+    position: absolute; left: -46px; top: 0; width: 35px; height: 35px; border-radius: 50%;
+    background: var(--paper-raised); border: 2px solid var(--pr); color: var(--pr);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: 14px;
+  }
+  .step.merged .step-num { border-color: var(--merge); color: var(--merge); }
+  .step h3 { font-size: 16.5px; margin-bottom: 6px; padding-top: 6px; }
+  .step p { font-size: 14.5px; color: var(--muted); margin: 0; max-width: 58ch; }
+
+  .meaning {
+    margin-top: 30px; background: var(--paper-raised); border: 1px solid var(--line);
+    border-top: 3px solid var(--merge); padding: 26px 26px 24px; box-shadow: var(--shadow);
+  }
+  .meaning ul { margin: 12px 0 0; padding-left: 20px; }
+  .meaning li { font-size: 15px; margin-bottom: 9px; }
+  .meaning li::marker { color: var(--merge); }
+  .meaning a { color: var(--merge); }
+
+  footer {
+    margin-top: 90px; padding-top: 22px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); font-family: "IBM Plex Mono", monospace;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pr-card, .step { transition: transform 0.2s ease; }
+    .pr-card:hover { transform: translateY(-2px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">개념 노트</p>
+    <h1>PR은 요청이고, 머지는 그 요청이 받아들여지는 순간</h1>
+    <p class="lede">
+      브랜치에 커밋을 쌓아도 그 자체론 <code>main</code>에 아무 영향이 없어요. <strong class="pr">PR(Pull Request)</strong>은
+      "이 브랜치 내용을 main에 반영해달라"는 요청이고, <strong class="merge">머지(merge)</strong>는 그 요청이 실제로
+      받아들여져 두 역사가 하나로 합쳐지는 동작이에요. 방금 만든 PR을 예로 풀어볼게요.
+    </p>
+  </header>
+
+  <section id="diagram">
+    <div class="section-head">
+      <h2>브랜치가 갈라졌다 다시 만나는 모양</h2>
+      <p class="sub">main은 계속 흘러가고, 작업 브랜치는 거기서 갈라져 나왔다가 PR과 머지를 거쳐 다시 합류해요.</p>
+    </div>
+
+    <div class="branch-diagram">
+      <div class="bd-track">
+        <div class="bd-line-label">main</div>
+        <div class="bd-line"></div>
+        <div class="bd-dot" style="left:6%"></div>
+        <div class="bd-dot" style="left:20%"></div>
+        <div class="bd-branch-path"></div>
+        <div class="bd-branch-label">claude/yesterday-discussion-review-bz9rnd</div>
+        <div class="bd-dot pr-dot" style="left:calc(26% - 6px); top:130px;"></div>
+        <div class="bd-tag pr" style="left:26%;">커밋 · twist-drill/index.html</div>
+        <div class="bd-branch-path merge-back"></div>
+        <div class="bd-dot merge-dot" style="left:calc(74% - 7px);"></div>
+        <div class="bd-tag merge" style="left:74%;">머지 → main</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="prcard">
+    <div class="section-head">
+      <h2>방금 만든 PR</h2>
+      <p class="sub">이번에 연 PR을 뜯어보면 이렇게 생겼어요.</p>
+    </div>
+
+    <div class="pr-card">
+      <div class="row">
+        <div class="field">번호</div>
+        <div class="val mono">#1</div>
+      </div>
+      <div class="row">
+        <div class="field">제목</div>
+        <div class="val msg">Add 빙글 드릴 (Twist Drill) game</div>
+      </div>
+      <div class="row">
+        <div class="field">브랜치</div>
+        <div class="val branches">claude/yesterday-discussion-review-bz9rnd <span class="arrow">→</span> main</div>
+      </div>
+      <div class="row">
+        <div class="field">변경 파일</div>
+        <div class="val mono">twist-drill/index.html (신규)</div>
+      </div>
+      <div class="row">
+        <div class="field">상태</div>
+        <div class="val"><span class="status">OPEN · 머지 대기중</span></div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>왜 바로 main에 커밋하지 않았을까?</strong> PR을 거치면 머지 전에 변경 내용을 한 번 더 검토할 수 있고,
+      이 브랜치의 커밋들이 main 역사에 하나의 사건으로 명확히 남아요. 지금 이 PR은 아직 머지되지 않아서,
+      <code>twist-drill/index.html</code>은 main에도, 실제 사이트에도 반영되지 않은 상태예요.
+    </div>
+  </section>
+
+  <section id="steps">
+    <div class="section-head">
+      <h2>머지를 누르면 일어나는 일</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>두 역사를 비교</h3>
+        <p>GitHub이 main과 작업 브랜치, 두 커밋 역사가 어디서 갈라졌는지 찾아요.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>변경사항을 하나로 합침</h3>
+        <p>작업 브랜치에서 쌓인 커밋들을 main 위에 적용해요. 충돌(같은 부분을 서로 다르게 고친 경우)이 없으면 자동으로 처리돼요.</p>
+      </div>
+      <div class="step merged">
+        <div class="step-num">3</div>
+        <h3>main이 그 내용을 갖게 됨</h3>
+        <p>머지가 끝나면 main 브랜치 자체가 <code>twist-drill/index.html</code>을 포함한 상태가 돼요. PR은 자동으로 닫혀요.</p>
+      </div>
+      <div class="step merged">
+        <div class="step-num">4</div>
+        <h3>사이트에 실제로 반영</h3>
+        <p>GitHub Pages가 main의 최신 상태를 다시 배포해서, 몇 분 안에 <code>y031748.github.io/twist-drill/</code>에서 실제로 열려요.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="meaning">
+    <div class="section-head"><h2>정리하면</h2></div>
+    <div class="meaning">
+      <ul>
+        <li><strong class="pr">PR</strong>은 "이 브랜치를 main에 반영해달라"는 요청이자 검토 단위예요. 그 자체로는 아직 아무것도 바뀌지 않아요.</li>
+        <li><strong class="merge">머지</strong>는 그 요청이 실행되는 순간이에요 — 두 브랜치의 역사가 합쳐지고, main이 그 변경을 갖게 돼요.</li>
+        <li>머지돼야 비로소 GitHub Pages가 다시 배포되고, 실제 사이트에 반영돼요.</li>
+        <li>지금 열려 있는 <a href="https://github.com/y031748/y031748.github.io/pull/1" target="_blank" rel="noopener">PR #1</a>이 바로 그 대기 상태예요.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>y031748.github.io · 개념 노트</footer>
+
+</div>
+
+</body>
+</html>
