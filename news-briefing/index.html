@@ -1,282 +1,240 @@
 <!doctype html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026년 8월 22일 뉴스브리핑</title>
+<title>2026년 8월 24일 뉴스브리핑</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;700;800;900&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink: #1b232d;
-    --ink-soft: #4c5866;
-    --paper: #eef1f1;
-    --surface: #ffffff;
-    --rule: #ccd3d5;
-    --accent: #2c5f8a;
-    --accent-strong: #1c4266;
-    --brass: #93701f;
-    --link-visited: #5a6b78;
+  :root {
+    --bg: #eae7e0;
+    --surface: #f5f3ee;
+    --surface-line: #d3cfc4;
+    --ink: #232220;
+    --ink-muted: #5b574f;
+    --ink-faint: #8a8578;
+    --accent: #1f4e63;
+    --accent-warm: #b5793a;
+    --rule: #c7c2b5;
   }
-
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --ink: #e7eaec;
-      --ink-soft: #a7b1ba;
-      --paper: #12161c;
-      --surface: #181e26;
-      --rule: #333e49;
-      --accent: #7fb0dd;
-      --accent-strong: #a6cbeb;
-      --brass: #d3ac4f;
-      --link-visited: #93a4b2;
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17181a;
+      --surface: #1f2123;
+      --surface-line: #34363a;
+      --ink: #ede9e1;
+      --ink-muted: #a6a197;
+      --ink-faint: #706c62;
+      --accent: #7db2cf;
+      --accent-warm: #d9a45f;
+      --rule: #3a3c3f;
     }
   }
-
-  :root[data-theme="dark"]{
-    --ink: #e7eaec;
-    --ink-soft: #a7b1ba;
-    --paper: #12161c;
-    --surface: #181e26;
-    --rule: #333e49;
-    --accent: #7fb0dd;
-    --accent-strong: #a6cbeb;
-    --brass: #d3ac4f;
-    --link-visited: #93a4b2;
+  :root[data-theme="dark"] {
+    --bg: #17181a;
+    --surface: #1f2123;
+    --surface-line: #34363a;
+    --ink: #ede9e1;
+    --ink-muted: #a6a197;
+    --ink-faint: #706c62;
+    --accent: #7db2cf;
+    --accent-warm: #d9a45f;
+    --rule: #3a3c3f;
   }
 
-  *{ box-sizing: border-box; }
+  * { box-sizing: border-box; }
 
-  body{
+  body {
     margin: 0;
-    background: var(--paper);
+    background: var(--bg);
     color: var(--ink);
-    font-family: "IBM Plex Sans KR", "Malgun Gothic", sans-serif;
+    font-family: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
     -webkit-font-smoothing: antialiased;
+    line-height: 1.7;
   }
 
-  .page{
+  .page {
     max-width: 720px;
     margin: 0 auto;
-    padding: 3.5rem 1.5rem 5rem;
+    padding: 56px 24px 80px;
   }
 
-  header.masthead{
+  header.masthead {
     border-bottom: 3px solid var(--ink);
-    padding-bottom: 1.6rem;
-    margin-bottom: 2.2rem;
+    padding-bottom: 28px;
+    margin-bottom: 40px;
   }
 
-  .kicker{
-    font-family: "IBM Plex Sans KR", sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.22em;
+  .eyebrow {
+    font-family: "Gothic A1", sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--accent);
-    margin: 0 0 0.9rem;
+    color: var(--accent-warm);
+    margin: 0 0 14px;
   }
 
-  h1.headline{
-    font-family: "Gothic A1", "Malgun Gothic", sans-serif;
-    font-weight: 800;
-    font-size: clamp(2.1rem, 5.5vw, 2.9rem);
+  h1.title {
+    font-family: "Gothic A1", sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 5.4vw, 42px);
     line-height: 1.18;
     letter-spacing: -0.01em;
-    margin: 0 0 0.7rem;
+    margin: 0 0 12px;
     text-wrap: balance;
     color: var(--ink);
   }
 
-  .dek{
-    font-size: 1.02rem;
-    color: var(--ink-soft);
-    margin: 0;
-    max-width: 34em;
-    line-height: 1.6;
+  .dateline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    align-items: baseline;
+    font-size: 14.5px;
+    color: var(--ink-muted);
   }
 
-  .dek strong{
-    color: var(--ink);
-    font-weight: 600;
+  .dateline .divider {
+    color: var(--ink-faint);
+  }
+
+  .count-badge {
     font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    font-weight: 700;
   }
 
-  main{
+  section.articles {
     display: flex;
     flex-direction: column;
   }
 
-  .article{
-    padding: 1.9rem 0;
+  article.card {
+    padding: 30px 0;
     border-bottom: 1px solid var(--rule);
   }
+  article.card:first-child { padding-top: 0; }
+  article.card:last-child { border-bottom: none; }
 
-  .article:first-child{ padding-top: 0; }
-  .article:last-child{ border-bottom: none; }
-
-  .meta{
+  .kicker {
     display: flex;
-    gap: 0.7rem;
-    align-items: baseline;
-    font-size: 0.8rem;
-    color: var(--ink-soft);
-    margin-bottom: 0.55rem;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .meta .source{
-    font-weight: 600;
-    color: var(--brass);
-    letter-spacing: 0.02em;
-  }
-
-  .meta .dot{
-    color: var(--rule);
-  }
-
-  h2.title{
-    font-family: "Gothic A1", "Malgun Gothic", sans-serif;
+    align-items: center;
+    gap: 10px;
+    font-family: "Gothic A1", sans-serif;
+    font-size: 12px;
     font-weight: 700;
-    font-size: 1.28rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+  }
+
+  .kicker .source {
+    color: var(--accent);
+  }
+
+  .kicker .sep {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+    flex: none;
+  }
+
+  h2.headline {
+    font-family: "Gothic A1", sans-serif;
+    font-weight: 800;
+    font-size: 21px;
     line-height: 1.4;
-    margin: 0 0 0.6rem;
+    margin: 0 0 12px;
     text-wrap: balance;
   }
 
-  h2.title a{
+  h2.headline a {
     color: var(--ink);
     text-decoration: none;
     background-image: linear-gradient(var(--accent), var(--accent));
     background-repeat: no-repeat;
     background-position: 0 100%;
     background-size: 0% 2px;
-    transition: background-size 0.18s ease, color 0.18s ease;
+    transition: background-size 0.2s ease;
   }
 
-  h2.title a:hover,
-  h2.title a:focus-visible{
-    color: var(--accent-strong);
+  h2.headline a:hover,
+  h2.headline a:focus-visible {
     background-size: 100% 2px;
   }
 
-  h2.title a:visited{
-    color: var(--link-visited);
-  }
-
-  h2.title a:focus-visible{
+  h2.headline a:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
     border-radius: 2px;
   }
 
-  p.summary{
+  p.summary {
     margin: 0;
-    font-size: 0.98rem;
-    line-height: 1.72;
-    color: var(--ink);
     max-width: 62ch;
+    font-size: 16px;
+    color: var(--ink-muted);
   }
 
-  .empty{
-    padding: 3rem 0;
-    font-size: 1.05rem;
-    color: var(--ink-soft);
+  .empty {
+    padding: 48px 0;
     text-align: center;
+    color: var(--ink-muted);
+    font-size: 16px;
     border-bottom: 1px solid var(--rule);
   }
 
-  footer{
-    margin-top: 2.6rem;
-    padding-top: 1.2rem;
+  footer.colophon {
+    margin-top: 48px;
+    padding-top: 20px;
     border-top: 1px solid var(--rule);
-    font-size: 0.78rem;
-    color: var(--ink-soft);
+    font-size: 12.5px;
+    color: var(--ink-faint);
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 8px;
   }
 
-  @media (max-width: 480px){
-    .page{ padding: 2.4rem 1.1rem 4rem; }
-    footer{ flex-direction: column; }
+  @media (prefers-reduced-motion: reduce) {
+    h2.headline a { transition: none; }
   }
 </style>
-</head>
-<body>
-<div class="page">
 
+<div class="page">
   <header class="masthead">
-    <p class="kicker">포스코이앤씨 뉴스브리핑</p>
-    <h1 class="headline">2026년 8월 22일 뉴스브리핑</h1>
-    <p class="dek">오늘 수집된 포스코이앤씨 관련 기사 <strong>9건</strong>을 시간순으로 정리했습니다.</p>
+    <p class="eyebrow">일일 뉴스브리핑 · 포스코이앤씨</p>
+    <h1 class="title">2026년 8월 24일 뉴스브리핑</h1>
+    <div class="dateline">
+      <span>포스코이앤씨 관련 기사 <span class="count-badge">3건</span></span>
+      <span class="divider">·</span>
+      <span>네이버 뉴스 검색 기준</span>
+    </div>
   </header>
 
-  <main>
-
-    <article class="article">
-      <p class="meta"><span class="source">워크투데이</span><span class="dot">·</span><span>오후 11:56</span></p>
-      <h2 class="title"><a href="http://www.worktoday.co.kr/news/articleView.html?idxno=88265" target="_blank" rel="noopener">8월 넷째 주 전국 13곳서 3886가구 청약 … 경기서 '매머드급' 단지 잇따라</a></h2>
-      <p class="summary">이번 주 전국 13곳에서 총 3886가구가 분양에 나서는 가운데, 포스코이앤씨는 오는 28일 경기 여주시 홍문동에 짓는 '더샵 여주역더퍼스트' 모델하우스를 연다. 지하 2층~지상 29층, 7개 동, 전용 84㎡ 단일면적으로 총 696가구 규모다.</p>
+  <section class="articles">
+    <article class="card">
+      <p class="kicker"><span class="source">이투데이</span><span class="sep"></span><span>2026.08.24 06:02</span></p>
+      <h2 class="headline"><a href="https://www.etoday.co.kr/news/view/2617028" target="_blank" rel="noopener">미매각 공포에 공모채 발행 '뚝'…자금줄 다변화하는 건설사들</a></h2>
+      <p class="summary">공모 회사채 미매각 우려가 커지면서 건설사들이 자금 조달 창구를 다변화하고 있다. 포스코이앤씨는 사모 방식의 신종자본증권을 발행해 기존 채무 상환에 활용했으며, 조달 자금이 회계상 자본으로 잡히면서 부채비율을 낮추는 효과도 얻었다. 업계에서는 하반기에도 이 같은 사모 조달 흐름이 이어질 것으로 보고 있다.</p>
     </article>
-
-    <article class="article">
-      <p class="meta"><span class="source">뉴시스</span><span class="dot">·</span><span>오전 9:00</span></p>
-      <h2 class="title"><a href="https://n.news.naver.com/mnews/article/003/0014141536?sid=101" target="_blank" rel="noopener">홍은·부천 등 분양…하월곡·성남 등 견본주택[분양캘린더]</a></h2>
-      <p class="summary">IPARK현대산업개발·현대건설·포스코이앤씨 컨소시엄이 인천 미추홀구 학익동 일원에 '시티오씨엘9단지오션파크뷰'를 공급한다. 지하 2층~지상 49층, 9개 동, 전용 59~136㎡, 총 1949가구 규모의 대단지다.</p>
+    <article class="card">
+      <p class="kicker"><span class="source">FN times</span><span class="sep"></span><span>2026.08.24 00:02</span></p>
+      <h2 class="headline"><a href="https://www.fntimes.com/html/view.php?ud=202608220112014437dd55077bc2_18" target="_blank" rel="noopener">삼성·현대 3조대 '양강'…3위는 대우건설 [2026 시평-신인도평가]</a></h2>
+      <p class="summary">2026년 시공능력평가 신인도 부문에서 삼성물산과 현대건설이 3조원대 실적으로 나란히 1·2위에 올랐고, 대우건설이 3위를 차지했다. 포스코이앤씨는 1조6765억원으로 6위에 이름을 올렸으며, 롯데건설이 7위, SK에코플랜트와 DL이앤씨가 각각 8·9위로 뒤를 이었다.</p>
     </article>
-
-    <article class="article">
-      <p class="meta"><span class="source">서울경제TV</span><span class="dot">·</span><span>오전 8:02</span></p>
-      <h2 class="title"><a href="https://www.sentv.co.kr/article/view/sentv202608210198" target="_blank" rel="noopener">[분양 캘린더] '상동역롯데캐슬시그니처' 등 5430가구 분양</a></h2>
-      <p class="summary">이번 주 수도권에서 5430가구가 분양되는 가운데, HDC현대산업개발·현대건설·포스코이앤씨가 짓는 인천 학익동 '시티오씨엘9단지오션파크뷰'(1949가구)가 대표 물량으로 소개됐다.</p>
+    <article class="card">
+      <p class="kicker"><span class="source">FN times</span><span class="sep"></span><span>2026.08.24 00:02</span></p>
+      <h2 class="headline"><a href="https://www.fntimes.com/html/view.php?ud=202608220109186226dd55077bc2_18" target="_blank" rel="noopener">기술력 1위 '현대건설'…계룡건설 '톱10' 진입 [2026 시평-기술능력평가]</a></h2>
+      <p class="summary">2026년 시공능력평가 기술능력 부문에서는 현대건설이 1위에 올랐고, 삼성물산에 이어 포스코이앤씨(대표이사 송치영)가 1조1847억원으로 상위권에 자리했다. DL이앤씨와 GS건설이 뒤를 이었고, 이번 평가에서는 계룡건설이 처음으로 톱10에 진입한 점이 눈에 띈다.</p>
     </article>
+  </section>
 
-    <article class="article">
-      <p class="meta"><span class="source">뉴스1</span><span class="dot">·</span><span>오전 8:00</span></p>
-      <h2 class="title"><a href="https://n.news.naver.com/mnews/article/421/0009126818?sid=101" target="_blank" rel="noopener">[분양캘린더] 다음 주 5430가구 공급…10곳 중 7곳 수도권</a></h2>
-      <p class="summary">다음 주 분양 물량 5430가구 중 7곳이 수도권에 몰린 가운데, HDC현대산업개발·현대건설·포스코이앤씨의 인천 학익동 '시티오씨엘9단지오션파크뷰'(1949가구)가 수도권 대단지로 이름을 올렸다.</p>
-    </article>
-
-    <article class="article">
-      <p class="meta"><span class="source">데일리안</span><span class="dot">·</span><span>오전 7:03</span></p>
-      <h2 class="title"><a href="https://n.news.naver.com/mnews/article/119/0003124124?sid=101" target="_blank" rel="noopener">"나홀로보다 대단지가 낫다"…집값 끌어올리는 '브랜드 타운'</a></h2>
-      <p class="summary">대단지 브랜드타운이 주변 집값 상승을 견인한다는 분석이 나온 가운데, IPARK현대산업개발·현대건설·포스코이앤씨가 이달 인천 용현·학익 일원에서 분양하는 '시티오씨엘 9단지 오션파크뷰'(1949가구)가 사례로 꼽혔다.</p>
-    </article>
-
-    <article class="article">
-      <p class="meta"><span class="source">뉴스핌</span><span class="dot">·</span><span>오전 6:00</span></p>
-      <h2 class="title"><a href="https://www.newspim.com/news/view/20260821000903" target="_blank" rel="noopener">[분양캘린더] 서울 쌍용더플래티넘서대문 등 5430가구</a></h2>
-      <p class="summary">이번 주 분양 캘린더에 서울 쌍용더플래티넘서대문 등과 함께, IPARK현대산업개발·현대건설·포스코이앤씨의 인천 학익동 '시티오씨엘9단지오션파크뷰'(1949가구)가 이름을 올렸다.</p>
-    </article>
-
-    <article class="article">
-      <p class="meta"><span class="source">스마트비즈</span><span class="dot">·</span><span>오전 5:30</span></p>
-      <h2 class="title"><a href="https://www.smartbizn.com/news/articleView.html?idxno=151836" target="_blank" rel="noopener">[분양캘린더] 8월 넷째 주 3886가구 청약···서울 '소량'·경기 '대단지'</a></h2>
-      <p class="summary">8월 넷째 주 전국에서 3886가구가 청약에 나서는 가운데, 포스코이앤씨는 28일 경기 여주시 홍문동에서 '더샵 여주역더퍼스트'(696가구) 모델하우스를 개관할 예정이다.</p>
-    </article>
-
-    <article class="article">
-      <p class="meta"><span class="source">YTN</span><span class="dot">·</span><span>오전 4:30</span></p>
-      <h2 class="title"><a href="https://n.news.naver.com/mnews/article/052/0002396620?sid=102" target="_blank" rel="noopener">'10년 표류' 전주 대한방직 재개발...이번엔 약속 번복</a></h2>
-      <p class="summary">10년째 표류 중인 전주 대한방직 부지 재개발을 두고 시행사 자광이 GS건설·포스코이앤씨 등 시공사들과 협의를 이어가고 있다. 전주시장은 시민과의 약속을 지키는 방향으로 결정하겠다고 밝혔다.</p>
-    </article>
-
-    <article class="article">
-      <p class="meta"><span class="source">SR타임즈</span><span class="dot">·</span><span>오전 12:06</span></p>
-      <h2 class="title"><a href="http://www.srtimes.kr/news/articleView.html?idxno=210604" target="_blank" rel="noopener">[8월 넷째주 분양동향] 전국 3,886가구 청약…서울 소규모 vs 경기 매머드</a></h2>
-      <p class="summary">28일 포스코이앤씨는 경기 여주시 홍문동에 짓는 '더샵 여주역더퍼스트'(696가구) 견본주택을 연다. 경강선 여주역 접근성과 인근 상업시설 인프라가 강점으로 꼽힌다.</p>
-    </article>
-
-  </main>
-
-  <footer>
-    <span>네이버 뉴스 검색 기반 · 매일 자동 생성</span>
-    <span>2026.08.22</span>
+  <footer class="colophon">
+    <span>네이버 뉴스 검색 · 키워드 "포스코이앤씨"</span>
+    <span>자동 생성 브리핑</span>
   </footer>
-
 </div>
-</body>
-</html>
