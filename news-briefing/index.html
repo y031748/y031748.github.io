@@ -1,153 +1,177 @@
-<!doctype html>
-<title>2026년 8월 24일 뉴스브리핑</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;700;800;900&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<title>포스코이앤씨 뉴스브리핑</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap');
+
   :root {
-    --bg: #eae7e0;
-    --surface: #f5f3ee;
-    --surface-line: #d3cfc4;
-    --ink: #232220;
-    --ink-muted: #5b574f;
-    --ink-faint: #8a8578;
-    --accent: #1f4e63;
-    --accent-warm: #b5793a;
-    --rule: #c7c2b5;
+    --paper: #eef0f3;
+    --paper-raised: #ffffff;
+    --ink: #1b222c;
+    --ink-soft: #545e6c;
+    --ink-faint: #8992a0;
+    --line: #d5d9e0;
+    --accent: #c9560f;
+    --accent-ink: #ffffff;
   }
+
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #17181a;
-      --surface: #1f2123;
-      --surface-line: #34363a;
-      --ink: #ede9e1;
-      --ink-muted: #a6a197;
-      --ink-faint: #706c62;
-      --accent: #7db2cf;
-      --accent-warm: #d9a45f;
-      --rule: #3a3c3f;
+      --paper: #14181e;
+      --paper-raised: #1c212a;
+      --ink: #e9ebef;
+      --ink-soft: #a3abb8;
+      --ink-faint: #6b7382;
+      --line: #2b323d;
+      --accent: #e2792f;
+      --accent-ink: #1b1206;
     }
   }
+
   :root[data-theme="dark"] {
-    --bg: #17181a;
-    --surface: #1f2123;
-    --surface-line: #34363a;
-    --ink: #ede9e1;
-    --ink-muted: #a6a197;
-    --ink-faint: #706c62;
-    --accent: #7db2cf;
-    --accent-warm: #d9a45f;
-    --rule: #3a3c3f;
+    --paper: #14181e;
+    --paper-raised: #1c212a;
+    --ink: #e9ebef;
+    --ink-soft: #a3abb8;
+    --ink-faint: #6b7382;
+    --line: #2b323d;
+    --accent: #e2792f;
+    --accent-ink: #1b1206;
   }
 
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    background: var(--bg);
+    background: var(--paper);
     color: var(--ink);
-    font-family: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    font-family: "IBM Plex Sans KR", "Noto Sans KR", "Malgun Gothic", sans-serif;
     -webkit-font-smoothing: antialiased;
-    line-height: 1.7;
   }
 
   .page {
     max-width: 720px;
     margin: 0 auto;
-    padding: 56px 24px 80px;
+    padding: 3rem 1.5rem 4rem;
   }
 
   header.masthead {
     border-bottom: 3px solid var(--ink);
-    padding-bottom: 28px;
-    margin-bottom: 40px;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.75rem;
   }
 
-  .eyebrow {
-    font-family: "Gothic A1", sans-serif;
-    font-weight: 700;
-    font-size: 12.5px;
-    letter-spacing: 0.16em;
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--accent);
     text-transform: uppercase;
-    color: var(--accent-warm);
-    margin: 0 0 14px;
+    margin-bottom: 0.9rem;
+  }
+
+  .kicker::before {
+    content: "";
+    width: 1.6rem;
+    height: 2px;
+    background: var(--accent);
+    display: inline-block;
   }
 
   h1.title {
-    font-family: "Gothic A1", sans-serif;
+    font-family: "Gothic A1", "Noto Sans KR", sans-serif;
     font-weight: 900;
-    font-size: clamp(28px, 5.4vw, 42px);
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
     line-height: 1.18;
-    letter-spacing: -0.01em;
-    margin: 0 0 12px;
+    margin: 0 0 0.85rem;
     text-wrap: balance;
-    color: var(--ink);
+    letter-spacing: -0.01em;
   }
 
   .dateline {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 14px;
+    justify-content: space-between;
     align-items: baseline;
-    font-size: 14.5px;
-    color: var(--ink-muted);
+    gap: 0.5rem 1rem;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
   }
 
-  .dateline .divider {
+  .dateline .date-full {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dateline .edition {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
     color: var(--ink-faint);
   }
 
-  .count-badge {
-    font-variant-numeric: tabular-nums;
-    color: var(--accent);
-    font-weight: 700;
+  .lede {
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+    line-height: 1.65;
+    margin: 0 0 2.2rem;
+    max-width: 42rem;
   }
 
-  section.articles {
+  .lede strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  ol.articles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
   }
 
-  article.card {
-    padding: 30px 0;
-    border-bottom: 1px solid var(--rule);
+  .article {
+    padding: 1.6rem 0;
+    border-bottom: 1px solid var(--line);
   }
-  article.card:first-child { padding-top: 0; }
-  article.card:last-child { border-bottom: none; }
 
-  .kicker {
+  .article:first-child { padding-top: 0; }
+  .article:last-child { border-bottom: none; }
+
+  .article-meta {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-family: "Gothic A1", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    gap: 0.6rem;
+    font-size: 0.78rem;
     color: var(--ink-faint);
-    margin-bottom: 10px;
+    margin-bottom: 0.55rem;
+    letter-spacing: 0.02em;
   }
 
-  .kicker .source {
-    color: var(--accent);
+  .article-meta .source {
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
-  .kicker .sep {
-    width: 4px;
-    height: 4px;
+  .article-meta .time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .article-meta .dot {
+    width: 3px;
+    height: 3px;
     border-radius: 50%;
     background: var(--ink-faint);
     flex: none;
   }
 
   h2.headline {
-    font-family: "Gothic A1", sans-serif;
-    font-weight: 800;
-    font-size: 21px;
+    font-size: 1.18rem;
     line-height: 1.4;
-    margin: 0 0 12px;
+    margin: 0 0 0.55rem;
+    font-weight: 700;
     text-wrap: balance;
   }
 
@@ -158,7 +182,7 @@
     background-repeat: no-repeat;
     background-position: 0 100%;
     background-size: 0% 2px;
-    transition: background-size 0.2s ease;
+    transition: background-size 0.25s ease;
   }
 
   h2.headline a:hover,
@@ -172,31 +196,33 @@
     border-radius: 2px;
   }
 
-  p.summary {
+  .summary {
+    color: var(--ink-soft);
+    font-size: 0.96rem;
+    line-height: 1.7;
     margin: 0;
-    max-width: 62ch;
-    font-size: 16px;
-    color: var(--ink-muted);
+    max-width: 40rem;
   }
 
   .empty {
-    padding: 48px 0;
+    padding: 3rem 0;
     text-align: center;
-    color: var(--ink-muted);
-    font-size: 16px;
-    border-bottom: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    border: 1px dashed var(--line);
+    border-radius: 4px;
   }
 
-  footer.colophon {
-    margin-top: 48px;
-    padding-top: 20px;
-    border-top: 1px solid var(--rule);
-    font-size: 12.5px;
+  footer {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.8rem;
     color: var(--ink-faint);
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 0.5rem;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -206,35 +232,145 @@
 
 <div class="page">
   <header class="masthead">
-    <p class="eyebrow">일일 뉴스브리핑 · 포스코이앤씨</p>
-    <h1 class="title">2026년 8월 24일 뉴스브리핑</h1>
+    <p class="kicker">Steel &amp; Construction Briefing</p>
+    <h1 class="title">2026년 8월 25일 뉴스브리핑</h1>
     <div class="dateline">
-      <span>포스코이앤씨 관련 기사 <span class="count-badge">3건</span></span>
-      <span class="divider">·</span>
-      <span>네이버 뉴스 검색 기준</span>
+      <span class="date-full">2026. 08. 25. (화)</span>
+      <span class="edition">POSCO E&amp;C 키워드 모니터링</span>
     </div>
   </header>
 
-  <section class="articles">
-    <article class="card">
-      <p class="kicker"><span class="source">이투데이</span><span class="sep"></span><span>2026.08.24 06:02</span></p>
-      <h2 class="headline"><a href="https://www.etoday.co.kr/news/view/2617028" target="_blank" rel="noopener">미매각 공포에 공모채 발행 '뚝'…자금줄 다변화하는 건설사들</a></h2>
-      <p class="summary">공모 회사채 미매각 우려가 커지면서 건설사들이 자금 조달 창구를 다변화하고 있다. 포스코이앤씨는 사모 방식의 신종자본증권을 발행해 기존 채무 상환에 활용했으며, 조달 자금이 회계상 자본으로 잡히면서 부채비율을 낮추는 효과도 얻었다. 업계에서는 하반기에도 이 같은 사모 조달 흐름이 이어질 것으로 보고 있다.</p>
-    </article>
-    <article class="card">
-      <p class="kicker"><span class="source">FN times</span><span class="sep"></span><span>2026.08.24 00:02</span></p>
-      <h2 class="headline"><a href="https://www.fntimes.com/html/view.php?ud=202608220112014437dd55077bc2_18" target="_blank" rel="noopener">삼성·현대 3조대 '양강'…3위는 대우건설 [2026 시평-신인도평가]</a></h2>
-      <p class="summary">2026년 시공능력평가 신인도 부문에서 삼성물산과 현대건설이 3조원대 실적으로 나란히 1·2위에 올랐고, 대우건설이 3위를 차지했다. 포스코이앤씨는 1조6765억원으로 6위에 이름을 올렸으며, 롯데건설이 7위, SK에코플랜트와 DL이앤씨가 각각 8·9위로 뒤를 이었다.</p>
-    </article>
-    <article class="card">
-      <p class="kicker"><span class="source">FN times</span><span class="sep"></span><span>2026.08.24 00:02</span></p>
-      <h2 class="headline"><a href="https://www.fntimes.com/html/view.php?ud=202608220109186226dd55077bc2_18" target="_blank" rel="noopener">기술력 1위 '현대건설'…계룡건설 '톱10' 진입 [2026 시평-기술능력평가]</a></h2>
-      <p class="summary">2026년 시공능력평가 기술능력 부문에서는 현대건설이 1위에 올랐고, 삼성물산에 이어 포스코이앤씨(대표이사 송치영)가 1조1847억원으로 상위권에 자리했다. DL이앤씨와 GS건설이 뒤를 이었고, 이번 평가에서는 계룡건설이 처음으로 톱10에 진입한 점이 눈에 띈다.</p>
-    </article>
-  </section>
+  <p class="lede">
+    오늘 하루 <strong>포스코이앤씨</strong> 관련 보도 8건을 모았습니다.
+    실적 발표와 도시정비 수주전, 인재 채용, 디자인 수상 소식까지
+    주요 흐름을 한눈에 정리했습니다.
+  </p>
 
-  <footer class="colophon">
-    <span>네이버 뉴스 검색 · 키워드 "포스코이앤씨"</span>
-    <span>자동 생성 브리핑</span>
+  <ol class="articles">
+    <li class="article">
+      <p class="article-meta">
+        <span class="source">경기신문</span>
+        <span class="dot"></span>
+        <span class="time">08.25 23:12</span>
+      </p>
+      <h2 class="headline">
+        <a href="http://www.knpnews.com/news/articleView.html?idxno=34333" target="_blank" rel="noopener">포스코이앤씨 PJ 처우 논란…'기준연봉 유지'에도 총보수 감소 주장</a>
+      </h2>
+      <p class="summary">
+        포스코이앤씨의 프로젝트(PJ) 계약직 사이에서 재계약과 현장 이동 과정을 거치며 기준연봉 외 추가 수당이 줄어 실질 총보수가 감소했다는 주장이 제기됐다.
+        회사 측은 기준연봉을 일괄 삭감한 적은 없다는 입장을 밝혔다. 처우를 둘러싼 노사 간 시각차가 이어지고 있다.
+      </p>
+    </li>
+
+    <li class="article">
+      <p class="article-meta">
+        <span class="source">비즈트리뷴</span>
+        <span class="dot"></span>
+        <span class="time">08.25 19:40</span>
+      </p>
+      <h2 class="headline">
+        <a href="http://www.biztribune.co.kr/news/articleView.html?idxno=357907" target="_blank" rel="noopener">현대건설, 신한울 3·4호기로 원전 경쟁력 입증…국내외 수주 확대 기대</a>
+      </h2>
+      <p class="summary">
+        신한울 3·4호기 건설에는 두산에너빌리티가 35%, 포스코이앤씨가 10% 지분으로 함께 참여하고 있다.
+        3호기는 지난해, 4호기는 올해 첫 콘크리트 타설에 들어갔으며 4월 말 기준 종합공정률은 약 30%다.
+        국내 원전 생태계가 다시 활기를 띠면서 참여 건설사들의 후속 수주 기대감도 커지는 분위기다.
+      </p>
+    </li>
+
+    <li class="article">
+      <p class="article-meta">
+        <span class="source">하이돈뉴스</span>
+        <span class="dot"></span>
+        <span class="time">08.25 19:32</span>
+      </p>
+      <h2 class="headline">
+        <a href="https://www.hidomin.com/news/articleView.html?idxno=718587" target="_blank" rel="noopener">포스코이앤씨, 영업이익 974억원 '흑자전환'</a>
+      </h2>
+      <p class="summary">
+        포스코이앤씨가 25일 공시한 상반기 연결 실적에서 매출은 다소 줄었지만 영업이익과 순이익 모두 흑자로 돌아섰다.
+        영업이익은 974억원을 기록하며 뚜렷한 개선세를 보였다. 원가 관리와 수익성 중심 수주 전략이 반영된 결과로 풀이된다.
+      </p>
+    </li>
+
+    <li class="article">
+      <p class="article-meta">
+        <span class="source">더데일리포스트</span>
+        <span class="dot"></span>
+        <span class="time">08.25 18:50</span>
+      </p>
+      <h2 class="headline">
+        <a href="https://www.thedailypost.kr/news/articleView.html?idxno=115152" target="_blank" rel="noopener">'오티에르 반포' 디자인 통했다…레드닷·K-디자인 4관왕</a>
+      </h2>
+      <p class="summary">
+        포스코이앤씨가 시공한 '오티에르 반포'가 '레드닷 디자인 어워드 2026'과 'K-디자인 어워드 2026'에서 총 4개 부문을 수상했다.
+        입주민의 삶의 질과 도시 환경의 조화를 고려한 설계가 좋은 평가를 받았다. 회사는 앞으로도 디자인 경쟁력을 이어가겠다고 밝혔다.
+      </p>
+    </li>
+
+    <li class="article">
+      <p class="article-meta">
+        <span class="source">파이낸셜뉴스</span>
+        <span class="dot"></span>
+        <span class="time">08.25 18:48</span>
+      </p>
+      <h2 class="headline">
+        <a href="https://n.news.naver.com/mnews/article/014/0005566328?sid=101" target="_blank" rel="noopener">강남역 15분… 분당 핵심입지 랜드마크로</a>
+      </h2>
+      <p class="summary">
+        포스코이앤씨가 시공을 맡은 리모델링 대단지 '더샵 분당하이스트'가 오는 9월 분양시장에 나온다.
+        신축 공급이 드문 분당신도시 핵심 입지에 들어서는 만큼, 뛰어난 입지와 특화 설계로 수요자들의 관심을 끌 것으로 기대된다.
+      </p>
+    </li>
+
+    <li class="article">
+      <p class="article-meta">
+        <span class="source">딜사이트</span>
+        <span class="dot"></span>
+        <span class="time">08.25 18:04</span>
+      </p>
+      <h2 class="headline">
+        <a href="https://dealsite.co.kr/articles/167794" target="_blank" rel="noopener">[압·여·목·성 신지형도] 여의도 시범도 입찰 유찰…시공사 '수의계약' 가능성</a>
+      </h2>
+      <p class="summary">
+        여의도 시범아파트 재건축 시공사 선정 입찰이 유찰되면서 향후 수의계약 전환 가능성이 거론되고 있다.
+        지난달 현장설명회에는 GS건설, 대우건설, 포스코이앤씨, HDC현대산업개발 등 4개사가 참석했지만, 실제 입찰에서도 경쟁 구도가 유지될지는 불투명한 상황이다.
+      </p>
+    </li>
+
+    <li class="article">
+      <p class="article-meta">
+        <span class="source">한국건설신문</span>
+        <span class="dot"></span>
+        <span class="time">08.25 18:00</span>
+      </p>
+      <h2 class="headline">
+        <a href="https://www.kfenews.co.kr/news/articleView.html?idxno=663126" target="_blank" rel="noopener">[현장] 건설업 취업문 두드린 청년들…채용설명회 '북적'</a>
+      </h2>
+      <p class="summary">
+        대한건설협회와 건설산업사회공헌재단이 공동 주최한 채용설명회에 현대건설, GS건설, 포스코이앤씨 등 주요 건설사와
+        공공기관이 참여했다. 건설업 취업을 준비하는 청년 구직자들의 발길이 이어지며 현장이 북적였다.
+      </p>
+    </li>
+
+    <li class="article">
+      <p class="article-meta">
+        <span class="source">폴리뉴스</span>
+        <span class="dot"></span>
+        <span class="time">08.25 17:33</span>
+      </p>
+      <h2 class="headline">
+        <a href="https://www.polinews.co.kr/news/articleView.html?idxno=741209" target="_blank" rel="noopener">고령화·인력 부족…건설사, '스마트건설 인재' 확보 총력</a>
+      </h2>
+      <p class="summary">
+        고령화와 인력난에 대응해 포스코이앤씨를 비롯한 주요 건설사와 공공기관 25곳이 채용설명회에 나서 스마트건설 인재 확보에 힘을 쏟고 있다.
+        채용 정보 제공은 물론 현직자가 직무를 직접 소개하는 자리도 함께 마련됐다.
+      </p>
+    </li>
+  </ol>
+
+  <footer>
+    <span>키워드: 포스코이앤씨</span>
+    <span>자동 수집·요약 브리핑</span>
   </footer>
 </div>
