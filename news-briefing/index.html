@@ -2,47 +2,44 @@
 <title>2026년 8월 29일 뉴스브리핑</title>
 <meta charset="utf-8">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800;900&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap');
 
   :root {
-    --bg: #eef0f2;
+    --bg: #eff1ee;
     --surface: #ffffff;
-    --border: #d7dbe1;
-    --border-strong: #b9c0cb;
-    --text-primary: #1b2430;
-    --text-secondary: #545f70;
-    --text-tertiary: #7c8698;
-    --accent: #1f6f78;
-    --accent-strong: #124046;
-    --rule: #1b2430;
+    --line: #d7d9d3;
+    --line-strong: #1a1d1a;
+    --ink: #1a1d1a;
+    --ink-muted: #565d58;
+    --ink-faint: #8a908a;
+    --accent: #d6540f;
+    --accent-ink: #ffffff;
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #11151b;
-      --surface: #171d25;
-      --border: #2a323d;
-      --border-strong: #3a4452;
-      --text-primary: #e9ecf1;
-      --text-secondary: #a3adbd;
-      --text-tertiary: #7c8798;
-      --accent: #5cc3cd;
-      --accent-strong: #8fdce4;
-      --rule: #e9ecf1;
+      --bg: #15181a;
+      --surface: #1b1f21;
+      --line: #2b302f;
+      --line-strong: #e9e7e0;
+      --ink: #e9e7e0;
+      --ink-muted: #a3a9a2;
+      --ink-faint: #757b76;
+      --accent: #ff8144;
+      --accent-ink: #15181a;
     }
   }
 
   :root[data-theme="dark"] {
-    --bg: #11151b;
-    --surface: #171d25;
-    --border: #2a323d;
-    --border-strong: #3a4452;
-    --text-primary: #e9ecf1;
-    --text-secondary: #a3adbd;
-    --text-tertiary: #7c8798;
-    --accent: #5cc3cd;
-    --accent-strong: #8fdce4;
-    --rule: #e9ecf1;
+    --bg: #15181a;
+    --surface: #1b1f21;
+    --line: #2b302f;
+    --line-strong: #e9e7e0;
+    --ink: #e9e7e0;
+    --ink-muted: #a3a9a2;
+    --ink-faint: #757b76;
+    --accent: #ff8144;
+    --accent-ink: #15181a;
   }
 
   * { box-sizing: border-box; }
@@ -50,192 +47,211 @@
   body {
     margin: 0;
     background: var(--bg);
-    color: var(--text-primary);
+    color: var(--ink);
     font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
   .page {
-    max-width: 720px;
+    max-width: 700px;
     margin: 0 auto;
-    padding: 56px 24px 80px;
+    padding: 52px 24px 72px;
   }
 
   header.masthead {
-    border-bottom: 3px solid var(--rule);
-    padding-bottom: 20px;
-    margin-bottom: 36px;
+    padding-bottom: 22px;
+    margin-bottom: 8px;
+    border-bottom: 3px double var(--line-strong);
   }
 
-  .eyebrow {
-    font-family: 'IBM Plex Sans KR', sans-serif;
-    font-size: 12.5px;
+  .kicker {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    letter-spacing: 0.16em;
     color: var(--accent);
-    margin: 0 0 10px;
+    margin: 0 0 14px;
   }
 
   h1 {
-    font-family: 'Gothic A1', 'Apple SD Gothic Neo', sans-serif;
-    font-weight: 900;
-    font-size: clamp(28px, 5.4vw, 40px);
-    line-height: 1.22;
+    font-family: 'Black Han Sans', 'Apple SD Gothic Neo', sans-serif;
+    font-weight: 400;
+    font-size: clamp(30px, 6vw, 42px);
+    line-height: 1.18;
     letter-spacing: -0.01em;
-    margin: 0 0 12px;
+    margin: 0 0 10px;
     text-wrap: balance;
   }
 
-  .meta-line {
+  .subhead {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 8px 16px;
-    font-size: 13.5px;
-    color: var(--text-secondary);
+    gap: 6px 16px;
+    font-size: 14px;
+    color: var(--ink-muted);
   }
 
-  .meta-line .count {
+  .subhead .count {
     font-variant-numeric: tabular-nums;
     font-weight: 500;
+    color: var(--ink);
   }
 
   main {
     display: flex;
     flex-direction: column;
-    gap: 28px;
   }
 
-  .article {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
-    border-radius: 2px;
-    padding: 22px 24px 20px;
+  .story {
+    padding: 26px 0;
+    border-bottom: 1px solid var(--line);
   }
 
-  .article-index {
-    font-family: 'Gothic A1', sans-serif;
-    font-weight: 800;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    color: var(--text-tertiary);
+  .story:first-of-type {
+    padding-top: 22px;
+  }
+
+  .story-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--ink-faint);
     margin: 0 0 8px;
+    font-variant-numeric: tabular-nums;
   }
 
-  .article h2 {
-    font-family: 'Gothic A1', 'Apple SD Gothic Neo', sans-serif;
-    font-size: 19.5px;
-    font-weight: 800;
-    line-height: 1.4;
+  .story-meta .outlet {
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+
+  .story h2 {
+    font-family: 'Black Han Sans', 'Apple SD Gothic Neo', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.42;
     margin: 0 0 10px;
     text-wrap: balance;
   }
 
-  .article h2 a {
-    color: var(--text-primary);
+  .story h2 a {
+    color: var(--ink);
     text-decoration: none;
     background-image: linear-gradient(var(--accent), var(--accent));
     background-repeat: no-repeat;
     background-position: 0 100%;
-    background-size: 0% 2px;
-    transition: background-size 0.18s ease;
+    background-size: 0% 1.5px;
+    transition: background-size 0.16s ease;
   }
 
-  .article h2 a:hover,
-  .article h2 a:focus-visible {
-    background-size: 100% 2px;
-    color: var(--accent-strong);
+  .story h2 a:hover,
+  .story h2 a:focus-visible {
+    background-size: 100% 1.5px;
   }
 
-  .article h2 a:focus-visible {
+  .story h2 a:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
 
-  .summary {
+  .story p.summary {
     font-size: 15.5px;
-    line-height: 1.75;
-    color: var(--text-secondary);
-    margin: 0 0 14px;
-    max-width: 62ch;
-  }
-
-  .source-line {
-    display: flex;
-    gap: 10px;
-    align-items: baseline;
-    font-size: 12.5px;
-    color: var(--text-tertiary);
-    border-top: 1px solid var(--border);
-    padding-top: 10px;
-  }
-
-  .source-line .outlet {
-    font-weight: 600;
-    color: var(--text-secondary);
+    line-height: 1.78;
+    color: var(--ink-muted);
+    margin: 0;
+    max-width: 60ch;
   }
 
   .empty-state {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--border-strong);
-    padding: 32px 24px;
+    padding: 48px 0;
     text-align: center;
-    color: var(--text-secondary);
+    color: var(--ink-muted);
     font-size: 15px;
+    border-bottom: 1px solid var(--line);
   }
 
   footer {
-    margin-top: 48px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
+    margin-top: 36px;
+    padding-top: 16px;
     font-size: 12px;
-    color: var(--text-tertiary);
+    color: var(--ink-faint);
   }
 
   @media (max-width: 480px) {
-    .page { padding: 40px 16px 64px; }
-    .article { padding: 18px 18px 16px; }
+    .page { padding: 36px 16px 56px; }
+    .story h2 { font-size: 18px; }
   }
 </style>
 
 <div class="page">
   <header class="masthead">
-    <p class="eyebrow">POSCO E&amp;C · Daily Briefing</p>
+    <p class="kicker">
+      <span>POSCO E&amp;C DAILY BRIEFING</span>
+      <span>NO. 20260829</span>
+    </p>
     <h1>2026년 8월 29일 뉴스브리핑</h1>
-    <div class="meta-line">
+    <div class="subhead">
       <span>포스코이앤씨 관련 기사 모음</span>
-      <span class="count">총 3건</span>
+      <span class="count">총 8건</span>
     </div>
   </header>
 
   <main>
-    <article class="article">
-      <p class="article-index">01</p>
-      <h2><a href="https://www.newspim.com/news/view/20260828000793" target="_blank" rel="noopener">"알짜도 굳이 안 싸운다"…목동·여의도 재건축 '나홀로 입찰' 대세</a></h2>
-      <p class="summary">목동·여의도 등 서울 주요 재건축 단지에서 대형 건설사들이 경쟁 입찰을 꺼리며 단독 응찰이 이어지고 있다. 지난 6월 현장설명회에는 포스코이앤씨를 포함해 현대건설, 대우건설, 금호건설 등 6개사가 참여했지만 정작 본입찰에는 현대건설만 단독으로 나섰다. 공사비 부담과 수익성 우려로 대형사들이 몸을 사리는 분위기가 이어지고 있다.</p>
-      <p class="source-line"><span class="outlet">뉴스핌</span><span>2026.08.29</span></p>
+    <article class="story">
+      <p class="story-meta"><span class="outlet">SR타임스</span><span>08.29 · 16:40</span></p>
+      <h2><a href="http://www.srtimes.kr/news/articleView.html?idxno=211126" target="_blank" rel="noopener">[9월 첫째주 분양동향] 전국 2,392가구 분양…인천 대단지·분상제 단지 눈길</a></h2>
+      <p class="summary">다음달 1일 IPARK현대산업개발·현대건설·포스코이앤씨 컨소시엄이 인천 미추홀구 학익동 일원에 짓는 '시티오씨엘 9단지 오션파크뷰'의 1순위 청약 접수를 진행한다. 9월 첫째 주 전국 분양 물량은 총 2392가구로 집계됐으며, 분양가 상한제가 적용되는 이 인천 대단지가 특히 주목받고 있다.</p>
     </article>
 
-    <article class="article">
-      <p class="article-index">02</p>
-      <h2><a href="https://www.asiatime.co.kr/article/20260828500223" target="_blank" rel="noopener">[분양 캘린더] 9월 첫째 주 전국 2392가구 청약 접수</a></h2>
-      <p class="summary">9월 첫째 주 전국에서 2392가구가 청약에 나서는 가운데, IPARK현대산업개발·현대건설·포스코이앤씨가 함께 짓는 인천 미추홀구 '시티오씨엘 9단지 오션파크뷰'가 9월 1일 1순위 청약을 받는다. 이 단지는 지하 2층~지상 49층 9개 동 규모로 전용 59~136㎡ 총 1949가구로 조성된다.</p>
-      <p class="source-line"><span class="outlet">아시아타임</span><span>2026.08.29</span></p>
+    <article class="story">
+      <p class="story-meta"><span class="outlet">워크투데이</span><span>08.29 · 11:36</span></p>
+      <h2><a href="http://www.worktoday.co.kr/news/articleView.html?idxno=88571" target="_blank" rel="noopener">9월 첫째 주 청약시장, 아파트는 인천에 물량 집중 … 전국 3곳 2,400가구</a></h2>
+      <p class="summary">9월 첫째 주 청약시장은 인천에 물량이 몰리는 모습이다. 1일에는 IPARK현대산업개발·현대건설·포스코이앤씨가 짓는 인천 미추홀구 학익동 '시티오씨엘 9단지 오션파크뷰'가 1순위 청약을 받으며, 전국 3개 단지에서 총 2400가구가 공급된다.</p>
     </article>
 
-    <article class="article">
-      <p class="article-index">03</p>
-      <h2><a href="https://www.theguru.co.kr/news/article.html?no=106367" target="_blank" rel="noopener">목동12단지 시공사 선정 카운트다운…'GS건설 굳히기'냐 경쟁이냐</a></h2>
-      <p class="summary">서울 양천구 목동12단지 재건축 시공사 선정이 임박한 가운데, 지난달 현장설명회에는 GS건설·대우건설·IPARK현대산업개발과 함께 포스코이앤씨가 참석해 관심을 모았다. 삼성물산과 현대건설이 불참하면서 GS건설의 단독 수주 가능성과 다자간 경쟁 구도 가능성이 함께 거론되고 있다.</p>
-      <p class="source-line"><span class="outlet">더구루</span><span>2026.08.29</span></p>
+    <article class="story">
+      <p class="story-meta"><span class="outlet">스마트비즈</span><span>08.29 · 11:04</span></p>
+      <h2><a href="https://www.smartbizn.com/news/articleView.html?idxno=152487" target="_blank" rel="noopener">[분양캘린더 9월 첫째주] 인천 대단지부터 광주 3216가구까지···9월 분양 러시</a></h2>
+      <p class="summary">9월 첫째 주에는 인천 대단지부터 광주 3216가구 규모 단지까지 다양한 분양이 예정돼 있다. 1일 IPARK현대산업개발·현대건설·포스코이앤씨가 인천 미추홀구 학익동에 공급하는 '시티오씨엘 9단지 오션파크뷰'가 1순위 청약에 들어가며, 지하 2층~지상 49층 9개 동 규모로 조성된다.</p>
+    </article>
+
+    <article class="story">
+      <p class="story-meta"><span class="outlet">더비즈</span><span>08.29 · 11:00</span></p>
+      <h2><a href="http://www.the-biz.co.kr/news/articleView.html?idxno=726996" target="_blank" rel="noopener">[내집마련 캘린더] 시티오씨엘·검암역 푸르지오 등 인천 2390가구 청약</a></h2>
+      <p class="summary">한국부동산원 청약홈에 따르면 디씨알이가 시행하고 IPARK현대산업개발·현대건설·포스코이앤씨가 시공하는 '시티오씨엘 9단지 오션파크뷰'가 오는 31일 특별공급을 시작한다. 인천 미추홀구 용현·학익동 일원에 들어서는 이 단지는 검암역 푸르지오 등과 함께 인천 지역 2390가구 청약 물량에 포함된다.</p>
+    </article>
+
+    <article class="story">
+      <p class="story-meta"><span class="outlet">글로벌이코노믹</span><span>08.29 · 10:38</span></p>
+      <h2><a href="https://www.g-enews.com/view.php?ud=2026082900015478259ae5042aca_1" target="_blank" rel="noopener">[인터뷰] 정영진 조합장 직무대행, "투명하고 공정한 경쟁"</a></h2>
+      <p class="summary">한 재건축 조합의 시공사 선정을 위한 현장설명회가 지난 28일 열려 포스코이앤씨를 비롯해 HDC현대산업개발, 삼성물산, 롯데건설, GS건설 등 대형 건설사들이 대거 참석했다. 정영진 조합장 직무대행은 인터뷰에서 시공사 선정 과정을 투명하고 공정하게 진행하겠다는 뜻을 밝혔다.</p>
+    </article>
+
+    <article class="story">
+      <p class="story-meta"><span class="outlet">서울경제TV</span><span>08.29 · 08:02</span></p>
+      <h2><a href="https://www.sentv.co.kr/article/view/sentv202608280139" target="_blank" rel="noopener">[분양 캘린더] '시티오씨엘9단지 오션파크뷰' 등 3곳서 3713가구 분양</a></h2>
+      <p class="summary">IPARK현대산업개발·현대건설·포스코이앤씨는 오는 9월 1일 인천 미추홀구 학익동 일원에서 '시티오씨엘9단지 오션파크뷰' 분양에 나선다. 이번 주 전국 3개 단지에서 총 3713가구가 공급되며, 이 단지는 지하 2층~지상 최고 49층 규모로 조성된다.</p>
+    </article>
+
+    <article class="story">
+      <p class="story-meta"><span class="outlet">딜사이트</span><span>08.29 · 08:02</span></p>
+      <h2><a href="https://dealsite.co.kr/articles/168045" target="_blank" rel="noopener">[부동산캘린더] 인천 중심 2392가구 청약…분양가 상한제 단지 눈길</a></h2>
+      <p class="summary">IPARK현대산업개발·현대건설·포스코이앤씨는 오는 1일 인천 미추홀구 학익동 일원에 조성하는 '시티오씨엘 9단지 오션파크뷰'의 1순위 청약 접수를 받는다. 지하 2층~지상 49층, 9개 동, 전용면적 59~136㎡ 규모로, 이번 주 인천에서는 분양가 상한제 적용 단지가 특히 주목받고 있다.</p>
+    </article>
+
+    <article class="story">
+      <p class="story-meta"><span class="outlet">뉴시스</span><span>08.29 · 08:00</span></p>
+      <h2><a href="https://n.news.naver.com/mnews/article/003/0014155836?sid=101" target="_blank" rel="noopener">'시티오씨엘9단지오션파크뷰' 등 전국 3713가구 분양[분양캘린더]</a></h2>
+      <p class="summary">IPARK현대산업개발·현대건설·포스코이앤씨는 인천 미추홀구 학익동 일원에 '시티오씨엘9단지오션파크뷰'를 분양한다. 지하 2층~지상 최고 49층, 9개 동, 전용면적 59~136㎡ 규모로 총 1949가구가 공급되며, 9월 첫째 주 전국 분양 물량은 3713가구에 이른다.</p>
     </article>
   </main>
 
   <footer>
-    네이버 뉴스 검색 기준으로 매일 자동 수집·요약됩니다.
+    네이버 뉴스 검색(정렬: 날짜순) 기준으로 매일 자동 수집·요약됩니다.
   </footer>
 </div>
