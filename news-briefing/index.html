@@ -1,120 +1,109 @@
-<title>2026년 9월 4일 뉴스브리핑</title>
+<title>2026년 9월 5일 뉴스브리핑</title>
 <style>
   :root {
-    --bg: #eef1ef;
-    --surface: #ffffff;
-    --surface-alt: #e4e8e5;
-    --ink: #1a2333;
-    --ink-muted: #4c5563;
-    --ink-faint: #8891a0;
-    --accent: #2c5f7c;
-    --accent-ink: #ffffff;
-    --gold: #a8792e;
-    --border: #d3d9d5;
-    --rule: #1a2333;
+    --paper: #f2f4f6;
+    --paper-raised: #ffffff;
+    --ink: #1c232c;
+    --ink-soft: #4b5563;
+    --ink-faint: #8a93a0;
+    --rule: #d7dce1;
+    --accent: #b5651d;
+    --accent-ink: #8a4c15;
+    --steel: #3a5a78;
+    --focus: #2c5f8a;
   }
-
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #10161d;
-      --surface: #1a232c;
-      --surface-alt: #202b35;
-      --ink: #e9ebe7;
-      --ink-muted: #a9b1bb;
-      --ink-faint: #6d7684;
-      --accent: #79aecb;
-      --accent-ink: #0e1620;
-      --gold: #d9b567;
-      --border: #2b3540;
-      --rule: #e9ebe7;
+      --paper: #12171d;
+      --paper-raised: #1a2027;
+      --ink: #e7ebef;
+      --ink-soft: #b0b8c1;
+      --ink-faint: #707a86;
+      --rule: #2c333c;
+      --accent: #e0973f;
+      --accent-ink: #f0ad5c;
+      --steel: #7ea2c4;
+      --focus: #7ea2c4;
     }
   }
-
   :root[data-theme="dark"] {
-    --bg: #10161d;
-    --surface: #1a232c;
-    --surface-alt: #202b35;
-    --ink: #e9ebe7;
-    --ink-muted: #a9b1bb;
-    --ink-faint: #6d7684;
-    --accent: #79aecb;
-    --accent-ink: #0e1620;
-    --gold: #d9b567;
-    --border: #2b3540;
-    --rule: #e9ebe7;
+    --paper: #12171d;
+    --paper-raised: #1a2027;
+    --ink: #e7ebef;
+    --ink-soft: #b0b8c1;
+    --ink-faint: #707a86;
+    --rule: #2c333c;
+    --accent: #e0973f;
+    --accent-ink: #f0ad5c;
+    --steel: #7ea2c4;
+    --focus: #7ea2c4;
   }
 
   * { box-sizing: border-box; }
 
   body {
-    background: var(--bg);
+    background: var(--paper);
     color: var(--ink);
-    font-family: "IBM Plex Sans KR", "Noto Sans KR", -apple-system, sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
+    font-family: "IBM Plex Sans KR", "Noto Sans KR", sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .page {
-    max-width: 760px;
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+  .wrap {
+    max-width: 720px;
     margin: 0 auto;
-    padding: 56px 24px 80px;
+    padding: 3.5rem 1.5rem 5rem;
   }
 
   .masthead {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding-bottom: 22px;
-    border-bottom: 3px solid var(--rule);
+    gap: 0.6rem;
+    padding-bottom: 1.6rem;
+    border-bottom: 3px solid var(--ink);
+    margin-bottom: 2.4rem;
   }
 
-  .masthead .kicker {
-    font-family: "Gothic A1", "Noto Sans KR", sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.14em;
+  .masthead .eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
   }
 
   .masthead h1 {
-    margin: 0;
     font-family: "Gothic A1", "Noto Sans KR", sans-serif;
     font-weight: 800;
-    font-size: clamp(28px, 5vw, 40px);
-    line-height: 1.2;
-    text-wrap: balance;
+    font-size: clamp(1.7rem, 4.5vw, 2.35rem);
     letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
   }
 
   .masthead .meta {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 8px;
-    font-size: 14px;
-    color: var(--ink-muted);
+    gap: 0.4rem 1rem;
+    font-size: 0.86rem;
+    color: var(--ink-soft);
     font-variant-numeric: tabular-nums;
   }
 
-  .masthead .meta strong {
-    color: var(--ink);
-    font-weight: 600;
+  .masthead .meta span:not(:last-child)::after {
+    content: "·";
+    margin-left: 1rem;
+    color: var(--ink-faint);
   }
 
   .lede {
-    padding: 22px 0 8px;
-    color: var(--ink-muted);
-    font-size: 15px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 8px;
-  }
-
-  .empty {
-    padding: 64px 0;
-    text-align: center;
-    color: var(--ink-muted);
-    font-size: 17px;
+    font-size: 0.94rem;
+    color: var(--ink-soft);
+    margin: 0 0 2.6rem;
+    max-width: 60ch;
   }
 
   .articles {
@@ -123,181 +112,198 @@
   }
 
   .article {
-    padding: 28px 0;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 2.4rem 1fr;
+    gap: 0 1rem;
+    padding: 1.9rem 0;
+    border-bottom: 1px solid var(--rule);
   }
 
-  .article:last-child {
-    border-bottom: none;
-  }
+  .article:first-child { padding-top: 0; }
+  .article:last-child { border-bottom: none; }
 
-  .article .eyebrow {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    font-size: 12.5px;
-    color: var(--gold);
-    font-weight: 600;
-    letter-spacing: 0.04em;
-  }
-
-  .article .eyebrow .time {
+  .article .num {
+    font-family: "Gothic A1", "Noto Sans KR", sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
     color: var(--ink-faint);
-    font-weight: 400;
     font-variant-numeric: tabular-nums;
+    line-height: 1.5;
   }
+
+  .article .body { min-width: 0; }
 
   .article h2 {
-    margin: 0;
-    font-size: 19px;
-    line-height: 1.4;
+    font-family: "Gothic A1", "Noto Sans KR", sans-serif;
     font-weight: 700;
+    font-size: 1.14rem;
+    line-height: 1.45;
+    margin: 0 0 0.55rem;
     text-wrap: balance;
   }
 
   .article h2 a {
-    color: var(--ink);
     text-decoration: none;
     background-image: linear-gradient(var(--accent), var(--accent));
     background-repeat: no-repeat;
+    background-size: 100% 1px;
     background-position: 0 100%;
-    background-size: 0% 2px;
-    transition: background-size 0.18s ease;
+    transition: background-size 0.15s ease;
   }
-
-  .article h2 a:hover,
-  .article h2 a:focus-visible {
+  .article h2 a:hover {
     background-size: 100% 2px;
-    color: var(--accent);
-  }
-
-  .article h2 a:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
+    color: var(--accent-ink);
   }
 
   .article p {
-    margin: 0;
+    margin: 0 0 0.85rem;
+    color: var(--ink-soft);
+    font-size: 0.97rem;
     max-width: 62ch;
-    color: var(--ink-muted);
-    font-size: 15px;
-    line-height: 1.7;
   }
 
-  .article .source {
-    font-size: 12.5px;
+  .article .src {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.7rem;
+    font-size: 0.8rem;
     color: var(--ink-faint);
+  }
+
+  .article .src .name {
+    color: var(--steel);
+    font-weight: 600;
+  }
+
+  .empty {
+    padding: 3rem 0;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 1.02rem;
+    border: 1px dashed var(--rule);
+    border-radius: 4px;
   }
 
   footer {
-    margin-top: 40px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.8rem;
+    color: var(--ink-faint);
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 8px;
-    font-size: 12.5px;
-    color: var(--ink-faint);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .article h2 a { transition: none; }
+    gap: 0.4rem 1rem;
   }
 
   @media (max-width: 480px) {
-    .page { padding: 40px 18px 64px; }
-    .masthead .meta { flex-direction: column; }
+    .article { grid-template-columns: 1.6rem 1fr; }
+    .article .num { font-size: 0.92rem; }
   }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 
-<div class="page">
+<div class="wrap">
   <div class="masthead">
-    <div class="kicker">Daily Briefing · 건설업계</div>
-    <h1>2026년 9월 4일 뉴스브리핑</h1>
+    <div class="eyebrow">POSCO E&amp;C NEWS BRIEFING</div>
+    <h1>2026년 9월 5일 뉴스브리핑</h1>
     <div class="meta">
-      <span>포스코이앤씨 관련 기사 <strong>9건</strong></span>
-      <span>기준일 <strong>2026-09-04</strong> (KST)</span>
+      <span>포스코이앤씨 관련 기사 9건</span>
+      <span>네이버 뉴스 기준</span>
     </div>
   </div>
 
-  <div class="lede">네이버 뉴스 검색을 기준으로 오늘 발행된 포스코이앤씨 관련 기사를 모아 정리했습니다.</div>
+  <p class="lede">오늘 하루 포스코이앤씨와 관련해 보도된 뉴스를 발행 시각 순으로 모았습니다. 상반기 실적 반등 소식부터 여주·천안·인천 분양 현장, 하반기 공채까지 주요 동향을 확인하세요.</p>
 
   <div class="articles">
 
     <article class="article">
-      <div class="eyebrow">정비사업 · 수주 경쟁<span class="time">09.04 19:02</span></div>
-      <h2><a href="https://www.asiatime.co.kr/article/20260904500317" target="_blank" rel="noopener">삼성·DL·포스코 맞붙는 '오금현대' 과열 조짐···"신고포상제 도입"</a></h2>
-      <p>서울 송파구 오금현대아파트 재건축 사업에 삼성물산, DL이앤씨, 포스코이앤씨 등 대형 건설사 3곳이 뛰어들며 수주 경쟁이 달아오르고 있다. 방이역과 오금역 사이 더블 역세권 입지로 세 회사 모두 대안설계 작업에 들어간 상태이며, 과열 양상에 신고포상제 도입 이야기까지 나오고 있다.</p>
-      <div class="source">아시아타임 · 2026.09.04</div>
+      <div class="num">01</div>
+      <div class="body">
+        <h2><a href="https://www.kbsm.net/news/view.php?idx=532876" target="_blank" rel="noopener">포스코그룹, 하반기 신입사원 공개채용...AI·로봇 등 60여개 직무</a></h2>
+        <p>포스코그룹이 포스코홀딩스 미래기술연구원과 포스코, 포스코인터내셔널, 포스코이앤씨, 포스코DX, RIST 등 6개 계열사를 대상으로 하반기 신입사원 공개채용에 들어갔다. AI와 로봇 등 미래산업 분야를 포함한 60여개 직무에서 세 자릿수 규모의 인원을 선발할 예정이다.</p>
+        <div class="src"><span class="name">kbsm.net</span><span>22:20</span></div>
+      </div>
     </article>
 
     <article class="article">
-      <div class="eyebrow">분양 시장<span class="time">09.04 17:52</span></div>
-      <h2><a href="http://www.biztribune.co.kr/news/articleView.html?idxno=358501" target="_blank" rel="noopener">수도권 전셋값 4억7천만원 시대···대출 부담에 "차라리 집 산다"</a></h2>
-      <p>수도권 아파트 평균 전셋값이 4억7000만원을 넘어서면서 세입자들 사이에서 "차라리 집을 사겠다"는 심리가 확산되고 있다. 이런 가운데 현대산업개발·현대건설·포스코이앤씨가 함께 짓는 인천 용현·학익지구 '시티오씨엘 9단지 오션파크뷰'가 분양 중이며, 총 1,949세대 규모의 대단지다.</p>
-      <div class="source">비즈트리뷴 · 2026.09.04</div>
+      <div class="num">02</div>
+      <div class="body">
+        <h2><a href="https://www.etoday.co.kr/news/view/2621916" target="_blank" rel="noopener">삼성전자, 무주택 임직원에 5억원 저리대출⋯'삼세권' 수요 늘까</a></h2>
+        <p>삼성전자가 무주택 임직원에게 최대 5억원을 저리로 지원하면서 삼성 사업장 인근, 이른바 '삼세권' 아파트에 관심이 쏠리고 있다. 포스코이앤씨가 삼성전자 천안캠퍼스 인근 부성2구역에서 다음 달 선보이는 '더샵 천안라크원'(1290가구)이 수혜 단지로 거론된다.</p>
+        <div class="src"><span class="name">etoday.co.kr</span><span>14:02</span></div>
+      </div>
     </article>
 
     <article class="article">
-      <div class="eyebrow">분양 시장<span class="time">09.04 17:13</span></div>
-      <h2><a href="https://n.news.naver.com/mnews/article/015/0005328790?sid=101" target="_blank" rel="noopener">모델하우스 탐방 - 더샵 여주역 더퍼스트</a></h2>
-      <p>포스코이앤씨가 경기 여주시 홍문동에 짓는 '더샵 여주역더퍼스트' 견본주택을 4일 개관하고 본격적인 분양에 돌입했다. 지하 2층~지상 29층, 7개 동, 총 696가구 규모이며 이 중 일반분양은 313가구다.</p>
-      <div class="source">한국경제 · 2026.09.04</div>
+      <div class="num">03</div>
+      <div class="body">
+        <h2><a href="https://www.discoverynews.kr/news/articleView.html?idxno=1100659" target="_blank" rel="noopener">비엠스인터네셔날, 비즈 소사이어티 첫 기수 운영…경영·문화 분야 연결</a></h2>
+        <p>비엠스인터네셔날이 기업 경영진과 전문직 종사자, 문화예술인 등을 잇는 '비즈 소사이어티' 1기를 출범시켰다. 지난 3일 포스코이앤씨 더샵갤러리에서 한국 CEO 미래발전 포럼과 함께 입학식이 열렸다.</p>
+        <div class="src"><span class="name">discoverynews.kr</span><span>13:04</span></div>
+      </div>
     </article>
 
     <article class="article">
-      <div class="eyebrow">경영 · 안전관리<span class="time">09.04 17:00</span></div>
-      <h2><a href="https://www.pointdaily.co.kr/news/articleView.html?idxno=318070" target="_blank" rel="noopener">포스코이앤씨, 안전 신뢰 회복 총력···하반기 경영 쇄신 본격화</a></h2>
-      <p>포스코이앤씨가 신안산선 복선전철 5-2공구 붕괴 사고로 인한 영업정지 여파를 딛고 안전관리 혁신에 총력을 기울이고 있다. 핵심 도시정비사업 선별 수주와 친환경 플랜트 사업 확대를 통해 하반기 경영 쇄신에 나선다는 방침이다.</p>
-      <div class="source">포인트데일리 · 2026.09.04</div>
+      <div class="num">04</div>
+      <div class="body">
+        <h2><a href="https://www.startuptoday.co.kr/news/articleView.html?idxno=812011" target="_blank" rel="noopener">[창간 9주년 기획] 포스코이앤씨, 원가 낮추고 도시정비 3조 4267억… 실적 반등</a></h2>
+        <p>작년 4515억원의 영업손실을 냈던 포스코이앤씨가 올해 상반기 흑자로 돌아섰다. 매출은 줄었지만 원가율을 낮추며 수익성을 회복했고, 도시정비 수주액도 3조4267억원을 기록하며 연간 목표의 절반을 넘어섰다.</p>
+        <div class="src"><span class="name">startuptoday.co.kr</span><span>13:00</span></div>
+      </div>
     </article>
 
     <article class="article">
-      <div class="eyebrow">정비사업 · 수주 경쟁<span class="time">09.04 16:50</span></div>
-      <h2><a href="http://www.4th.kr/news/articleView.html?idxno=2117515" target="_blank" rel="noopener">현대건설, 2.6조원 목동10단지에 첫 '디에이치'···수주 굳히기</a></h2>
-      <p>현대건설이 사업비 2조6000억원 규모의 서울 양천구 목동10단지 재건축 수주전에서 사실상 승기를 잡았다. 대우건설, 포스코이앤씨 등 총 6개사가 참여했던 경쟁에서 다른 건설사들이 잇따라 발을 빼며 현대건설이 단독으로 우선협상대상자 지위를 확보했다.</p>
-      <div class="source">더포스 · 2026.09.04</div>
+      <div class="num">05</div>
+      <div class="body">
+        <h2><a href="https://www.smartbizn.com/news/articleView.html?idxno=153130" target="_blank" rel="noopener">[현장] '더샵' 첫선 보인 여주···"84㎡ 단일평형 눈길, 입지는 과제"</a></h2>
+        <p>포스코이앤씨가 경기 여주에서 처음 선보이는 '더샵 여주역더퍼스트' 견본주택을 지난 4일 열고 분양 일정에 돌입했다. 평일에도 방문객 발길이 이어졌지만, 전용 84㎡ 단일평형 구성과 입지 여건은 과제로 지적됐다.</p>
+        <div class="src"><span class="name">smartbizn.com</span><span>10:16</span></div>
+      </div>
     </article>
 
     <article class="article">
-      <div class="eyebrow">분양 시장<span class="time">09.04 15:55</span></div>
-      <h2><a href="https://n.news.naver.com/mnews/article/243/0000102625?sid=101" target="_blank" rel="noopener">'소요한남 by 파르나스', 수중 트레드밀·자쿠지 등 웰니스 커뮤니티 공개</a></h2>
-      <p>포스코이앤씨가 시공을 맡은 한남동 주거단지 '소요한남 by 파르나스'가 수중 트레드밀과 자쿠지 등을 갖춘 웰니스 특화 커뮤니티 시설을 선보인다. 골프, 수영, 스파 등 전문 시설과 넉넉한 커뮤니티 공간을 함께 갖춘 것이 특징이다.</p>
-      <div class="source">이코노미스트 · 2026.09.04</div>
+      <div class="num">06</div>
+      <div class="body">
+        <h2><a href="https://www.seoulfn.com/news/articleView.html?idxno=637172" target="_blank" rel="noopener">수주 한파에 R&amp;D 줄인 건설사들···SK·현엔은 미래기술에 베팅</a></h2>
+        <p>수주 한파 속에 건설사들의 연구개발비 감소세가 이어지는 가운데 포스코이앤씨도 R&amp;D 투자를 0.6% 줄인 것으로 나타났다. 현대건설과 대우건설 등은 20%대의 큰 폭 감소를 보인 반면, SK와 현대엔지니어링은 미래기술 투자를 늘리며 대조를 이뤘다.</p>
+        <div class="src"><span class="name">seoulfn.com</span><span>10:00</span></div>
+      </div>
     </article>
 
     <article class="article">
-      <div class="eyebrow">정비사업<span class="time">09.04 15:51</span></div>
-      <h2><a href="https://n.news.naver.com/mnews/article/241/0003529057?sid=101" target="_blank" rel="noopener">광명 아파트값 1~8월 12.77% 상승···'광명 시티프라디움 에듀하임' 9월 분양</a></h2>
-      <p>광명시 아파트값이 올해 1~8월 사이 12.77% 오른 가운데, 인근 3·4단지 재건축에서는 포스코이앤씨가 시공사 수의계약을 위한 우선협상대상자로 입찰을 마감했다. 5단지도 2,886가구 규모 재건축을 추진 중이어서 지역 정비사업 열기가 이어지고 있다.</p>
-      <div class="source">이슈플러스 · 2026.09.04</div>
+      <div class="num">07</div>
+      <div class="body">
+        <h2><a href="https://www.sisajournal-e.com/news/articleView.html?idxno=423531" target="_blank" rel="noopener">공채 시즌 열린 재계···AI·로봇 '미래 인재' 확보전 본격화</a></h2>
+        <p>하반기 공채 시즌을 맞아 재계가 AI·로봇 등 미래 인재 확보 경쟁에 본격 나섰다. 포스코그룹도 포스코이앤씨를 포함한 6개 계열사에서 생산·설비기술부터 연구개발, 영업·마케팅까지 다양한 직무의 신입사원을 채용한다.</p>
+        <div class="src"><span class="name">sisajournal-e.com</span><span>08:10</span></div>
+      </div>
     </article>
 
     <article class="article">
-      <div class="eyebrow">분양 시장<span class="time">09.04 15:50</span></div>
-      <h2><a href="http://www.wikileaks-kr.org/news/articleView.html?idxno=191666" target="_blank" rel="noopener">[분양 NOW] 대우건설, 포스코이앤씨, 우미건설-신영씨앤디</a></h2>
-      <p>이번 주 분양시장에는 대우건설, 포스코이앤씨, 우미건설-신영씨앤디 등이 나선다. 포스코이앤씨는 경기 여주시에 '더샵 여주역더퍼스트' 견본주택을 열고 696가구 규모 분양에 돌입했다.</p>
-      <div class="source">위클리서울 · 2026.09.04</div>
+      <div class="num">08</div>
+      <div class="body">
+        <h2><a href="https://n.news.naver.com/mnews/article/119/0003129336?sid=101" target="_blank" rel="noopener">공급 확대 체감은 아직…전매 빠른 수도권 단지 분양</a></h2>
+        <p>전매 제한이 상대적으로 빨리 풀리는 수도권 분양 단지에 수요자 관심이 몰리고 있다. 포스코이앤씨는 경기 여주시 홍문2지구에 짓는 '더샵 여주역더퍼스트'(696가구)를 이달 분양할 예정이다.</p>
+        <div class="src"><span class="name">dailian.co.kr</span><span>08:06</span></div>
+      </div>
     </article>
 
     <article class="article">
-      <div class="eyebrow">하도급 · 논란<span class="time">09.04 15:23</span></div>
-      <h2><a href="https://n.news.naver.com/mnews/article/029/0003046189?sid=101" target="_blank" rel="noopener">포스코이앤씨, 도급 지역건설사에 자금. 하자보증 부담만 떠넘겨</a></h2>
-      <p>포스코이앤씨가 인천 경인고속도로 일반도로화 개량공사, 제3연륙교 건설 등 대형사업의 공동수급체 구성 과정에서 지역 중소 건설사들에 자금 부담을 떠넘기고 있다는 지적이 나왔다. 하자보증 부담까지 지역업체가 떠안는 구조라는 비판이 제기됐다.</p>
-      <div class="source">디지털타임스 · 2026.09.04</div>
+      <div class="num">09</div>
+      <div class="body">
+        <h2><a href="https://n.news.naver.com/mnews/article/119/0003129330?sid=101" target="_blank" rel="noopener">전셋값 뛰고 대출 부담 커지자…무주택자 '분양' 저울질</a></h2>
+        <p>전셋값 상승과 대출 부담 확대로 무주택자들이 분양 시장으로 눈을 돌리고 있다. IPARK현대산업개발·현대건설·포스코이앤씨 컨소시엄은 인천 용현·학익지구에서 '시티오씨엘 9단지 오션파크뷰'(1949세대)를 분양 중이다.</p>
+        <div class="src"><span class="name">dailian.co.kr</span><span>07:03</span></div>
+      </div>
     </article>
 
   </div>
 
   <footer>
-    <span>자동 생성 · 네이버 뉴스 검색 API</span>
-    <span>y031748.github.io</span>
+    <span>네이버 뉴스 검색 · 키워드 "포스코이앤씨"</span>
+    <span>매일 자동 발행</span>
   </footer>
 </div>
