@@ -1,42 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
 <title>2026년 9월 7일 뉴스브리핑</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800;900&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: #f2f4f6;
-    --paper-raised: #ffffff;
-    --ink: #1c232c;
-    --ink-soft: #4b5563;
-    --ink-faint: #8a93a0;
-    --rule: #d7dce1;
-    --accent: #b5651d;
-    --accent-ink: #8a4c15;
-    --steel: #3a5a78;
-    --focus: #2c5f8a;
+    --ink: #1a2129;
+    --ink-soft: #4b5761;
+    --paper: #eef0ec;
+    --paper-raised: #f8f8f5;
+    --steel: #3d5a73;
+    --accent: #c6551e;
+    --rule: #ccd0c7;
+    --rule-strong: #1a2129;
+    --shadow: rgba(26, 33, 41, 0.08);
   }
+
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --paper: #12171d;
-      --paper-raised: #1a2027;
-      --ink: #e7ebef;
-      --ink-soft: #b0b8c1;
-      --ink-faint: #707a86;
-      --rule: #2c333c;
-      --accent: #e0973f;
-      --accent-ink: #f0ad5c;
-      --steel: #7ea2c4;
-      --focus: #7ea2c4;
+      --ink: #e9ece7;
+      --ink-soft: #a8b3ba;
+      --paper: #14181b;
+      --paper-raised: #1c2226;
+      --steel: #8aa6b9;
+      --accent: #ff8f52;
+      --rule: #2b3236;
+      --rule-strong: #e9ece7;
+      --shadow: rgba(0, 0, 0, 0.35);
     }
   }
+
   :root[data-theme="dark"] {
-    --paper: #12171d;
-    --paper-raised: #1a2027;
-    --ink: #e7ebef;
-    --ink-soft: #b0b8c1;
-    --ink-faint: #707a86;
-    --rule: #2c333c;
-    --accent: #e0973f;
-    --accent-ink: #f0ad5c;
-    --steel: #7ea2c4;
-    --focus: #7ea2c4;
+    --ink: #e9ece7;
+    --ink-soft: #a8b3ba;
+    --paper: #14181b;
+    --paper-raised: #1c2226;
+    --steel: #8aa6b9;
+    --accent: #ff8f52;
+    --rule: #2b3236;
+    --rule-strong: #e9ece7;
+    --shadow: rgba(0, 0, 0, 0.35);
   }
 
   * { box-sizing: border-box; }
@@ -44,66 +51,63 @@
   body {
     background: var(--paper);
     color: var(--ink);
-    font-family: "IBM Plex Sans KR", "Noto Sans KR", sans-serif;
+    font-family: "IBM Plex Sans KR", "Noto Sans KR", -apple-system, sans-serif;
+    margin: 0;
+    padding: 56px 20px 96px;
     line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
   }
 
-  a { color: inherit; }
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-
-  .wrap {
+  .sheet {
     max-width: 720px;
     margin: 0 auto;
-    padding: 3.5rem 1.5rem 5rem;
   }
 
   .masthead {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    padding-bottom: 1.6rem;
-    border-bottom: 3px solid var(--ink);
-    margin-bottom: 2.4rem;
+    border-top: 3px solid var(--rule-strong);
+    border-bottom: 1px solid var(--rule-strong);
+    padding: 18px 0 16px;
+    margin-bottom: 30px;
   }
 
-  .masthead .eyebrow {
+  .masthead-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-family: "Gothic A1", sans-serif;
+    font-weight: 700;
     font-size: 0.78rem;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--accent-ink);
+    color: var(--ink-soft);
+  }
+
+  h1 {
+    font-family: "Gothic A1", sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.9rem, 5vw, 2.5rem);
+    letter-spacing: -0.01em;
+    line-height: 1.18;
+    text-wrap: balance;
+    margin: 10px 0 2px;
+  }
+
+  .deck {
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .deck strong {
+    color: var(--accent);
     font-weight: 600;
   }
 
-  .masthead h1 {
-    font-family: "Gothic A1", "Noto Sans KR", sans-serif;
-    font-weight: 800;
-    font-size: clamp(1.7rem, 4.5vw, 2.35rem);
-    letter-spacing: -0.01em;
-    margin: 0;
-    text-wrap: balance;
-  }
-
-  .masthead .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 1rem;
-    font-size: 0.86rem;
+  .empty {
+    padding: 48px 4px;
+    text-align: center;
+    font-size: 1.05rem;
     color: var(--ink-soft);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .masthead .meta span:not(:last-child)::after {
-    content: "·";
-    margin-left: 1rem;
-    color: var(--ink-faint);
-  }
-
-  .lede {
-    font-size: 0.94rem;
-    color: var(--ink-soft);
-    margin: 0 0 2.6rem;
-    max-width: 60ch;
   }
 
   .articles {
@@ -112,126 +116,171 @@
   }
 
   .article {
-    display: grid;
-    grid-template-columns: 2.4rem 1fr;
-    gap: 0 1rem;
-    padding: 1.9rem 0;
+    padding: 26px 0;
     border-bottom: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .article:first-child { padding-top: 0; }
+  .article:first-child { padding-top: 4px; }
   .article:last-child { border-bottom: none; }
 
-  .article .num {
-    font-family: "Gothic A1", "Noto Sans KR", sans-serif;
+  .kicker {
+    font-family: "Gothic A1", sans-serif;
     font-weight: 800;
-    font-size: 1.05rem;
-    color: var(--ink-faint);
-    font-variant-numeric: tabular-nums;
-    line-height: 1.5;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--steel);
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
-  .article .body { min-width: 0; }
+  .kicker::before {
+    content: "";
+    width: 14px;
+    height: 2px;
+    background: var(--accent);
+    display: inline-block;
+  }
 
   .article h2 {
-    font-family: "Gothic A1", "Noto Sans KR", sans-serif;
-    font-weight: 700;
-    font-size: 1.14rem;
-    line-height: 1.45;
-    margin: 0 0 0.55rem;
+    margin: 0;
+    font-family: "Gothic A1", sans-serif;
+    font-weight: 800;
+    font-size: 1.22rem;
+    line-height: 1.4;
     text-wrap: balance;
   }
 
   .article h2 a {
+    color: var(--ink);
     text-decoration: none;
     background-image: linear-gradient(var(--accent), var(--accent));
     background-repeat: no-repeat;
-    background-size: 100% 1px;
+    background-size: 0% 2px;
     background-position: 0 100%;
-    transition: background-size 0.15s ease;
+    transition: background-size 0.2s ease;
   }
-  .article h2 a:hover {
+
+  .article h2 a:hover,
+  .article h2 a:focus-visible {
     background-size: 100% 2px;
-    color: var(--accent-ink);
   }
 
-  .article p {
-    margin: 0 0 0.85rem;
+  .article h2 a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .summary {
+    margin: 0;
+    max-width  : 62ch;
+    color: var(--ink);
+    font-size: 0.99rem;
+  }
+
+  .meta {
+    font-size: 0.82rem;
     color: var(--ink-soft);
-    font-size: 0.97rem;
-    max-width: 62ch;
+    font-variant-numeric: tabular-nums;
   }
 
-  .article .src {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 0.7rem;
-    font-size: 0.8rem;
-    color: var(--ink-faint);
-  }
-
-  .article .src .name {
-    color: var(--steel);
-    font-weight: 600;
-  }
-
-  .empty {
-    padding: 3rem 0;
-    text-align: center;
-    color: var(--ink-soft);
-    font-size: 1.02rem;
-    border: 1px dashed var(--rule);
-    border-radius: 4px;
+  .meta .dot {
+    margin: 0 6px;
+    color: var(--rule-strong);
+    opacity: 0.5;
   }
 
   footer {
-    margin-top: 3rem;
-    padding-top: 1.4rem;
+    margin-top: 40px;
+    padding-top: 16px;
     border-top: 1px solid var(--rule);
-    font-size: 0.8rem;
-    color: var(--ink-faint);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.4rem 1rem;
+    gap: 12px;
   }
 
   @media (max-width: 480px) {
-    .article { grid-template-columns: 1.6rem 1fr; }
-    .article .num { font-size: 0.92rem; }
+    body { padding: 40px 16px 72px; }
+    .masthead-row { font-size: 0.68rem; }
   }
 </style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="sheet">
 
-<div class="wrap">
   <div class="masthead">
-    <div class="eyebrow">POSCO E&amp;C NEWS BRIEFING</div>
-    <h1>2026년 9월 7일 뉴스브리핑</h1>
-    <div class="meta">
-      <span>포스코이앤씨 관련 기사 1건</span>
-      <span>네이버 뉴스 기준</span>
+    <div class="masthead-row">
+      <span>포스코이앤씨 뉴스브리핑</span>
+      <span>2026. 09. 07</span>
     </div>
+    <h1>2026년 9월 7일 뉴스브리핑</h1>
+    <p class="deck">오늘 발행된 <strong>포스코이앤씨</strong> 관련 기사 7건을 골라 정리했습니다.</p>
   </div>
-
-  <p class="lede">오늘 하루 포스코이앤씨와 관련해 보도된 뉴스를 발행 시각 순으로 모았습니다. 강북권 최초로 하이엔드 브랜드를 입히는 신당8구역 재개발 소식을 확인하세요.</p>
 
   <div class="articles">
 
     <article class="article">
-      <div class="num">01</div>
-      <div class="body">
-        <h2><a href="https://realty.chosun.com/site/data/html_dir/2026/09/04/2026090402716.html" target="_blank" rel="noopener">"신당동이 국평 30억 아파트를?" 포스코 하이엔드 입는 신당8구역 [르포]</a></h2>
-        <p>포스코이앤씨가 서울 중구 신당8구역 재개발사업에 강북권 최초로 하이엔드 브랜드 '오티에르'를 적용한다. 노후 주택가를 헐고 1,159가구 규모 대단지로 탈바꿈하며, 준공 후 단지명은 '오티에르 남산'으로 정해질 예정이다. 국민평형 기준 30억원대 시세가 거론될 만큼 강북 재개발 시장의 관심이 집중되고 있다.</p>
-        <div class="src"><span class="name">realty.chosun.com</span><span>06:02</span></div>
-      </div>
+      <span class="kicker">지역 상생</span>
+      <h2><a href="https://www.gukjenews.com/news/articleView.html?idxno=3687612" target="_blank" rel="noopener">인천시-포스코이앤씨, 인천대로 일반화사업 상생협약 체결</a></h2>
+      <p class="summary">인천시는 9월 7일 시청에서 포스코이앤씨, 대한전문건설협회 인천시회와 함께 인천대로 일반화사업을 계기로 한 지역 건설산업 상생협력 협약을 체결했다. 송치영 포스코이앤씨 대표이사와 박찬대 인천시장 등이 참석해 지역 건설업체와의 협력을 강화하기로 했다.</p>
+      <p class="meta">국제뉴스<span class="dot">·</span>9월 7일</p>
+    </article>
+
+    <article class="article">
+      <span class="kicker">분양</span>
+      <h2><a href="https://n.news.naver.com/mnews/article/018/0006365187?sid=101" target="_blank" rel="noopener">포스코이앤씨, '더샵 중앙로역센터폴' 잔여가구 선착순 분양</a></h2>
+      <p class="summary">포스코이앤씨는 대구 중구에서 후분양 방식으로 공급 중인 '더샵 중앙로역센터폴'의 잔여가구에 대해 선착순 동·호 지정 계약을 진행한다고 밝혔다. 준공과 입주를 앞둔 만큼 수요자들은 완성된 건물과 주변 환경을 직접 확인한 뒤 계약할 수 있다.</p>
+      <p class="meta">이데일리<span class="dot">·</span>9월 7일</p>
+    </article>
+
+    <article class="article">
+      <span class="kicker">지역 상생</span>
+      <h2><a href="https://www.kihoilbo.co.kr/news/articleView.html?idxno=3033910" target="_blank" rel="noopener">지역건설산업 상생협력 협약식</a></h2>
+      <p class="summary">7일 인천시청 대접견실에서 열린 '지역건설산업 상생협력 업무협약식'에는 박찬대 인천시장과 포스코이앤씨 송치영 대표이사, 대한전문건설협회 인천시회 조흥수 회장이 참석해 협약서를 교환했다. 인천 지역 건설업계의 동반성장을 위한 협력 체계를 마련하는 자리였다.</p>
+      <p class="meta">기호일보<span class="dot">·</span>9월 7일</p>
+    </article>
+
+    <article class="article">
+      <span class="kicker">견본주택</span>
+      <h2><a href="http://www.newsprime.co.kr/news/article.html?no=746769" target="_blank" rel="noopener">여주·이천 첫 '더샵' 여주역더퍼스트 견본주택 사흘간 1만2000명 방문</a></h2>
+      <p class="summary">경기 여주시 홍문2지구에 들어서는 포스코이앤씨의 '더샵 여주역더퍼스트' 견본주택이 개관 사흘 만에 약 1만2000명이 다녀가며 여주·이천 지역 첫 '더샵' 브랜드에 대한 뜨거운 관심을 확인했다. 개관 첫날부터 긴 대기줄이 이어졌고 신혼부부부터 중장년층까지 다양한 연령대가 방문했다.</p>
+      <p class="meta">프라임경제<span class="dot">·</span>9월 7일</p>
+    </article>
+
+    <article class="article">
+      <span class="kicker">주거 트렌드</span>
+      <h2><a href="http://www.popcornnews.net/news/articleView.html?idxno=132139" target="_blank" rel="noopener">하이엔드 기준, 희소성 넘어 매시브로... 주거 트렌드 변화</a></h2>
+      <p class="summary">최근 주택 시장에서는 희소성을 앞세우던 하이엔드 단지가 대규모 '매시브' 단지까지 아우르는 방향으로 흐름이 바뀌고 있으며, 포스코이앤씨가 시공을 맡은 단지도 이런 변화의 사례로 꼽혔다. 최고 65층, 5175가구 규모로 계획된 압구정 3구역 등 서울 주요 정비사업지에서도 매머드급 하이엔드 단지 조성이 추진되고 있다.</p>
+      <p class="meta">팝콘뉴스<span class="dot">·</span>9월 7일</p>
+    </article>
+
+    <article class="article">
+      <span class="kicker">견본주택</span>
+      <h2><a href="https://www.rcast.co.kr/news/articleView.html?idxno=31575" target="_blank" rel="noopener">'더샵 여주역더퍼스트' 견본주택 3일간 1만2천 명 내방</a></h2>
+      <p class="summary">포스코이앤씨는 지난 4일 문을 연 '더샵 여주역더퍼스트' 견본주택에 사흘간 약 1만2000명이 방문했다고 밝혔다. 개관 첫날부터 긴 대기줄이 형성됐으며 신혼부부부터 중장년층까지 폭넓은 연령대의 방문객이 몰린 것으로 나타났다.</p>
+      <p class="meta">알씨캐스트<span class="dot">·</span>9월 7일</p>
+    </article>
+
+    <article class="article">
+      <span class="kicker">주거 트렌드</span>
+      <h2><a href="https://www.rcast.co.kr/news/articleView.html?idxno=31574" target="_blank" rel="noopener">용산·성수·동탄에 잇단 대단지 하이엔드… '매시브 하이엔드' 부상</a></h2>
+      <p class="summary">용산·성수·동탄 등 핵심 입지에서 대단지 하이엔드 아파트가 잇달아 공급되며 '매시브 하이엔드'라는 새로운 흐름이 부상하고 있다. 해당 사업들의 시공은 부산 해운대 엘시티, 서울 강남 브라이튼 N40 등 고급 주거를 지어온 포스코이앤씨가 다수 맡아 눈길을 끈다.</p>
+      <p class="meta">알씨캐스트<span class="dot">·</span>9월 7일</p>
     </article>
 
   </div>
 
   <footer>
-    <span>네이버 뉴스 검색 · 키워드 "포스코이앤씨"</span>
-    <span>매일 자동 발행</span>
+    <span>포스코이앤씨 뉴스브리핑</span>
+    <span>네이버 뉴스 검색 기반 자동 정리</span>
   </footer>
+
 </div>
+</body>
+</html>
