@@ -2,285 +2,291 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>2026년 9월 7일 뉴스브리핑</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026년 9월 9일 뉴스브리핑</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%231F4E79'/%3E%3Cpath d='M8 22 L16 8 L24 22' stroke='%23EEF1F2' stroke-width='2' fill='none' stroke-linejoin='round'/%3E%3Cline x1='11.5' y1='16.5' x2='20.5' y2='16.5' stroke='%23EEF1F2' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800;900&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1a2129;
-    --ink-soft: #4b5761;
-    --paper: #eef0ec;
-    --paper-raised: #f8f8f5;
-    --steel: #3d5a73;
-    --accent: #c6551e;
-    --rule: #ccd0c7;
-    --rule-strong: #1a2129;
-    --shadow: rgba(26, 33, 41, 0.08);
+    --bg: #eef1f2;
+    --surface: #ffffff;
+    --surface-raised: #f7f9fa;
+    --ink: #1b2430;
+    --ink-soft: #4b5a6b;
+    --ink-faint: #7c8a99;
+    --accent: #1f4e79;
+    --accent-warm: #a8752b;
+    --line: #d6dbe0;
+    --line-strong: #b7c0c8;
+    --grid-line: rgba(31, 78, 121, 0.06);
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --ink: #e9ece7;
-      --ink-soft: #a8b3ba;
-      --paper: #14181b;
-      --paper-raised: #1c2226;
-      --steel: #8aa6b9;
-      --accent: #ff8f52;
-      --rule: #2b3236;
-      --rule-strong: #e9ece7;
-      --shadow: rgba(0, 0, 0, 0.35);
+      --bg: #10161f;
+      --surface: #172130;
+      --surface-raised: #1c2839;
+      --ink: #e7ecf2;
+      --ink-soft: #93a2b4;
+      --ink-faint: #647486;
+      --accent: #6fa8dc;
+      --accent-warm: #d99a4e;
+      --line: rgba(255, 255, 255, 0.14);
+      --line-strong: rgba(255, 255, 255, 0.24);
+      --grid-line: rgba(111, 168, 220, 0.08);
     }
   }
 
   :root[data-theme="dark"] {
-    --ink: #e9ece7;
-    --ink-soft: #a8b3ba;
-    --paper: #14181b;
-    --paper-raised: #1c2226;
-    --steel: #8aa6b9;
-    --accent: #ff8f52;
-    --rule: #2b3236;
-    --rule-strong: #e9ece7;
-    --shadow: rgba(0, 0, 0, 0.35);
+    --bg: #10161f;
+    --surface: #172130;
+    --surface-raised: #1c2839;
+    --ink: #e7ecf2;
+    --ink-soft: #93a2b4;
+    --ink-faint: #647486;
+    --accent: #6fa8dc;
+    --accent-warm: #d99a4e;
+    --line: rgba(255, 255, 255, 0.14);
+    --line-strong: rgba(255, 255, 255, 0.24);
+    --grid-line: rgba(111, 168, 220, 0.08);
   }
 
   * { box-sizing: border-box; }
 
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: "IBM Plex Sans KR", "Noto Sans KR", -apple-system, sans-serif;
+  html, body {
     margin: 0;
-    padding: 56px 20px 96px;
-    line-height: 1.7;
+    padding: 0;
   }
 
-  .sheet {
+  body {
+    background:
+      repeating-linear-gradient(0deg, var(--grid-line) 0, var(--grid-line) 1px, transparent 1px, transparent 32px),
+      repeating-linear-gradient(90deg, var(--grid-line) 0, var(--grid-line) 1px, transparent 1px, transparent 32px),
+      var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .page {
     max-width: 720px;
     margin: 0 auto;
+    padding: 56px 24px 80px;
   }
 
   .masthead {
-    border-top: 3px solid var(--rule-strong);
-    border-bottom: 1px solid var(--rule-strong);
-    padding: 18px 0 16px;
-    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 28px;
   }
 
-  .masthead-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    font-family: "Gothic A1", sans-serif;
-    font-weight: 700;
-    font-size: 0.78rem;
-    letter-spacing: 0.14em;
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--ink-soft);
-  }
-
-  h1 {
-    font-family: "Gothic A1", sans-serif;
-    font-weight: 900;
-    font-size: clamp(1.9rem, 5vw, 2.5rem);
-    letter-spacing: -0.01em;
-    line-height: 1.18;
-    text-wrap: balance;
-    margin: 10px 0 2px;
-  }
-
-  .deck {
-    font-size: 0.98rem;
-    color: var(--ink-soft);
-    margin: 0;
-  }
-
-  .deck strong {
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  .empty {
-    padding: 48px 4px;
-    text-align: center;
-    font-size: 1.05rem;
-    color: var(--ink-soft);
-  }
-
-  .articles {
+    color: var(--accent-warm);
     display: flex;
-    flex-direction: column;
-  }
-
-  .article {
-    padding: 26px 0;
-    border-bottom: 1px solid var(--rule);
-    display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 10px;
   }
 
-  .article:first-child { padding-top: 4px; }
-  .article:last-child { border-bottom: none; }
-
-  .kicker {
-    font-family: "Gothic A1", sans-serif;
-    font-weight: 800;
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--steel);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .kicker::before {
+  .eyebrow::before {
     content: "";
-    width: 14px;
-    height: 2px;
-    background: var(--accent);
+    width: 22px;
+    height: 1px;
+    background: var(--accent-warm);
     display: inline-block;
   }
 
-  .article h2 {
+  h1 {
+    font-family: "IBM Plex Sans KR", "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 5vw, 40px);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
     margin: 0;
-    font-family: "Gothic A1", sans-serif;
-    font-weight: 800;
-    font-size: 1.22rem;
-    line-height: 1.4;
     text-wrap: balance;
   }
 
-  .article h2 a {
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 16px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .meta-row .count {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .rule-double {
+    height: 5px;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line-strong);
+    margin: 0 0 36px;
+  }
+
+  .log {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 4px 20px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .item:first-child { padding-top: 0; }
+  .item:last-child { border-bottom: none; }
+
+  .item-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    padding-top: 4px;
+  }
+
+  .item-tag .no {
+    display: block;
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .item-body { min-width: 0; }
+
+  .item h2 {
+    font-family: "IBM Plex Sans KR", "Noto Sans KR", sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+
+  .item h2 a {
     color: var(--ink);
     text-decoration: none;
     background-image: linear-gradient(var(--accent), var(--accent));
     background-repeat: no-repeat;
-    background-size: 0% 2px;
     background-position: 0 100%;
-    transition: background-size 0.2s ease;
+    background-size: 100% 1px;
   }
 
-  .article h2 a:hover,
-  .article h2 a:focus-visible {
-    background-size: 100% 2px;
+  .item h2 a:hover,
+  .item h2 a:focus-visible {
+    color: var(--accent);
   }
 
-  .article h2 a:focus-visible {
+  .item h2 a:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
 
-  .summary {
-    margin: 0;
-    max-width  : 62ch;
-    color: var(--ink);
-    font-size: 0.99rem;
-  }
-
-  .meta {
-    font-size: 0.82rem;
+  .item p {
+    font-size: 15px;
+    line-height: 1.75;
     color: var(--ink-soft);
-    font-variant-numeric: tabular-nums;
+    max-width: 62ch;
+    margin: 0 0 12px;
   }
 
-  .meta .dot {
-    margin: 0 6px;
-    color: var(--rule-strong);
-    opacity: 0.5;
+  .item .source {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .item .source .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+    display: inline-block;
+  }
+
+  .empty {
+    padding: 48px 0;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 16px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 2px;
+    background: var(--surface-raised);
   }
 
   footer {
-    margin-top: 40px;
-    padding-top: 16px;
-    border-top: 1px solid var(--rule);
-    font-size: 0.78rem;
-    color: var(--ink-soft);
+    margin-top: 44px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: space-between;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
   }
 
   @media (max-width: 480px) {
-    body { padding: 40px 16px 72px; }
-    .masthead-row { font-size: 0.68rem; }
+    .item { grid-template-columns: 1fr; }
+    .item-tag { display: flex; gap: 8px; align-items: baseline; padding-top: 0; }
   }
 </style>
 </head>
 <body>
-<div class="sheet">
+  <div class="page">
+    <header class="masthead">
+      <div class="eyebrow">POSCO E&amp;C · DAILY DIGEST</div>
+      <h1>포스코이앤씨 뉴스브리핑</h1>
+      <div class="meta-row">
+        <span>2026년 9월 9일 · 수요일</span>
+        <span class="count">오늘의 기사 2건</span>
+      </div>
+    </header>
 
-  <div class="masthead">
-    <div class="masthead-row">
-      <span>포스코이앤씨 뉴스브리핑</span>
-      <span>2026. 09. 07</span>
-    </div>
-    <h1>2026년 9월 7일 뉴스브리핑</h1>
-    <p class="deck">오늘 발행된 <strong>포스코이앤씨</strong> 관련 기사 7건을 골라 정리했습니다.</p>
+    <div class="rule-double"></div>
+
+    <main class="log">
+      <article class="item">
+        <div class="item-tag"><span class="no">No.01</span>00:55</div>
+        <div class="item-body">
+          <h2><a href="https://n.news.naver.com/mnews/article/005/0001871766?sid=101" target="_blank" rel="noopener">포스코이앤씨 '더샵 에너지 절약 챌린지', 8500㎾h 줄였다</a></h2>
+          <p>포스코이앤씨가 전력거래소, 포스코DX, 파란에너지와 함께 진행한 '더샵 에너지 절약 챌린지'를 통해 4개월간 8500㎾h의 전력을 절감했다고 밝혔다. 이는 약 1000가구가 하루 동안 사용하는 전력량에 해당하는 규모로, 입주민들의 자발적인 참여가 성과로 이어졌다. 회사는 스마트홈 기반 자동 수요반응(Auto DR) 시스템을 앞세워 전국 더샵 단지로 에너지 절감 활동을 넓혀갈 계획이다.</p>
+          <div class="source">국민일보<span class="dot"></span>2026.09.09</div>
+        </div>
+      </article>
+
+      <article class="item">
+        <div class="item-tag"><span class="no">No.02</span>00:01</div>
+        <div class="item-body">
+          <h2><a href="https://n.news.naver.com/mnews/article/629/0000531986?sid=101" target="_blank" rel="noopener">불황에도 사람은 뽑는다…제조업 채용 키워드는 'AI 융합인재'</a></h2>
+          <p>경기 불황 속에서도 국내 제조업체들의 신입 채용이 이어지는 가운데 포스코그룹도 채용 대열에 합류했다. 포스코홀딩스 미래기술연구원을 비롯해 포스코, 포스코인터내셔널, 포스코DX, 포스코이앤씨, RIST 등 6개 그룹사가 오는 16일까지 세 자릿수 규모의 신입사원을 모집한다. 모집 분야는 생산·설비기술부터 영업까지 폭넓으며, AI 융합 역량을 갖춘 인재가 핵심 채용 키워드로 꼽힌다.</p>
+          <div class="source">더팩트<span class="dot"></span>2026.09.09</div>
+        </div>
+      </article>
+    </main>
+
+    <footer>
+      <span>SOURCE: NAVER NEWS SEARCH</span>
+      <span>DOC. 2026-0909 · AUTO-GENERATED DAILY</span>
+    </footer>
   </div>
-
-  <div class="articles">
-
-    <article class="article">
-      <span class="kicker">지역 상생</span>
-      <h2><a href="https://www.gukjenews.com/news/articleView.html?idxno=3687612" target="_blank" rel="noopener">인천시-포스코이앤씨, 인천대로 일반화사업 상생협약 체결</a></h2>
-      <p class="summary">인천시는 9월 7일 시청에서 포스코이앤씨, 대한전문건설협회 인천시회와 함께 인천대로 일반화사업을 계기로 한 지역 건설산업 상생협력 협약을 체결했다. 송치영 포스코이앤씨 대표이사와 박찬대 인천시장 등이 참석해 지역 건설업체와의 협력을 강화하기로 했다.</p>
-      <p class="meta">국제뉴스<span class="dot">·</span>9월 7일</p>
-    </article>
-
-    <article class="article">
-      <span class="kicker">분양</span>
-      <h2><a href="https://n.news.naver.com/mnews/article/018/0006365187?sid=101" target="_blank" rel="noopener">포스코이앤씨, '더샵 중앙로역센터폴' 잔여가구 선착순 분양</a></h2>
-      <p class="summary">포스코이앤씨는 대구 중구에서 후분양 방식으로 공급 중인 '더샵 중앙로역센터폴'의 잔여가구에 대해 선착순 동·호 지정 계약을 진행한다고 밝혔다. 준공과 입주를 앞둔 만큼 수요자들은 완성된 건물과 주변 환경을 직접 확인한 뒤 계약할 수 있다.</p>
-      <p class="meta">이데일리<span class="dot">·</span>9월 7일</p>
-    </article>
-
-    <article class="article">
-      <span class="kicker">지역 상생</span>
-      <h2><a href="https://www.kihoilbo.co.kr/news/articleView.html?idxno=3033910" target="_blank" rel="noopener">지역건설산업 상생협력 협약식</a></h2>
-      <p class="summary">7일 인천시청 대접견실에서 열린 '지역건설산업 상생협력 업무협약식'에는 박찬대 인천시장과 포스코이앤씨 송치영 대표이사, 대한전문건설협회 인천시회 조흥수 회장이 참석해 협약서를 교환했다. 인천 지역 건설업계의 동반성장을 위한 협력 체계를 마련하는 자리였다.</p>
-      <p class="meta">기호일보<span class="dot">·</span>9월 7일</p>
-    </article>
-
-    <article class="article">
-      <span class="kicker">견본주택</span>
-      <h2><a href="http://www.newsprime.co.kr/news/article.html?no=746769" target="_blank" rel="noopener">여주·이천 첫 '더샵' 여주역더퍼스트 견본주택 사흘간 1만2000명 방문</a></h2>
-      <p class="summary">경기 여주시 홍문2지구에 들어서는 포스코이앤씨의 '더샵 여주역더퍼스트' 견본주택이 개관 사흘 만에 약 1만2000명이 다녀가며 여주·이천 지역 첫 '더샵' 브랜드에 대한 뜨거운 관심을 확인했다. 개관 첫날부터 긴 대기줄이 이어졌고 신혼부부부터 중장년층까지 다양한 연령대가 방문했다.</p>
-      <p class="meta">프라임경제<span class="dot">·</span>9월 7일</p>
-    </article>
-
-    <article class="article">
-      <span class="kicker">주거 트렌드</span>
-      <h2><a href="http://www.popcornnews.net/news/articleView.html?idxno=132139" target="_blank" rel="noopener">하이엔드 기준, 희소성 넘어 매시브로... 주거 트렌드 변화</a></h2>
-      <p class="summary">최근 주택 시장에서는 희소성을 앞세우던 하이엔드 단지가 대규모 '매시브' 단지까지 아우르는 방향으로 흐름이 바뀌고 있으며, 포스코이앤씨가 시공을 맡은 단지도 이런 변화의 사례로 꼽혔다. 최고 65층, 5175가구 규모로 계획된 압구정 3구역 등 서울 주요 정비사업지에서도 매머드급 하이엔드 단지 조성이 추진되고 있다.</p>
-      <p class="meta">팝콘뉴스<span class="dot">·</span>9월 7일</p>
-    </article>
-
-    <article class="article">
-      <span class="kicker">견본주택</span>
-      <h2><a href="https://www.rcast.co.kr/news/articleView.html?idxno=31575" target="_blank" rel="noopener">'더샵 여주역더퍼스트' 견본주택 3일간 1만2천 명 내방</a></h2>
-      <p class="summary">포스코이앤씨는 지난 4일 문을 연 '더샵 여주역더퍼스트' 견본주택에 사흘간 약 1만2000명이 방문했다고 밝혔다. 개관 첫날부터 긴 대기줄이 형성됐으며 신혼부부부터 중장년층까지 폭넓은 연령대의 방문객이 몰린 것으로 나타났다.</p>
-      <p class="meta">알씨캐스트<span class="dot">·</span>9월 7일</p>
-    </article>
-
-    <article class="article">
-      <span class="kicker">주거 트렌드</span>
-      <h2><a href="https://www.rcast.co.kr/news/articleView.html?idxno=31574" target="_blank" rel="noopener">용산·성수·동탄에 잇단 대단지 하이엔드… '매시브 하이엔드' 부상</a></h2>
-      <p class="summary">용산·성수·동탄 등 핵심 입지에서 대단지 하이엔드 아파트가 잇달아 공급되며 '매시브 하이엔드'라는 새로운 흐름이 부상하고 있다. 해당 사업들의 시공은 부산 해운대 엘시티, 서울 강남 브라이튼 N40 등 고급 주거를 지어온 포스코이앤씨가 다수 맡아 눈길을 끈다.</p>
-      <p class="meta">알씨캐스트<span class="dot">·</span>9월 7일</p>
-    </article>
-
-  </div>
-
-  <footer>
-    <span>포스코이앤씨 뉴스브리핑</span>
-    <span>네이버 뉴스 검색 기반 자동 정리</span>
-  </footer>
-
-</div>
 </body>
 </html>
