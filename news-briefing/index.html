@@ -1,227 +1,335 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026년 9월 11일 뉴스브리핑</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=Noto+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f1f2ef;
-    --surface: #ffffff;
-    --surface-border: #dedcd3;
-    --ink: #1c2024;
-    --ink-soft: #565b60;
-    --ink-faint: #8b8f92;
-    --accent: #2c4a6e;
-    --accent-soft: rgba(44, 74, 110, 0.08);
-    --highlight: #c97a2e;
-    --rule: #cac8bd;
+    --paper: #f2f1ea;
+    --paper-raised: #e9e7dd;
+    --ink: #181c1f;
+    --ink-soft: #4c5257;
+    --steel: #2c4a66;
+    --steel-soft: #6e93b4;
+    --accent: #b6591f;
+    --line: #d4d0c3;
+    --focus: #2c4a66;
   }
+
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #14171a;
-      --surface: #1c2024;
-      --surface-border: #2c3136;
-      --ink: #ecece5;
-      --ink-soft: #a7abae;
-      --ink-faint: #74787b;
-      --accent: #82b2df;
-      --accent-soft: rgba(130, 178, 223, 0.12);
-      --highlight: #e3a25c;
-      --rule: #34393e;
+      --paper: #15181a;
+      --paper-raised: #1d2124;
+      --ink: #e9e7df;
+      --ink-soft: #a9aeaf;
+      --steel: #8fb7da;
+      --steel-soft: #5c7c96;
+      --accent: #e08a45;
+      --line: #2c3134;
     }
   }
+
   :root[data-theme="dark"] {
-    --bg: #14171a;
-    --surface: #1c2024;
-    --surface-border: #2c3136;
-    --ink: #ecece5;
-    --ink-soft: #a7abae;
-    --ink-faint: #74787b;
-    --accent: #82b2df;
-    --accent-soft: rgba(130, 178, 223, 0.12);
-    --highlight: #e3a25c;
-    --rule: #34393e;
+    --paper: #15181a;
+    --paper-raised: #1d2124;
+    --ink: #e9e7df;
+    --ink-soft: #a9aeaf;
+    --steel: #8fb7da;
+    --steel-soft: #5c7c96;
+    --accent: #e08a45;
+    --line: #2c3134;
   }
 
   * { box-sizing: border-box; }
+
   body {
     margin: 0;
-    background: var(--bg);
+    background: var(--paper);
     color: var(--ink);
-    font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
-    padding: clamp(28px, 6vw, 72px) 20px 64px;
+    font-family: "IBM Plex Sans KR", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    padding: 0 20px;
   }
+
   .page {
-    max-width: 680px;
+    max-width: 700px;
     margin: 0 auto;
+    padding-block: 56px 72px;
   }
-  .masthead {
-    padding-bottom: 22px;
+
+  header.masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 28px;
     border-bottom: 3px solid var(--ink);
   }
-  .kicker {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.72rem;
+
+  .eyebrow {
+    font-family: "IBM Plex Sans KR", sans-serif;
     font-weight: 600;
-    letter-spacing: 0.16em;
-    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    margin-bottom: 14px;
+    color: var(--accent);
   }
-  .kicker::before {
-    content: "";
-    width: 18px;
-    height: 3px;
-    background: var(--highlight);
-    display: inline-block;
-  }
-  h1 {
+
+  h1.title {
     font-family: "Gothic A1", "Noto Sans KR", sans-serif;
-    font-weight: 800;
-    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    font-weight: 900;
+    font-size: clamp(30px, 6vw, 44px);
     line-height: 1.18;
-    margin: 0 0 10px;
-    text-wrap: balance;
     letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
   }
-  .subline {
+
+  .title .mark { color: var(--steel); }
+
+  .dateline {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 14px;
-    font-size: 0.92rem;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 14px;
     color: var(--ink-soft);
   }
-  .subline strong {
+
+  .dateline .sep {
+    color: var(--line);
+  }
+
+  .lede {
+    margin: 26px 0 44px;
+    font-size: 16.5px;
+    color: var(--ink-soft);
+    max-width: 60ch;
+  }
+
+  .lede strong {
     color: var(--ink);
     font-weight: 600;
   }
 
-  .list {
-    margin-top: 30px;
+  .briefs {
     display: flex;
     flex-direction: column;
-    gap: 18px;
   }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--surface-border);
-    border-radius: 4px;
-    padding: 22px clamp(18px, 4vw, 28px);
+
+  .brief {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 4px 18px;
+    padding: 26px 0;
+    border-top: 1px solid var(--line);
   }
-  .card-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px 10px;
-    font-size: 0.78rem;
-    color: var(--ink-faint);
-    margin-bottom: 10px;
+
+  .briefs .brief:last-child {
+    border-bottom: 1px solid var(--line);
   }
-  .card-meta .source {
-    font-weight: 600;
-    color: var(--accent);
-    background: var(--accent-soft);
-    padding: 2px 9px;
-    border-radius: 999px;
-    letter-spacing: 0.01em;
+
+  .brief-num {
+    font-family: "Gothic A1", sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    color: var(--steel-soft);
+    padding-top: 3px;
+    font-variant-numeric: tabular-nums;
   }
-  .card h2 {
+
+  .brief-body h2 {
     margin: 0 0 10px;
     font-family: "Gothic A1", "Noto Sans KR", sans-serif;
-    font-size: 1.22rem;
     font-weight: 700;
+    font-size: 19px;
     line-height: 1.4;
     text-wrap: balance;
   }
-  .card h2 a {
+
+  .brief-body h2 a {
     color: var(--ink);
     text-decoration: none;
-    background-image: linear-gradient(var(--highlight), var(--highlight));
-    background-size: 0% 2px;
-    background-position: 0 100%;
+    background-image: linear-gradient(var(--accent), var(--accent));
     background-repeat: no-repeat;
-    transition: background-size 0.2s ease, color 0.2s ease;
+    background-position: 0 100%;
+    background-size: 0% 2px;
+    transition: background-size 0.18s ease;
   }
-  .card h2 a:hover,
-  .card h2 a:focus-visible {
-    color: var(--accent);
+
+  .brief-body h2 a:hover,
+  .brief-body h2 a:focus-visible {
     background-size: 100% 2px;
   }
-  .card p {
-    margin: 0;
-    max-width: 62ch;
-    font-size: 0.98rem;
-    line-height: 1.72;
+
+  .brief-body h2 a:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .brief-body p.summary {
+    margin: 0 0 12px;
     color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 62ch;
+  }
+
+  .brief-body p.meta {
+    margin: 0;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--steel-soft);
   }
 
   .empty {
-    margin-top: 30px;
-    padding: 40px clamp(18px, 4vw, 28px);
-    background: var(--surface);
-    border: 1px solid var(--surface-border);
-    border-radius: 4px;
-    text-align: center;
+    padding: 48px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
     color: var(--ink-soft);
-    font-size: 1.02rem;
+    font-size: 16px;
   }
 
-  footer {
-    margin-top: 36px;
-    padding-top: 18px;
-    border-top: 1px solid var(--rule);
-    font-size: 0.78rem;
-    color: var(--ink-faint);
-    line-height: 1.6;
+  footer.colophon {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
   }
 
-  @media (max-width: 420px) {
-    .card { padding: 18px 16px; }
-    h1 { font-size: 1.7rem; }
+  @media (max-width: 460px) {
+    .brief {
+      grid-template-columns: 1fr;
+    }
+    .brief-num {
+      padding-top: 0;
+    }
   }
 </style>
 </head>
 <body>
-  <div class="page">
+  <main class="page">
     <header class="masthead">
-      <div class="kicker">포스코이앤씨 뉴스브리핑</div>
-      <h1>2026년 9월 11일 뉴스브리핑</h1>
-      <div class="subline">
-        <span><strong>키워드</strong> 포스코이앤씨</span>
-        <span><strong>수집 기사</strong> 2건</span>
-        <span><strong>기준</strong> 2026-09-11 KST</span>
+      <span class="eyebrow">Daily Brief · 건설 · 원자력 · 리모델링</span>
+      <h1 class="title">2026년 9월 11일<br><span class="mark">포스코이앤씨</span> 뉴스브리핑</h1>
+      <div class="dateline">
+        <span>2026년 9월 11일 금요일</span>
+        <span class="sep">·</span>
+        <span>네이버 뉴스 검색 기준</span>
       </div>
     </header>
 
-    <main class="list">
-      <article class="card">
-        <div class="card-meta">
-          <span class="source">동아일보</span>
-          <span>2026.09.11 오전 4:33</span>
+    <p class="lede">오늘 포스코이앤씨 관련 보도 <strong>10건</strong>을 골라 정리했습니다. 발전소 수주 경쟁부터 리모델링 실적, 원자력 기술 협력까지 하루 동안의 움직임을 한눈에 확인하세요.</p>
+
+    <section class="briefs">
+      <article class="brief">
+        <div class="brief-num">01</div>
+        <div class="brief-body">
+          <h2><a href="https://www.gukjenews.com/news/articleView.html?idxno=3692694" target="_blank" rel="noopener">현대엔지니어링, 용인·여수 발전소 우선협상대상자 선정 경쟁 치열</a></h2>
+          <p class="summary">총사업비 약 6,300억원 규모의 용인·여수 발전소 사업에서 현대엔지니어링이 컨소시엄 대표사로 설계·조달(EP)을 맡고, 포스코이앤씨는 보조 기자재 구매와 시공을 담당하는 조달·시공(PC) 역할을 수행한다. 우선협상대상자 선정을 둘러싼 업계 경쟁이 치열해지고 있다.</p>
+          <p class="meta">국제뉴스 · 2026.09.11</p>
         </div>
-        <h2><a href="https://n.news.naver.com/mnews/article/020/0003747343?sid=102" target="_blank" rel="noopener">"뭉쳐야 산다" 인천 아파트 '컨소시엄 파워'</a></h2>
-        <p>IPARK현대산업개발·현대건설·포스코이앤씨가 공동 시공한 인천 아파트가 지역 내 대표적인 컨소시엄 단지로 꼽히고 있다. 같은 생활권 안에서도 여러 건설사가 함께 지은 컨소시엄 아파트가 상대적으로 강세를 보이는 것으로 나타났다. 2024년 10월 입주를 시작한 부평구 단지 등이 이런 흐름을 보여주는 사례로 소개됐다.</p>
       </article>
 
-      <article class="card">
-        <div class="card-meta">
-          <span class="source">동아일보</span>
-          <span>2026.09.11 오전 12:31</span>
+      <article class="brief">
+        <div class="brief-num">02</div>
+        <div class="brief-body">
+          <h2><a href="http://www.ikld.kr/news/articleView.html?idxno=340532" target="_blank" rel="noopener">수도권 대표 신도시… 동탄의 마지막 심장부 '아크메르 동탄' 개발 박차</a></h2>
+          <p class="summary">동탄의 마지막 노른자 입지로 꼽히는 '아크메르 동탄' 개발이 속도를 내고 있다. 시공은 포스코이앤씨가 맡으며, 에르메스·샤넬 등과 협업한 디자이너 자나이나 미레이로의 외관 디자인과 이탈리아 프리미엄 주방가구 '쿠치네 루베' 등 고급 마감재가 적용될 예정이다.</p>
+          <p class="meta">일간경기 · 2026.09.11</p>
         </div>
-        <h2><a href="https://n.news.naver.com/mnews/article/020/0003747284?sid=101" target="_blank" rel="noopener">충남 천안 1호선 부성역 인근에 1290채 분양</a></h2>
-        <p>포스코이앤씨가 충남 천안시 서북구 부성2 도시개발구역에서 '더샵 천안라크원'을 10월 분양한다고 밝혔다. 단지는 지하 2층~지상 37층 10개 동 규모로 전용면적 84~118㎡ 총 1290채로 조성된다. 지하철 1호선 부성역과 가까운 입지가 특징으로 꼽힌다.</p>
       </article>
-    </main>
 
-    <footer>
-      네이버 뉴스 검색 결과를 바탕으로 자동 수집·요약된 브리핑입니다. 원문 확인 후 인용하시기 바랍니다.
+      <article class="brief">
+        <div class="brief-num">03</div>
+        <div class="brief-body">
+          <h2><a href="http://www.biztribune.co.kr/news/articleView.html?idxno=358862" target="_blank" rel="noopener">포스코이앤씨, 누적 14조3000억원 리모델링 수주… '업계 1위' 굳힌다</a></h2>
+          <p class="summary">포스코이앤씨가 누적 리모델링 수주액 14조3000억원을 기록하며 업계 1위 입지를 굳히고 있다. 2014년 리모델링 시장에 진출한 이후 압도적인 수주 실적과 차별화된 시공 기술력을 앞세워 정비사업 시장을 선도하고 있다.</p>
+          <p class="meta">비즈트리뷴 · 2026.09.11</p>
+        </div>
+      </article>
+
+      <article class="brief">
+        <div class="brief-num">04</div>
+        <div class="brief-body">
+          <h2><a href="https://news.mtn.co.kr/news-detail/2026091116254450487" target="_blank" rel="noopener">송파 전역 재건축 열기…대단지 시공사 선정 '2막' 열렸다</a></h2>
+          <p class="summary">예상 공사비 약 1조7000억원 규모인 송파구 대단지 재건축의 시공사 선정 경쟁이 새 국면을 맞았다. 삼성물산, DL이앤씨, 포스코이앤씨가 관심을 보여온 가운데 삼성물산이 가장 먼저 대안설계에 착수하며 입찰 참여를 공식화했다.</p>
+          <p class="meta">MTN · 2026.09.11</p>
+        </div>
+      </article>
+
+      <article class="brief">
+        <div class="brief-num">05</div>
+        <div class="brief-body">
+          <h2><a href="https://www.getnews.co.kr/news/articleView.html?idxno=880561" target="_blank" rel="noopener">호수공원 입지에 '더샵' 브랜드 가치... '더샵 천안라크원' 눈길</a></h2>
+          <p class="summary">성성호수공원을 품은 입지와 포스코이앤씨의 '더샵' 브랜드 경쟁력을 갖춘 '더샵 천안라크원'이 눈길을 끌고 있다. 단지는 천안시 서북구 부대동 일원에 지하 2층~지상 최고 37층, 총 10개 동 규모로 조성될 예정이다.</p>
+          <p class="meta">겟뉴스 · 2026.09.11</p>
+        </div>
+      </article>
+
+      <article class="brief">
+        <div class="brief-num">06</div>
+        <div class="brief-body">
+          <h2><a href="http://www.areyou.co.kr/news/articleView.html?idxno=95336" target="_blank" rel="noopener">[아유경제_부동산] 현대엔지니어링, 용인ㆍ신호남 발전소 우선협상자 선...</a></h2>
+          <p class="summary">옛 호남화력발전소 부지에 들어서는 고효율·저탄소 발전소 사업에서 포스코이앤씨가 보조 기자재 구매와 시공을 담당하는 조달·시공(PC) 역무를 맡는다. 총사업비는 약 6300억원이며, 2027년 6월 착공해 2030년 5월 준공될 예정이다.</p>
+          <p class="meta">아유경제 · 2026.09.11</p>
+        </div>
+      </article>
+
+      <article class="brief">
+        <div class="brief-num">07</div>
+        <div class="brief-body">
+          <h2><a href="https://n.news.naver.com/mnews/article/015/0005331395?sid=101" target="_blank" rel="noopener">리모델링 휩쓰는 포스코…수주액 15조 눈앞</a></h2>
+          <p class="summary">포스코이앤씨의 리모델링 수주액이 15조원 돌파를 눈앞에 두고 있다. 필로티 1개 층 수직증축과 가구별 수평증축, 1개 동 신축 등 복합증축 기술이 적용된 단지가 대표 사례로 꼽히며, 해당 단지는 연면적이 12만3120㎡에서 21만7626㎡로 확대된다.</p>
+          <p class="meta">한국경제 · 2026.09.11</p>
+        </div>
+      </article>
+
+      <article class="brief">
+        <div class="brief-num">08</div>
+        <div class="brief-body">
+          <h2><a href="https://www.vegannews.co.kr/news/article.html?no=386176" target="_blank" rel="noopener">인천 아파트 분양가 3.3㎡당 2236만원…2000만원 첫 돌파</a></h2>
+          <p class="summary">인천 아파트 분양가가 3.3㎡당 2236만원으로 처음 2000만원대를 넘어섰다. 이런 가운데 IPARK현대산업개발·현대건설·포스코이앤씨가 공동 시공하는 인천 용현·학익 1블록 '시티오씨엘 9단지 오션파크뷰'가 분양 중이다.</p>
+          <p class="meta">비건뉴스 · 2026.09.11</p>
+        </div>
+      </article>
+
+      <article class="brief">
+        <div class="brief-num">09</div>
+        <div class="brief-body">
+          <h2><a href="https://www.econovill.com/news/articleView.html?idxno=750594" target="_blank" rel="noopener">한전기술·포스코이앤씨, SMR·고온가스로 맞손…HyREX까지 확대</a></h2>
+          <p class="summary">한국전력기술과 포스코이앤씨가 소형모듈원자로(SMR) 등 차세대 원자력 기술 개발에 협력하기로 했다. 원자력으로 생산한 무탄소 전력과 청정수소를 포스코의 수소환원제철 기술 'HyREX'에 활용하는 방향으로 협력 범위를 넓힐 계획이다.</p>
+          <p class="meta">이코노믹뷰 · 2026.09.11</p>
+        </div>
+      </article>
+
+      <article class="brief">
+        <div class="brief-num">10</div>
+        <div class="brief-body">
+          <h2><a href="https://www.dnews.co.kr/uhtml/view.jsp?idxno=202609111614422650668" target="_blank" rel="noopener">포스코이앤씨-한국전력기술, 원자력 기술개발에 협력…글로벌 경쟁력 확...</a></h2>
+          <p class="summary">포스코이앤씨와 한국전력기술이 혁신형 SMR, 초고온가스로(HTGR), HyREX 등 부문에서 긴밀히 협력하는 업무협약을 체결했다. 송치영 포스코이앤씨 사장 등이 참여해 원자력 기술 경쟁력 확보에 나선다는 방침이다.</p>
+          <p class="meta">대한경제 · 2026.09.11</p>
+        </div>
+      </article>
+    </section>
+
+    <footer class="colophon">
+      <span>네이버 뉴스 검색(search_news) 기반 자동 수집</span>
+      <span>매일 갱신 · news-briefing</span>
     </footer>
-  </div>
+  </main>
 </body>
 </html>
